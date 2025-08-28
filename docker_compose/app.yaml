@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  main-app:
+  main-app2:
     build:
       context: ..
       dockerfile: Dockerfile
@@ -11,6 +11,13 @@ services:
     env_file:
       - ../.env
     depends_on:
-      - postgres
+      - postgres2
     volumes:
       - ..:/app/
+
+    networks:
+      - hrresumebank-network
+
+networks:
+  hrresumebank-network:
+    external: true
