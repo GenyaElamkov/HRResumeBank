@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "core.apps.resumes.apps.ResumesConfig",
 ]
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

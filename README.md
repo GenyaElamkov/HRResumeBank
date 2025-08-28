@@ -123,3 +123,7 @@ docker rm ваш_контейнер_postgres
 
 # Удалить volume с данными (если нужно полностью очистить)
 docker volume rm ваш_volume_postgres
+
+# Разработка ведется в ветке dev
+# Создаем от ветки dev
+git checkout -b feature/add-new-button
