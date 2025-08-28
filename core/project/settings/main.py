@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # first party
-    "core.apps.products.apps.ProductsConfig",
+    "core.apps.common.apps.CommonConfig",
+    "core.apps.resumes.apps.ResumesConfig",
 ]
 
 MIDDLEWARE = [
