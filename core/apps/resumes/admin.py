@@ -7,8 +7,8 @@ from .models.role import Role
 from .models.role_permission import RolePermission
 from .models.staff import Staff
 from .models.team import Team
-from .models.user_role import UserRole
 from .models.user_group import UserGroup
+from .models.user_role import UserRole
 
 
 @admin.register(Department)
@@ -43,7 +43,7 @@ class UserRoleAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['title'] = "Управление связми Пользователя и Роли"
+        extra_context['title'] = "Управление связями Пользователя/Роли"
         return super().changelist_view(request, extra_context=extra_context)
 
 

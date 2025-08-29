@@ -4,12 +4,9 @@
 
 * [x] Настройка Git-репозитория + CI/CD (GitHub Actions).
 * [x] Создание Docker-окружения (Postgres + Django + Nginx).
-* Инициализация Django-проекта (структура приложения, настройки).
+* [x] Инициализация Django-проекта (структура приложения, настройки).
 * [x] Настройка линтеров (flake8, black, isort, mypy).
-* Подготовка базовой модели данных (User, Role, Permission, Department).
-* Первые миграции БД.
-
-👉 Результат: проект поднимается в Docker, есть базовые таблицы и миграции.
+* [x] Подготовка базовой модели данных (User, Role, Permission, Department).
 
 ---
 
@@ -127,3 +124,7 @@ docker volume rm ваш_volume_postgres
 # Разработка ведется в ветке dev
 # Создаем от ветки dev
 git checkout -b feature/add-new-button
+
+# Формируем схему БД
+uv run manage.py graph_models -a -o my_project_models.dot
+https://dreampuf.github.io/GraphvizOnline/

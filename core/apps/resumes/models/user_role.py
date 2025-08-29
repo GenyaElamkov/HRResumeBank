@@ -1,8 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
-from .role import Role
 from .department import Department
+from .role import Role
 
 
 class UserRole(models.Model):
@@ -37,3 +37,19 @@ class UserRole(models.Model):
     class Meta:
         verbose_name = "Пользователь/Роль"
         verbose_name_plural = "Пользователи/Роли"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'role'],
+                condition=models.Q(department__isnull=True),
+                name='unique_user_role_department',
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'role'],
+                condition=models.Q(department__isnull=False),
+                name='unique_user_role_with_department',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['user', 'role']),
+        ]

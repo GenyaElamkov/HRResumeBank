@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 from .team import Team
+
 
 class UserGroup(models.Model):
     """Модель связывающая Пользователя и Группу"""
@@ -11,7 +12,7 @@ class UserGroup(models.Model):
         verbose_name="Пользователь",
         help_text="Выберите пользователя",
         on_delete=models.CASCADE,
-        related_name="user_group"
+        related_name="user_group",
     )
     group = models.ForeignKey(
         Team,
@@ -27,3 +28,9 @@ class UserGroup(models.Model):
     class Meta:
         verbose_name = "Пользователь/Группа"
         verbose_name_plural = "Пользователи/Группы"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'group'],
+                name='unique_user_group',
+            ),
+        ]

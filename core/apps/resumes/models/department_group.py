@@ -1,7 +1,7 @@
 from django.db import models
 
-from .team import Team
 from .department import Department
+from .team import Team
 
 
 class DepartmentGroup(models.Model):
@@ -27,3 +27,9 @@ class DepartmentGroup(models.Model):
     class Meta:
         verbose_name = "Департамент/Группа"
         verbose_name_plural = "Департаменты/Группы"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['group', 'department'],
+                name='unique_group_department',
+            ),
+        ]

@@ -1,7 +1,7 @@
 from django.db import models
 
-from .role import Role
 from .permission import Permission
+from .role import Role
 
 
 class RolePermission(models.Model):
@@ -28,4 +28,9 @@ class RolePermission(models.Model):
     class Meta:
         verbose_name = "Роль/Разрешение"
         verbose_name_plural = "Роли/Разрешении"
-        
+        constraints = [
+            models.UniqueConstraint(
+                fields=['role', 'permission'],
+                name='unique_role_permission',
+            ),
+        ]

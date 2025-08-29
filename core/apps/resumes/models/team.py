@@ -8,6 +8,7 @@ class Team(models.Model):
         verbose_name="Название группы",
         help_text="Введите название группы",
         max_length=150,
+        unique=True,
     )
     description = models.TextField(
         verbose_name="Описание группы",

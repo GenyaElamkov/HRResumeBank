@@ -18,7 +18,7 @@ class Role(models.Model):
     def __str__(self):
         return self.title
 
-
     class Meta:
         verbose_name = "Роль"
         verbose_name_plural = "Роли"
+# TODO: Сделать проверку регистронезвисимую на одинаковые роли

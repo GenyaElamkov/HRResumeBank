@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ValidationError
 
 
 class Department(models.Model):
@@ -24,9 +25,13 @@ class Department(models.Model):
         blank=True,
     )
 
-    class Meta:
-        verbose_name = "Департамент"
-        verbose_name_plural = "Департаменты"
+    def clean(self):
+        if self.parent == self:
+            raise ValidationError("Department cannot be its own parent")
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = "Департамент"
+        verbose_name_plural = "Департаменты"
