@@ -2,11 +2,12 @@ from django.db import models
 
 
 class Department(models.Model):
-    """Подразделение"""
+    """Департамент"""
     title = models.CharField(
         verbose_name="Название подразделения",
         help_text="Введите подразделение",
         max_length=150,
+        unique=True,
     )
     parent = models.ForeignKey(
         "self",
@@ -24,8 +25,8 @@ class Department(models.Model):
     )
 
     class Meta:
-        verbose_name = "Поздразделение"
-        verbose_name_plural = "Подразделение"
+        verbose_name = "Департамент"
+        verbose_name_plural = "Департаменты"
 
     def __str__(self):
         return self.title

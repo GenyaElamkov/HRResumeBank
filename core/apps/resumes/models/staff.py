@@ -1,12 +1,13 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
+from core.apps.common.models import TimeBaseModel
 
 from .department import Department
-from core.apps.common.models import TimeBaseModel
 
 
 class Staff(TimeBaseModel):
-    """Кастомная модель User"""
+    """Персонал"""
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -16,11 +17,11 @@ class Staff(TimeBaseModel):
     )
     department = models.ForeignKey(
         Department,
-        verbose_name="Депортамент/Отдел",
+        verbose_name="Департамент/Отдел",
         help_text="Выберите подразделение",
         on_delete=models.SET_NULL,
         null=True,
-        related_name="users"
+        related_name="users",
     )
 
     class Meta:
