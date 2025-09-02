@@ -25,7 +25,10 @@ INSTALLED_APPS = [
     # first party
     "core.apps.common.apps.CommonConfig",
     "core.apps.resumes.apps.ResumesConfig",
+    # app
+    'django_extensions',
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -4,13 +4,15 @@ distlib==0.4.0
 django==5.2.5
 django-environ==0.12.0
 django-extensions==4.1
+faker==37.6.0
 filelock==3.19.1
 identify==2.6.13
+isort==6.0.1
 nodeenv==1.9.1
-pillow==11.3.0
-platformdirs==4.3.8
+platformdirs==4.4.0
 pre-commit==4.3.0
 psycopg2-binary==2.9.10
 pyyaml==6.0.2
 sqlparse==0.5.3
+tzdata==2025.2
 virtualenv==20.34.0

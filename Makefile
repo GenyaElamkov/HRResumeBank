@@ -6,7 +6,7 @@ DB_CONTAINER = example-db
 ENV = --env-file .env
 APP_FILE = docker_compose/app.yaml
 APP_CONTAINER = main-app
-MANAGE_PY = python manage.py 
+MANAGE_PY = python manage.py
 
 
 .PHONY: storages
@@ -31,7 +31,7 @@ app:
 
 .PHONY: app-logs
 app-logs:
-	$(LOGS) $(APP_CONTAINER) -f 
+	$(LOGS) $(APP_CONTAINER) -f
 
 .PHONY: app-down
 app-down:
@@ -43,18 +43,21 @@ app-img-down:
 
 .PHONY: migrate
 migrate:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) migrate 
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) migrate
 
 .PHONY: migrations
 migrations:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) makemigrations  
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) makemigrations
 
 .PHONY: superuser
 superuser:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) createsuperuser  
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) createsuperuser
 
 .PHONY: collectstatic
 collectstatic:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) collectstatic 
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) collectstatic
 
-
+# Faker
+.PHONY: seed
+seed:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed
