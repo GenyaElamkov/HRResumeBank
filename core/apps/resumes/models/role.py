@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import UniqueConstraint
+from django.db.models.functions import Lower
 
 
 class Role(models.Model):
@@ -21,4 +23,6 @@ class Role(models.Model):
     class Meta:
         verbose_name = "Роль"
         verbose_name_plural = "Роли"
-# TODO: Сделать проверку регистронезвисимую на одинаковые роли
+        constraints = [
+            UniqueConstraint(Lower('title'), name="unique_lower_title_role"),
+        ]
