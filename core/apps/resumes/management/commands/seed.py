@@ -1,18 +1,19 @@
-from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-from faker import Faker
 import random
 
+from django.contrib.auth.models import User
+from django.core.management.base import BaseCommand
+
+from faker import Faker
+
+from core.apps.resumes.models.department import Department
+from core.apps.resumes.models.department_group import DepartmentGroup
 from core.apps.resumes.models.permission import Permission
 from core.apps.resumes.models.role import Role
 from core.apps.resumes.models.role_permission import RolePermission
 from core.apps.resumes.models.staff import Staff
-from core.apps.resumes.models.department import Department
 from core.apps.resumes.models.team import Team
-from core.apps.resumes.models.department_group import DepartmentGroup
 from core.apps.resumes.models.user_group import UserGroup
 from core.apps.resumes.models.user_role import UserRole
-
 
 
 fake = Faker("ru_RU")
@@ -60,7 +61,7 @@ class Command(BaseCommand):
         # Department <-> Team links
         for t in teams:
             DepartmentGroup.objects.create(
-                department=random.choice(departments), group=t
+                department=random.choice(departments), group=t,
             )
         self.stdout.write(self.style.SUCCESS("Связаны департаменты и группы"))
 

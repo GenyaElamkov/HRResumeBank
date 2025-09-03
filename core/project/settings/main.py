@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import environ
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
     # first party
     "core.apps.common.apps.CommonConfig",
     "core.apps.resumes.apps.ResumesConfig",
+    "core.apps.accounts.apps.AccountsConfig",
     # app
     'django_extensions',
 ]
@@ -45,7 +47,7 @@ ROOT_URLCONF = "core.project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [os.path.join(BASE_DIR, "core/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -60,6 +62,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.project.wsgi.application"
 
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
 
 DATABASES = {
     "default": {
@@ -71,6 +76,7 @@ DATABASES = {
         "PORT": env("POSTGRES_PORT"),
     },
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
