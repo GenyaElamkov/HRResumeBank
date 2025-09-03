@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     # first party
     "core.apps.common.apps.CommonConfig",
     "core.apps.resumes.apps.ResumesConfig",
-    "core.apps.accounts.apps.AccountsConfig",
     # app
     'django_extensions',
 ]
