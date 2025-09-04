@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import environ
@@ -45,7 +46,7 @@ ROOT_URLCONF = "core.project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [os.path.join(BASE_DIR, "core/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -60,6 +61,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.project.wsgi.application"
 
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
 
 DATABASES = {
     "default": {
@@ -71,6 +75,7 @@ DATABASES = {
         "PORT": env("POSTGRES_PORT"),
     },
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {

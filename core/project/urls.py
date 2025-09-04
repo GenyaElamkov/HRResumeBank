@@ -18,7 +18,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from core.apps.resumes import views
+from core.apps.resumes.views import ResumeListView, ResumeDetailView
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", ResumeListView.as_view(), name="resume-list"),
+    path("resume/<int:entity_id>/", ResumeDetailView.as_view(), name="resume-detail"),
 ]

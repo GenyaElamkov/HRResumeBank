@@ -1,0 +1,14 @@
+<h1>Резюме: {{ resume_data.ФИО|default:"Без имени" }}</h1>
+
+<p><b>Шаблон:</b> {{ entity.template.title }}</p>
+<p><b>Создано:</b> {{ entity.create_at }}</p>
+<p><b>Создатель:</b> {{ entity.created.username }}</p>
+
+<h2>Данные:</h2>
+<ul>
+    {% for field, value in resume_data.items %}
+        <li><b>{{ field }}:</b> {{ value }}</li>
+    {% endfor %}
+</ul>
+
+<p><a href="{% url 'resume-list' %}">← Назад к списку</a></p>

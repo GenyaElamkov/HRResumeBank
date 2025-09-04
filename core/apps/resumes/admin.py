@@ -1,92 +1,52 @@
 from django.contrib import admin
 
-from .models.department import Department
-from .models.department_group import DepartmentGroup
-from .models.permission import Permission
-from .models.role import Role
-from .models.role_permission import RolePermission
-from .models.staff import Staff
-from .models.team import Team
-from .models.user_group import UserGroup
-from .models.user_role import UserRole
+from .models.entity import Entity
+from .models.entity_date import EntityDate
+from .models.log import Log
+from .models.template import Template
+from .models.template_field import TemplateField
 
 
-@admin.register(Department)
-class DeportmentAdmin(admin.ModelAdmin):
+@admin.register(Template)
+class TemplateAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['title'] = "Управление Департаментом/Отделом"
+        extra_context['title'] = "Управление Шаблонами резюме/карточки"
         return super().changelist_view(request, extra_context=extra_context)
 
 
-@admin.register(Staff)
-class StaffAdmin(admin.ModelAdmin):
+@admin.register(TemplateField)
+class TemplateFieldAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['title'] = "Управление Персоналом"
+        extra_context['title'] = "Управление Полями шаблона"
         return super().changelist_view(request, extra_context=extra_context)
 
 
-@admin.register(Role)
-class RoleAdmin(admin.ModelAdmin):
+@admin.register(Entity)
+class EntityAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['title'] = "Управление Ролями"
+        extra_context['title'] = "Управление Записями резюме/Сущностями"
         return super().changelist_view(request, extra_context=extra_context)
 
 
-@admin.register(UserRole)
-class UserRoleAdmin(admin.ModelAdmin):
+@admin.register(EntityDate)
+class EntityDateAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['title'] = "Управление связями Пользователя/Роли"
+        extra_context['title'] = "Управление Значениями динамических полей"
         return super().changelist_view(request, extra_context=extra_context)
 
 
-@admin.register(Permission)
-class PermissionAdmin(admin.ModelAdmin):
+@admin.register(Log)
+class LogAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['title'] = "Управление Разрешениями"
-        return super().changelist_view(request, extra_context=extra_context)
-
-
-@admin.register(RolePermission)
-class RolePermissionAdmin(admin.ModelAdmin):
-    def changelist_view(self, request, extra_context=None):
-        if extra_context is None:
-            extra_context = {}
-        extra_context['title'] = "Управление связями Ролями/Разрешениями"
-        return super().changelist_view(request, extra_context=extra_context)
-
-
-@admin.register(Team)
-class TeamAdmin(admin.ModelAdmin):
-    def changelist_view(self, request, extra_context=None):
-        if extra_context is None:
-            extra_context = {}
-        extra_context['title'] = "Управление Группами"
-        return super().changelist_view(request, extra_context=extra_context)
-
-
-@admin.register(DepartmentGroup)
-class DepartmentGroupAdmin(admin.ModelAdmin):
-    def changelist_view(self, request, extra_context=None):
-        if extra_context is None:
-            extra_context = {}
-        extra_context['title'] = "Управление Департаментами/Группами"
-        return super().changelist_view(request, extra_context=extra_context)
-
-
-@admin.register(UserGroup)
-class UserGroupAdmin(admin.ModelAdmin):
-    def changelist_view(self, request, extra_context=None):
-        if extra_context is None:
-            extra_context = {}
-        extra_context['title'] = "Управление Пользователь/Группа"
+        extra_context['title'] = "Управление Журналом действий"
         return super().changelist_view(request, extra_context=extra_context)

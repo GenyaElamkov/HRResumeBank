@@ -1,0 +1,32 @@
+<h1>Список резюме</h1>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя / Организация</th>
+            <th>Шаблон</th>
+            <th>Создатель</th>
+            <th>Дата создания</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td>
+                    <a href="{% url 'resume-detail' entity.id %}">
+                        {{ entity.main_name|default:"[Без имени]" }}
+                    </a>
+                </td>
+                <td>{{ entity.template.title }}</td>
+                <td>{{ entity.created.username }}</td>
+                <td>{{ entity.create_at }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5">Нет резюме</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

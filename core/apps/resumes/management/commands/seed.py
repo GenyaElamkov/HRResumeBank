@@ -1,124 +1,153 @@
-from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-from faker import Faker
 import random
 
-from core.apps.resumes.models.permission import Permission
-from core.apps.resumes.models.role import Role
-from core.apps.resumes.models.role_permission import RolePermission
-from core.apps.resumes.models.staff import Staff
-from core.apps.resumes.models.department import Department
-from core.apps.resumes.models.team import Team
-from core.apps.resumes.models.department_group import DepartmentGroup
-from core.apps.resumes.models.user_group import UserGroup
-from core.apps.resumes.models.user_role import UserRole
+from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
+from datetime import date, timedelta
 
+from faker import Faker
 
+from core.apps.resumes.models.template import Template
+from core.apps.resumes.models.template_field import TemplateField
+from core.apps.resumes.models.entity import Entity
+from core.apps.resumes.models.entity_date import EntityDate
+from core.apps.resumes.models.log import Log
 
-fake = Faker("ru_RU")
 
 
 class Command(BaseCommand):
-    help = "Генерация тестовых данных для всех моделей"
 
-    def handle(self, *args, **kwargs):
+    help = "Заполняет базу тестовыми данными (seed)"
+
+    def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING("=== Очищаем старые данные ==="))
 
-        UserRole.objects.all().delete()
-        UserGroup.objects.all().delete()
-        RolePermission.objects.all().delete()
-        Staff.objects.all().delete()
-        DepartmentGroup.objects.all().delete()
-        Permission.objects.all().delete()
-        Role.objects.all().delete()
-        Team.objects.all().delete()
-        Department.objects.all().delete()
+        Template.objects.all().delete()
+        TemplateField.objects.all().delete()
+        EntityDate.objects.all().delete()
+        Entity.objects.all().delete()
+        Log.objects.all().delete()
         User.objects.exclude(is_superuser=True).delete()
 
         self.stdout.write(self.style.SUCCESS("Данные очищены!"))
 
-        # Departments
-        departments = [
-            Department.objects.create(
-                title=fake.unique.company(),
-                description=fake.text(max_nb_chars=120),
+        fake = Faker("ru_RU")
+
+        # --- Пользователи ---
+        user1, _ = User.objects.get_or_create(
+            username="admin",
+            defaults={"is_superuser": True, "is_staff": True}
+        )
+        user2, _ = User.objects.get_or_create(username="sanya")
+        user3, _ = User.objects.get_or_create(username="genya")
+        user4, _ = User.objects.get_or_create(username="vasilek")
+
+        # --- Шаблоны ---
+        template, _ = Template.objects.get_or_create(title="Резюме")
+        template_organization, _ = Template.objects.get_or_create(title="Организация")
+
+        # --- Поля шаблона ---
+        field_name, _ = TemplateField.objects.get_or_create(
+            template=template,
+            title="ФИО",
+            type_filed=TemplateField.TypeFiled.TEXT,
+            is_required=True,
+            is_primary=True,
+            order=1,
+        )
+        field_birth, _ = TemplateField.objects.get_or_create(
+            template=template,
+            title="Дата рождения",
+            type_filed=TemplateField.TypeFiled.DATE,
+            order=2,
+        )
+        field_experience, _ = TemplateField.objects.get_or_create(
+            template=template,
+            title="Опыт (лет)",
+            type_filed=TemplateField.TypeFiled.NUMBER,
+            order=3,
+        )
+        field_email, _ = TemplateField.objects.get_or_create(
+            template=template,
+            title="Email",
+            type_filed=TemplateField.TypeFiled.EMAIL,
+            order=4,
+        )
+        field_images, _ = TemplateField.objects.get_or_create(
+            template=template,
+            title="Фотография",
+            type_filed=TemplateField.TypeFiled.IMAGE,
+            order=5,
+        )
+        # Поля шаблона организации
+        field_name_organization, _ = TemplateField.objects.get_or_create(
+            template=template_organization,
+            title="ИНН",
+            type_filed=TemplateField.TypeFiled.TEXT,
+            is_required=True,
+            is_primary=True,
+            order=1,
+        )
+
+        # --- Генерация 100 записей ---
+        for i in range(100):
+            created_user = random.choice([user1, user2, user3, user4])
+
+            entity = Entity.objects.create(
+                template=template,
+                created=created_user
             )
-            for _ in range(3)
-        ]
-        self.stdout.write(self.style.SUCCESS(f"Создано департаментов: {len(departments)}"))
 
-        # Teams
-        teams = [
-            Team.objects.create(
-                title=fake.unique.bs().title(),
-                description=fake.text(max_nb_chars=120),
+            # Значения
+            EntityDate.objects.create(
+                entity=entity,
+                field=field_name,
+                value_text=fake.name(),
             )
-            for _ in range(5)
-        ]
-        self.stdout.write(self.style.SUCCESS(f"Создано групп: {len(teams)}"))
-
-        # Department <-> Team links
-        for t in teams:
-            DepartmentGroup.objects.create(
-                department=random.choice(departments), group=t
+            EntityDate.objects.create(
+                entity=entity,
+                field=field_birth,
+                value_date=fake.date_of_birth(minimum_age=18, maximum_age=60),
             )
-        self.stdout.write(self.style.SUCCESS("Связаны департаменты и группы"))
-
-        # Roles
-        roles = [
-            Role.objects.create(
-                title=fake.unique.job(),
-                description=fake.text(max_nb_chars=80),
+            EntityDate.objects.create(
+                entity=entity,
+                field=field_experience,
+                value_number=random.randint(0, 30),
             )
-            for _ in range(4)
-        ]
-        self.stdout.write(self.style.SUCCESS(f"Создано ролей: {len(roles)}"))
-
-        # Permissions
-        permissions = [
-            Permission.objects.create(
-                title=fake.word().capitalize(),
-                code=fake.unique.lexify(text="perm_????"),
-                description=fake.text(max_nb_chars=60),
+            EntityDate.objects.create(
+                entity=entity,
+                field=field_email,
+                value_email = fake.email(),
             )
-            for _ in range(6)
-        ]
-        self.stdout.write(self.style.SUCCESS(f"Создано разрешений: {len(permissions)}"))
-
-        # Role <-> Permission links
-        for r in roles:
-            for p in random.sample(permissions, k=random.randint(1, 3)):
-                RolePermission.objects.create(role=r, permission=p)
-        self.stdout.write(self.style.SUCCESS("Связаны роли и разрешения"))
-
-        # Users & Staff
-        users = []
-        for _ in range(10):
-            user = User.objects.create_user(
-                username=fake.unique.user_name(),
-                email=fake.unique.email(),
-                password="test1234",
-                first_name=fake.first_name(),
-                last_name=fake.last_name(),
+            EntityDate.objects.create(
+                entity=entity,
+                field=field_images,
+                value_images = fake.image_url(),
             )
-            Staff.objects.create(
-                user=user,
-                department=random.choice(departments),
+
+            # Лог действия
+            Log.objects.create(
+                user=created_user,
+                action="Создание резюме",
+                details=f"Создано резюме {entity.id}",
             )
-            users.append(user)
-        self.stdout.write(self.style.SUCCESS(f"Создано пользователей: {len(users)}"))
 
-        # User <-> Group links
-        for u in users:
-            for t in random.sample(teams, k=random.randint(1, 2)):
-                UserGroup.objects.create(user=u, group=t)
-        self.stdout.write(self.style.SUCCESS("Связаны пользователи и группы"))
+            inn = random.randrange(1000, 26444546)
+            entity_organization = Entity.objects.create(
+                template=template_organization,
+                created=created_user,
+                # main_name=f"Организация ИНН {inn}"
+            )
+            # Значение для организации
+            EntityDate.objects.create(
+                entity=entity_organization,
+                field=field_name_organization,
+                value_number=inn,
+            )
+            # Лог действия для организации
+            Log.objects.create(
+                user=created_user,
+                action="Создание организации",
+                details=f"Создана организация {entity_organization.id}",
+            )
 
-        # User <-> Role links
-        for u in users:
-            for r in random.sample(roles, k=random.randint(1, 2)):
-                dept = random.choice(departments) if random.choice([True, False]) else None
-                UserRole.objects.create(user=u, role=r, department=dept)
-        self.stdout.write(self.style.SUCCESS("Связаны пользователи и роли"))
-
-        self.stdout.write(self.style.SUCCESS("=== Генерация тестовых данных завершена! ==="))
+        self.stdout.write(self.style.SUCCESS("✅ Создано 100 резюме"))

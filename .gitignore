@@ -18,3 +18,7 @@ static/*
 !static/.gitkeep
 *.sqlite*
 .venv/
+
+core/apps/resumes/migrations/
+
+media/
