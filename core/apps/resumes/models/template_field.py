@@ -43,8 +43,13 @@ class TemplateField(models.Model):
         default=0,
     )
 
+    is_primary = models.BooleanField(
+        help_text="Если отмечено — это поле используется как 'главное' для отображения Entity (например ФИО или Название компании).",
+        default=False
+    )
+
     def __str__(self):
-        return f"{self.template}: {self.title}"
+        return f"{self.template} - {self.title}"
 
 
     class Meta:

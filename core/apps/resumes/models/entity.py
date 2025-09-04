@@ -20,9 +20,14 @@ class Entity(TimeBaseModel):
         on_delete=models.CASCADE,
         related_name="created_template"
     )
+    main_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
-        return f"{self.template}: {self.created}"
+        return self.main_name or f"Entity #{self.id}"
 
     class Meta:
         verbose_name = "Запись резюме/Сущность"
