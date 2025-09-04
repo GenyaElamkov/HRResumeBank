@@ -30,6 +30,8 @@ class ResumeDetailView(View):
                 or d.value_number
                 or d.value_date
                 or d.value_boolean
+                or d.value_email
+                or d.value_images
                 or (d.file.original_name if d.file else None)
             )
             resume_data[field_name] = value

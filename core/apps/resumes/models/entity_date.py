@@ -24,16 +24,24 @@ class EntityDate(models.Model):
         blank=True,
         null=True,
     )
-    # TODO: Поменять Decimal
-    value_number = models.DecimalField(
+    value_number = models.IntegerField(
         verbose_name="Числовое значение",
-        max_digits=20,
-        decimal_places=4,
         blank=True,
         null=True,
     )
     value_date = models.DateField(
         verbose_name="Дата",
+        blank=True,
+        null=True,
+    )
+    value_email = models.EmailField(
+        verbose_name="Email",
+        blank=True,
+        null=True,
+    )
+    value_images = models.ImageField(
+        verbose_name="Картинка",
+        upload_to="images/",
         blank=True,
         null=True,
     )

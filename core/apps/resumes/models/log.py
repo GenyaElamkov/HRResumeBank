@@ -25,3 +25,10 @@ class Log(models.Model):
         verbose_name="Время события",
         auto_now_add=True,
     )
+
+    def __str__(self):
+        return f"{self.user}: {self.action}"
+
+    class Meta:
+        verbose_name = "Журнал действий"
+        verbose_name_plural = "Жарнал действий"

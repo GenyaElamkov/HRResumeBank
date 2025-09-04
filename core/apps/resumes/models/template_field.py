@@ -12,6 +12,8 @@ class TemplateField(models.Model):
         NUMBER = "number", "Число",
         DATE = "date", "Дата",
         BOOLEAN = "boolean", "Булево",
+        EMAIL = "email", "Почта",
+        IMAGE = "image", "Изображение",
         FILE = "file", "Файл",
 
     template = models.ForeignKey(
