@@ -24,6 +24,7 @@ class Entity(TimeBaseModel):
         max_length=255,
         blank=True,
         null=True,
+        editable=False,
     )
 
     def __str__(self):
