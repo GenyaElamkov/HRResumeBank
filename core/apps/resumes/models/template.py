@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 
 from core.apps.common.models import TimeBaseModel
@@ -16,7 +16,7 @@ class Template(TimeBaseModel):
         verbose_name="Описание",
     )
     created = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         verbose_name="Кто создал шаблон",
         on_delete=models.SET_NULL,
         null=True,
