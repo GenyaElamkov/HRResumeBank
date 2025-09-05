@@ -12,7 +12,7 @@ class LoginRequiredMiddleware:
         exempt_urls = [
             reverse("authentication:login"),
             #
-            # reverse("authentication:logout"),
+            reverse("authentication:logout"),
             # "/admin/",
         ]
 
