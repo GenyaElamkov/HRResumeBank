@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 
 class Log(models.Model):
@@ -10,7 +10,7 @@ class Log(models.Model):
         verbose_name="Кто выполнил действие",
         on_delete=models.SET_NULL,
         related_name="logs",
-        null=True
+        null=True,
     )
     action = models.CharField(
         verbose_name="Тип действия",

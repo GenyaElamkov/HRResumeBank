@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 from core.apps.common.models import TimeBaseModel
 from core.apps.resumes.models.template import Template
@@ -18,7 +18,7 @@ class Entity(TimeBaseModel):
         User,
         verbose_name="Кто создал запись",
         on_delete=models.CASCADE,
-        related_name="created_template"
+        related_name="created_template",
     )
     main_name = models.CharField(
         max_length=255,

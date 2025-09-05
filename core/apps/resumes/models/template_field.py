@@ -8,13 +8,13 @@ class TemplateField(models.Model):
 
     class TypeFiled(models.TextChoices):
         """Тип поля"""
-        TEXT = "text", "Текст",
-        NUMBER = "number", "Число",
-        DATE = "date", "Дата",
-        BOOLEAN = "boolean", "Булево",
-        EMAIL = "email", "Почта",
-        IMAGE = "image", "Изображение",
-        FILE = "file", "Файл",
+        TEXT = "text", "Текст"
+        NUMBER = "number", "Число"
+        DATE = "date", "Дата"
+        BOOLEAN = "boolean", "Булево"
+        EMAIL = "email", "Почта"
+        IMAGE = "image", "Изображение"
+        FILE = "file", "Файл"
 
     template = models.ForeignKey(
         Template,
@@ -46,13 +46,13 @@ class TemplateField(models.Model):
     )
 
     is_primary = models.BooleanField(
-        help_text="Если отмечено — это поле используется как 'главное' для отображения Entity (например ФИО или Название компании).",
-        default=False
+        help_text="Если отмечено — это поле используется как 'главное' \
+            для отображения \\Entity (например ФИО или Название компании).",
+        default=False,
     )
 
     def __str__(self):
         return f"{self.template} - {self.title}"
-
 
     class Meta:
         verbose_name = "Полe шаблона"

@@ -18,8 +18,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from core.apps.resumes import views
-from core.apps.resumes.views import ResumeListView, ResumeDetailView
+from core.apps.resumes.views import (
+    ResumeDetailView,
+    ResumeListView,
+)
 
 
 urlpatterns = [

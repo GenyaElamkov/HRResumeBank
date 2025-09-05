@@ -1,22 +1,19 @@
-import random
+from random import SystemRandom
 
-from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from datetime import date, timedelta
+from django.core.management.base import BaseCommand
 
 from faker import Faker
 
-from core.apps.resumes.models.template import Template
-from core.apps.resumes.models.template_field import TemplateField
 from core.apps.resumes.models.entity import Entity
 from core.apps.resumes.models.entity_date import EntityDate
 from core.apps.resumes.models.log import Log
-
+from core.apps.resumes.models.template import Template
+from core.apps.resumes.models.template_field import TemplateField
 
 
 class Command(BaseCommand):
-
-    help = "Заполняет базу тестовыми данными (seed)"
+    """Заполняет базу тестовыми данными (seed)"""
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING("=== Очищаем старые данные ==="))
@@ -35,7 +32,7 @@ class Command(BaseCommand):
         # --- Пользователи ---
         user1, _ = User.objects.get_or_create(
             username="admin",
-            defaults={"is_superuser": True, "is_staff": True}
+            defaults={"is_superuser": True, "is_staff": True},
         )
         user2, _ = User.objects.get_or_create(username="sanya")
         user3, _ = User.objects.get_or_create(username="genya")
@@ -90,11 +87,11 @@ class Command(BaseCommand):
 
         # --- Генерация 100 записей ---
         for i in range(100):
-            created_user = random.choice([user1, user2, user3, user4])
+            created_user = SystemRandom.choice([user1, user2, user3, user4])
 
             entity = Entity.objects.create(
                 template=template,
-                created=created_user
+                created=created_user,
             )
 
             # Значения
@@ -111,17 +108,17 @@ class Command(BaseCommand):
             EntityDate.objects.create(
                 entity=entity,
                 field=field_experience,
-                value_number=random.randint(0, 30),
+                value_number=SystemRandom.randint(0, 30),
             )
             EntityDate.objects.create(
                 entity=entity,
                 field=field_email,
-                value_email = fake.email(),
+                value_email=fake.email(),
             )
             EntityDate.objects.create(
                 entity=entity,
                 field=field_images,
-                value_images = fake.image_url(),
+                value_images=fake.image_url(),
             )
 
             # Лог действия
@@ -131,11 +128,10 @@ class Command(BaseCommand):
                 details=f"Создано резюме {entity.id}",
             )
 
-            inn = random.randrange(1000, 26444546)
+            inn = SystemRandom.randrange(1000, 26444546)
             entity_organization = Entity.objects.create(
                 template=template_organization,
                 created=created_user,
-                # main_name=f"Организация ИНН {inn}"
             )
             # Значение для организации
             EntityDate.objects.create(

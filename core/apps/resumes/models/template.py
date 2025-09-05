@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
 from core.apps.common.models import TimeBaseModel
 
 
@@ -12,7 +13,7 @@ class Template(TimeBaseModel):
         unique=True,
     )
     description = models.TextField(
-        verbose_name="Описание"
+        verbose_name="Описание",
     )
     created = models.ForeignKey(
         User,
