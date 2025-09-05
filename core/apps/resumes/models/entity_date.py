@@ -54,11 +54,10 @@ class EntityDate(models.Model):
     def __str__(self):
         return f"{self.entity.template}: {self.field.title}"
 
-
     class Meta:
         verbose_name = "Значения динамического поля"
         verbose_name_plural = "Значения динамических полей"
 
         indexes = [
-            models.Index(fields=['value_text', 'value_number', 'value_date',]),
+            models.Index(fields=['value_text', 'value_number', 'value_date']),
         ]

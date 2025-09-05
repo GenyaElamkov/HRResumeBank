@@ -1,5 +1,8 @@
-from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import (
+    get_object_or_404,
+    render,
+)
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -14,6 +17,7 @@ class ResumeListView(View):
     def get(self, request):
         entities = Entity.objects.select_related("template", "created").all()
         return render(request, "resumes/resume_list.html", {"entities": entities})
+
 
 @method_decorator(login_required, name="dispatch")
 class ResumeDetailView(View):
