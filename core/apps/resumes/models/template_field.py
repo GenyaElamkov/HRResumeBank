@@ -6,7 +6,7 @@ from core.apps.resumes.models.template import Template
 class TemplateField(models.Model):
     """Поля шаблона"""
 
-    class TypeFiled(models.TextChoices):
+    class TypeField(models.TextChoices):
         """Тип поля"""
         TEXT = "text", "Текст"
         NUMBER = "number", "Число"
@@ -20,16 +20,16 @@ class TemplateField(models.Model):
         Template,
         verbose_name="Шаблон, которому принадлежит поле",
         on_delete=models.CASCADE,
-        related_name="fileds_templatefiled",
+        related_name="fields_templatefield",
     )
     title = models.CharField(
         verbose_name="Имя поля",
         max_length=100,
     )
-    type_filed = models.CharField(
+    type_field = models.CharField(
         verbose_name="Тип данных",
         max_length=50,
-        choices=TypeFiled.choices,
+        choices=TypeField.choices,
     )
     description = models.TextField(
         verbose_name="Описание",

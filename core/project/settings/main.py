@@ -24,12 +24,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # first party
-    "core.apps.common.apps.CommonConfig",
+    # "core.apps.common.apps.CommonConfig",
     "core.apps.resumes.apps.ResumesConfig",
+    "core.apps.accounts.apps.AccountsConfig",
     # app
     'django_extensions',
 ]
 
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

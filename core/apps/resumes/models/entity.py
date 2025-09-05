@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 
 from core.apps.common.models import TimeBaseModel
@@ -15,7 +15,7 @@ class Entity(TimeBaseModel):
         related_name="entity_template",
     )
     created = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         verbose_name="Кто создал запись",
         on_delete=models.CASCADE,
         related_name="created_template",

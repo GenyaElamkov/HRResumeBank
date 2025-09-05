@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 
 
@@ -6,7 +6,7 @@ class Log(models.Model):
     """Журнал действий"""
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         verbose_name="Кто выполнил действие",
         on_delete=models.SET_NULL,
         related_name="logs",

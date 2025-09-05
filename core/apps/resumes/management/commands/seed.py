@@ -1,7 +1,7 @@
-from random import SystemRandom
+from random import SystemRandom, choice, randint, randrange
 
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
 
 from faker import Faker
 
@@ -17,6 +17,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING("=== Очищаем старые данные ==="))
+
+        User = get_user_model()
 
         Template.objects.all().delete()
         TemplateField.objects.all().delete()
@@ -46,7 +48,7 @@ class Command(BaseCommand):
         field_name, _ = TemplateField.objects.get_or_create(
             template=template,
             title="ФИО",
-            type_filed=TemplateField.TypeFiled.TEXT,
+            type_field=TemplateField.TypeField.TEXT,
             is_required=True,
             is_primary=True,
             order=1,
@@ -54,32 +56,32 @@ class Command(BaseCommand):
         field_birth, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Дата рождения",
-            type_filed=TemplateField.TypeFiled.DATE,
+            type_field=TemplateField.TypeField.DATE,
             order=2,
         )
         field_experience, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Опыт (лет)",
-            type_filed=TemplateField.TypeFiled.NUMBER,
+            type_field=TemplateField.TypeField.NUMBER,
             order=3,
         )
         field_email, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Email",
-            type_filed=TemplateField.TypeFiled.EMAIL,
+            type_field=TemplateField.TypeField.EMAIL,
             order=4,
         )
         field_images, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Фотография",
-            type_filed=TemplateField.TypeFiled.IMAGE,
+            type_field=TemplateField.TypeField.IMAGE,
             order=5,
         )
         # Поля шаблона организации
         field_name_organization, _ = TemplateField.objects.get_or_create(
             template=template_organization,
             title="ИНН",
-            type_filed=TemplateField.TypeFiled.TEXT,
+            type_field=TemplateField.TypeField.TEXT,
             is_required=True,
             is_primary=True,
             order=1,
@@ -87,7 +89,7 @@ class Command(BaseCommand):
 
         # --- Генерация 100 записей ---
         for i in range(100):
-            created_user = SystemRandom.choice([user1, user2, user3, user4])
+            created_user = choice([user1, user2, user3, user4])
 
             entity = Entity.objects.create(
                 template=template,
@@ -108,7 +110,7 @@ class Command(BaseCommand):
             EntityDate.objects.create(
                 entity=entity,
                 field=field_experience,
-                value_number=SystemRandom.randint(0, 30),
+                value_number=randint(0, 30),
             )
             EntityDate.objects.create(
                 entity=entity,
@@ -128,7 +130,7 @@ class Command(BaseCommand):
                 details=f"Создано резюме {entity.id}",
             )
 
-            inn = SystemRandom.randrange(1000, 26444546)
+            inn = randrange(1000, 26444546)
             entity_organization = Entity.objects.create(
                 template=template_organization,
                 created=created_user,
