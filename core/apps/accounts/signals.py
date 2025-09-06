@@ -17,49 +17,71 @@ class UserPerm(StrEnum):
     VIEW = 'view_customuser'
 
 
+class TemplatePerm(StrEnum):
+    """Разрешения на шаблоны в модели Template"""
+    ADD = 'add_template'
+    CHANGE = 'change_template'
+    DELETE = 'delete_template'
+    VIEW = 'view_template'
+
+
 class EntityPerm(StrEnum):
     """Разрешения в резуюме/сущность модели Entity"""
     ADD = 'add_entity'
     CHANGE = 'change_entity'
-    DELETE = 'delete_entitydata'
-    VIEW = 'view_entitydata'
+    DELETE = 'delete_entity'
+    VIEW = 'view_entity'
 
 
 class EntityDataPerm(StrEnum):
     """Разрешение на динамические поля модели EntityData"""
-    ADD = 'add_entity_data'
-    CHANGE = 'change_entity_data'
-    DELETE = 'delete_entity_data'
-    VIEW = 'view_entity_data'
+    ADD = 'add_entitydata'
+    CHANGE = 'change_entitydata'
+    DELETE = 'delete_entitydata'
+    VIEW = 'view_entitydata'
 
 
 def create_default_groups(sender, **kwargs):
     """Создает группы по умолчанию"""
 
-    groups_permissions = {
-        "Администратор": [
-            UserPerm.ADD, UserPerm.CHANGE,
-            UserPerm.DELETE, UserPerm.VIEW,
-            EntityPerm.ADD, EntityPerm.CHANGE,
-            EntityPerm.VIEW, EntityPerm.DELETE,
-            EntityDataPerm.ADD, EntityDataPerm.CHANGE,
-            EntityDataPerm.VIEW, EntityDataPerm.DELETE,
-        ],
-        "Редактор": [
-            EntityPerm.ADD, EntityPerm.CHANGE, EntityPerm.VIEW,
-            EntityDataPerm.ADD, EntityDataPerm.CHANGE, EntityDataPerm.VIEW,
-        ],
-        "Читатель": [
-            EntityPerm.VIEW, EntityDataPerm.VIEW,
-        ],
-    }
-
     user = get_user_model()
     ContentType.objects.get_for_model(user)
 
+    groups_permissions = {
+        "Администратор": [
+            UserPerm.ADD,
+            UserPerm.CHANGE,
+            UserPerm.DELETE,
+            UserPerm.VIEW,
+            TemplatePerm.ADD,
+            TemplatePerm.CHANGE,
+            TemplatePerm.DELETE,
+            TemplatePerm.VIEW,
+            EntityPerm.ADD,
+            EntityPerm.CHANGE,
+            EntityPerm.DELETE,
+            EntityPerm.VIEW,
+            EntityDataPerm.ADD,
+            EntityDataPerm.CHANGE,
+            EntityDataPerm.DELETE,
+            EntityDataPerm.VIEW,
+        ],
+        "Редактор": [
+            EntityPerm.ADD,
+            EntityPerm.CHANGE,
+            EntityPerm.VIEW,
+            EntityDataPerm.ADD,
+            EntityDataPerm.CHANGE,
+            EntityDataPerm.VIEW,
+        ],
+        "Читатель": [
+            EntityPerm.VIEW,
+            EntityDataPerm.VIEW,
+        ],
+    }
+
     for group_name, perm_codes in groups_permissions.items():
         group, _ = Group.objects.get_or_create(name=group_name)
-
         permissions = Permission.objects.filter(
             codename__in=perm_codes,
         )
