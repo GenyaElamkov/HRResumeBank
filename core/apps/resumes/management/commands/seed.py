@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from faker import Faker
 
 from core.apps.resumes.models.entity import Entity
-from core.apps.resumes.models.entity_date import EntityDate
+from core.apps.resumes.models.entity_data import EntityData
 from core.apps.resumes.models.log import Log
 from core.apps.resumes.models.template import Template
 from core.apps.resumes.models.template_field import TemplateField
@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
         Template.objects.all().delete()
         TemplateField.objects.all().delete()
-        EntityDate.objects.all().delete()
+        EntityData.objects.all().delete()
         Entity.objects.all().delete()
         Log.objects.all().delete()
         User.objects.exclude(is_superuser=True).delete()
@@ -101,27 +101,27 @@ class Command(BaseCommand):
             )
 
             # Значения
-            EntityDate.objects.create(
+            EntityData.objects.create(
                 entity=entity,
                 field=field_name,
                 value_text=fake.name(),
             )
-            EntityDate.objects.create(
+            EntityData.objects.create(
                 entity=entity,
                 field=field_birth,
                 value_date=fake.date_of_birth(minimum_age=18, maximum_age=60),
             )
-            EntityDate.objects.create(
+            EntityData.objects.create(
                 entity=entity,
                 field=field_experience,
                 value_number=randint(0, 30),
             )
-            EntityDate.objects.create(
+            EntityData.objects.create(
                 entity=entity,
                 field=field_email,
                 value_email=fake.email(),
             )
-            EntityDate.objects.create(
+            EntityData.objects.create(
                 entity=entity,
                 field=field_images,
                 value_images=fake.image_url(),
@@ -140,7 +140,7 @@ class Command(BaseCommand):
                 created=created_user,
             )
             # Значение для организации
-            EntityDate.objects.create(
+            EntityData.objects.create(
                 entity=entity_organization,
                 field=field_name_organization,
                 value_number=inn,

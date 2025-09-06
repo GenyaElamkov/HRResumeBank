@@ -2,14 +2,13 @@ from django.conf import settings
 from django.db import models
 
 from core.apps.common.models import TimeBaseModel
-from core.apps.resumes.models.template import Template
 
 
 class Entity(TimeBaseModel):
     """Запись резюме/Сущность"""
 
     template = models.ForeignKey(
-        Template,
+        to="resumes.Template",
         verbose_name="Шаблон",
         on_delete=models.CASCADE,
         related_name="entity_template",
@@ -33,3 +32,4 @@ class Entity(TimeBaseModel):
     class Meta:
         verbose_name = "Запись резюме/Сущность"
         verbose_name_plural = "Записи резюме/Сущности"
+        db_table = "entity"

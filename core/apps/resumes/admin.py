@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models.entity import Entity
-from .models.entity_date import EntityDate
+from .models.entity_data import EntityData
 from .models.log import Log
 from .models.template import Template
 from .models.template_field import TemplateField
@@ -34,8 +34,8 @@ class EntityAdmin(admin.ModelAdmin):
         return super().changelist_view(request, extra_context=extra_context)
 
 
-@admin.register(EntityDate)
-class EntityDateAdmin(admin.ModelAdmin):
+@admin.register(EntityData)
+class EntityDataAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}

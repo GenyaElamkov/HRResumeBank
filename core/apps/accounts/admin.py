@@ -37,9 +37,9 @@ class CustomUserAdmin(UserAdmin):
                 "classes": ("wide",),
                 "fields": (
                     "username",
-                    "email",
                     "password1",
                     "password2",
+                    "email",
                     "is_staff",
                     "is_active",
                 ),

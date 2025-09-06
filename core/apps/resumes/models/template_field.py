@@ -1,7 +1,5 @@
 from django.db import models
 
-from core.apps.resumes.models.template import Template
-
 
 class TemplateField(models.Model):
     """Поля шаблона"""
@@ -18,7 +16,7 @@ class TemplateField(models.Model):
         FILE = "file", "Файл"
 
     template = models.ForeignKey(
-        Template,
+        to="resumes.Template",
         verbose_name="Шаблон, которому принадлежит поле",
         on_delete=models.CASCADE,
         related_name="fields_templatefield",
@@ -48,7 +46,7 @@ class TemplateField(models.Model):
 
     is_primary = models.BooleanField(
         help_text="Если отмечено — это поле используется как 'главное' \
-            для отображения \\Entity (например ФИО или Название компании).",
+            для отображения Entity (например ФИО или Название компании).",
         default=False,
     )
 
@@ -58,3 +56,4 @@ class TemplateField(models.Model):
     class Meta:
         verbose_name = "Полe шаблона"
         verbose_name_plural = "Поля шаблона"
+        db_table = "template_field"

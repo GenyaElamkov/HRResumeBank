@@ -1,20 +1,17 @@
 from django.db import models
 
-from core.apps.resumes.models.entity import Entity
-from core.apps.resumes.models.template_field import TemplateField
 
-
-class EntityDate(models.Model):
+class EntityData(models.Model):
     """Значения динамических полей"""
 
     entity = models.ForeignKey(
-        Entity,
+        to="resumes.Entity",
         verbose_name="К какой сущности относится значение",
         on_delete=models.CASCADE,
         related_name="date_entitydate",
     )
     field = models.ForeignKey(
-        TemplateField,
+        to="resumes.TemplateField",
         verbose_name="К какому полю относится значение",
         on_delete=models.CASCADE,
         related_name="field_entitydate",
@@ -57,6 +54,7 @@ class EntityDate(models.Model):
     class Meta:
         verbose_name = "Значения динамического поля"
         verbose_name_plural = "Значения динамических полей"
+        db_table = "entity_data"
 
         indexes = [
             models.Index(fields=['value_text', 'value_number', 'value_date']),
