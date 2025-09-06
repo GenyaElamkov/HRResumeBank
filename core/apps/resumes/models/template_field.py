@@ -8,6 +8,7 @@ class TemplateField(models.Model):
 
     class TypeField(models.TextChoices):
         """Тип поля"""
+
         TEXT = "text", "Текст"
         NUMBER = "number", "Число"
         DATE = "date", "Дата"

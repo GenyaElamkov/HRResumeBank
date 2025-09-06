@@ -16,12 +16,16 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import (
+    include,
+    path,
+)
 
 from core.apps.resumes.views import (
     ResumeDetailView,
     ResumeListView,
 )
+
 
 handler403 = "core.apps.resumes.views.tr_handler403"
 handler404 = "core.apps.resumes.views.tr_handler404"

@@ -14,6 +14,7 @@ class ResumeListView(View):
     """
     Список всех резюме (Entity)
     """
+
     def get(self, request):
         entities = Entity.objects.select_related("template", "created").all()
         return render(request, "resumes/resume_list.html", {"entities": entities})
@@ -24,6 +25,7 @@ class ResumeDetailView(View):
     """
     Просмотр резюме по entity_id
     """
+
     def get(self, request, entity_id):
         entity = get_object_or_404(Entity, id=entity_id)
         resume_data = {}
@@ -58,6 +60,7 @@ def tr_handler404(request, exception):
         },
     )
 
+
 def tr_handler500(request):
     """Обработка ошибки 500"""
     return render(
@@ -66,11 +69,13 @@ def tr_handler500(request):
         status=500,
         context={
             "title": "Ошибка сервера: 500",
-            "error_message": "Внутренняя ошибка сайта, вернитесь на главную страницу, отчёт об ошибке мы направим администрации сайта",
+            "error_message": "Внутренняя ошибка сайта, вернитесь на главную страницу, \
+                отчёт об ошибке мы направим администрации сайта",
             "error_top_message": "Ошибка сервера",
             "status": "500",
         },
     )
+
 
 def tr_handler403(request, exception):
     """Обработка ошибки 403"""
