@@ -1,10 +1,10 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models.entity_date import EntityDate
+from .models.entity_data import EntityData
 
 
-@receiver(post_save, sender=EntityDate)
+@receiver(post_save, sender=EntityData)
 def update_entity_main_name(sender, instance, **kwargs):
     field = instance.field
     entity = instance.entity

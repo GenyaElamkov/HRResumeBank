@@ -32,3 +32,4 @@ class Log(models.Model):
     class Meta:
         verbose_name = "Журнал действий"
         verbose_name_plural = "Жарнал действий"
+        db_table = "log"

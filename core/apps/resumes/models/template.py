@@ -29,3 +29,4 @@ class Template(TimeBaseModel):
     class Meta:
         verbose_name = "Шаблон резюме/карточка"
         verbose_name_plural = "Шаблоны резюме/карточки"
+        db_table = "template"

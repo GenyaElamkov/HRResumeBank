@@ -24,9 +24,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # first party
-    # "core.apps.common.apps.CommonConfig",
-    "core.apps.resumes.apps.ResumesConfig",
     "core.apps.accounts.apps.AccountsConfig",
+    "core.apps.authentication.apps.AuthenticationConfig",
+    "core.apps.resumes.apps.ResumesConfig",
     # app
     'django_extensions',
 ]
@@ -41,7 +41,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Customs middleware для авторизации
+    "core.apps.authentication.middleware.LoginRequiredMiddleware",
 ]
+
 
 ROOT_URLCONF = "core.project.urls"
 
@@ -63,9 +66,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.project.wsgi.application"
 
-LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "login"
 
 DATABASES = {
     "default": {
@@ -111,3 +111,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'authentication:login'
+LOGIN_URL = 'authentication:login'
