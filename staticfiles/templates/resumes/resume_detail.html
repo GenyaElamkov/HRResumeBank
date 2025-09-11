@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ entity.main_name|default:"Резюме" }} - Резюме система{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>{{ entity.main_name|default:"Резюме" }}</h1>
+            <div>
+                <a href="{% url 'resume_list' %}" class="btn btn-outline-secondary">Назад</a>
+                <button class="btn btn-outline-primary ms-2" onclick="window.print()">Печать</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Информация о резюме</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Шаблон:</strong> {{ entity.template.title }}</p>
+                        <p><strong>Создано:</strong> {{ entity.create_at|date:"d.m.Y H:i" }}</p>
+                        <p><strong>Автор:</strong> {{ entity.created.username }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Данные резюме</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for field_name, value in resume_data.items %}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">{{ field_name }}:</label>
+                        <p class="mb-0">
+                            {% if value %}
+                                {{ value }}
+                            {% else %}
+                                <span class="text-muted">Не указано</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

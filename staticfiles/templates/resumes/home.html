@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - Резюме система{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Hero Section -->
+    <div class="col-12 mb-5">
+        <div class="hero-section bg-light p-5 rounded text-center">
+            <h1 class="display-4 mb-3">Создавайте профессиональные резюме</h1>
+            <p class="lead mb-4">Используйте готовые шаблоны или создавайте свои собственные</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'resume_list' %}" class="btn btn-primary btn-lg me-3">Мои резюме</a>
+                <a href="{% url 'template_list' %}" class="btn btn-outline-primary btn-lg">Шаблоны</a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3">Начать сейчас</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">Войти</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="col-12 mb-5">
+        <h2 class="text-center mb-4">Возможности системы</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-file-earmark-text fs-1 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Гибкие шаблоны</h5>
+                        <p class="card-text">Создавайте собственные шаблоны с различными типами полей</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-collection fs-1 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Динамические поля</h5>
+                        <p class="card-text">Текст, числа, даты, изображения и многое другое</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-share fs-1 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Быстрый доступ</h5>
+                        <p class="card-text">Доступ к вашим резюме с любого устройства</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Resumes Section with HTMX -->
+    <div class="col-12">
+        <h2 class="mb-4">Последние резюме</h2>
+        <div id="recent-resumes"
+             hx-get="{% url 'recent_resumes' %}"
+             hx-trigger="load"
+             hx-swap="innerHTML">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
