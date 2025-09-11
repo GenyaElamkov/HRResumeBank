@@ -50,7 +50,7 @@
                         {% endfor %}
                         <div class="d-flex mx-2 justify-content-between">
                             <small class="card-text small text-muted">Обновлено: {{ entity.update_at|date:"d.m.Y H:i" }}</small>
-                            <a href="#" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                            <a href="{% url 'resumes:resume_detail' entity.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
                         </div>
                     </div>
                 </div>

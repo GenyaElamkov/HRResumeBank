@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}{{ entity.main_name|default:"Резюме" }} - Система резюме{% endblock %}
+
+{% block content %}
+
+<!-- Хлебные крошки -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'resumes:resume_list' %}">Все резюме</a></li>
+        <li class="breadcrumb-item active">{{ entity.main_name|default:"Резюме" }}</li>
+    </ol>
+</nav>
+<!-- Заголовок и действия -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="h3 mb-0">{{ entity.main_name|default:"Резюме" }}</h1>
+        <p class="text-muted">Шаблон: {{ entity.template.title }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="btn-group">
+            <a href="" class="btn btn-outline-primary">
+                <i class="bi bi-pencil me-2"></i>Редактировать
+            </a>
+            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="bi bi-trash me-2"></i>Удалить
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Основная информация -->
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Карточка с данными -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Основная информация</h5>
+                <span class="badge bg-primary">{{ entity.template.title }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for data in entity_data %}
+                    {% if data.field.is_primary or data.field.order <= 5 %}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">{{ data.field.title }}</label>
+                        <div class="fs-6">
+                                {% if data.field.type_field == 'text' and data.value_text %}
+                                    {{ data.value_text }}
+                                {% elif data.field.type_field == 'number' and data.value_number %}
+                                    {{ data.value_number }}
+                                {% elif data.field.type_field == 'date' and data.value_date %}
+                                    {{ data.value_date|date:"d.m.Y" }}
+                                {% elif data.field.type_field == 'email' and data.value_email %}
+                                    <a href="mailto:{{ data.value_email }}">{{ data.value_email }}</a>
+                                {% elif data.field.type_field == 'boolean' and data.value_boolean is not None %}
+                                    {% if data.value_boolean %}Да{% else %}Нет{% endif %}
+                                {% elif data.field.type_field == 'image' and data.value_images %}
+                                    <img src="{{ data.value_images.url }}" alt="{{ data.field.title }}" class="img-fluid rounded" style="max-height: 200px;">
+                                {% else %}
+                                    <span class="text-muted">Не заполнено</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Дополнительная информация -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Дополнительная информация</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for data in entity_data %}
+                        {% if not data.field.is_primary and data.field.order >= 6 %}
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label text-muted small mb-1">{{ data.field.title }}</label>
+                            <div class="fs-6">
+                                {% if data.field.type_field == 'text' and data.value_text %}
+                                    {{ data.value_text }}
+                                {% elif data.field.type_field == 'number' and data.value_number %}
+                                    {{ data.value_number }}
+                                {% elif data.field.type_field == 'date' and data.value_date %}
+                                    {{ data.value_date|date:"d.m.Y" }}
+                                {% elif data.field.type_field == 'email' and data.value_email %}
+                                    <a href="mailto:{{ data.value_email }}">{{ data.value_email }}</a>
+                                {% elif data.field.type_field == 'boolean' and data.value_boolean is not None %}
+                                    {% if data.value_boolean %}Да{% else %}Нет{% endif %}
+                                {% elif data.field.type_field == 'image' and data.value_images %}
+                                    <img src="{{ data.value_images.url }}" alt="{{ data.field.title }}" class="img-fluid rounded" style="max-height: 200px;">
+                                {% else %}
+                                    <span class="text-muted">Не заполнено</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="col-lg-4">
+        <!-- Информация о записи -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Информация о записи</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Создано</label>
+                    <div class="fs-6">{{ entity.create_at|date:"d.m.Y H:i" }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Обновлено</label>
+                    <div class="fs-6">{{ entity.update_at|date:"d.m.Y H:i" }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Создал</label>
+                    <div class="fs-6">{{ entity.created.get_full_name }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Действия -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Действия</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="bi bi-download me-2"></i>Скачать PDF
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary">
+                        <i class="bi bi-printer me-2"></i>Распечатать
+                    </a>
+                    <a href="#" class="btn btn-outline-info">
+                        <i class="bi bi-share me-2"></i>Поделиться
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить резюме "{{ entity.main_name|default:'Резюме' }}"?</p>
+                <p class="text-danger"><small>Это действие нельзя отменить.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
+<style>
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb-item a {
+        color: var(--secondary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--dark-text);
+    }
+
+    .card {
+        border: 1px solid #d1d1d1;
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .btn-group .btn {
+        border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+        .btn-group {
+            width: 100%;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,5 +1,8 @@
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import (
+    DetailView,
+    ListView,
+)
 
 from .models.entity import Entity
 from .models.template import Template
@@ -19,6 +22,33 @@ class ResumeListView(ListView):
             .select_related("template", "created")
             .order_by("-create_at").all()
         )
+
+
+class ResumeDetailView(DetailView):
+    """Резюме по pk"""
+    model = Entity
+    template_name = "resumes/resume_detail.html"
+    context_object_name = "entity"
+
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+            .select_related("template", "created")
+            .prefetch_related("date_entitydate__field")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        entity = self.object
+
+        entity_data = entity.date_entitydate.all()
+
+        primary_field = entity_data.filter(field__is_primary=True).first()
+        if primary_field:
+            entity.main_name = getattr(primary_field, f'value_{primary_field.field.type_field}', 'Резюме')
+
+        context['entity_data'] = entity_data
+        return context
 
 
 class TemplateListView(ListView):
