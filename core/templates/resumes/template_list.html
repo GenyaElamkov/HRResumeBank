@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Все шаблоны - Система резюме{% endblock %}
+
+{% block content %}
+
+<!-- Заголовок и панель поиска -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="h3 mb-0">Шаблоны резюме и карточек</h1>
+        <p class="text-muted">Управление шаблонами для создания резюме и карточек</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Создать шаблон
+        </a>
+    </div>
+</div>
+
+<!-- Панель поиска и фильтров -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-10 mb-3 mb-md-0">
+                <input type="text"
+                       id="searchInput"
+                       class="form-control"
+                       placeholder="Поиск по названию или описанию..."
+                       value="{{ request.GET.search|default:'' }}"
+                       hx-get="{% url 'resumes:template_list' %}"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-target="#template-list"
+                       hx-push-url="true"
+                       hx-include="[name='search']"
+                       name="search">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary w-100" onclick="searchTemplates()">
+                    <i class="bi bi-search me-2"></i>Поиск
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Сетка с карточками шаблонов -->
+<div id="template-list">
+    <div class="row">
+        {% if templates %}
+            {% for template in templates %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">{{ template.title }}</h5>
+                            <span class="badge bg-secondary">{{ template.fields_templatefield.count }} полей</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text text-muted">{{ template.description|truncatewords:20 }}</p>
+
+                            <div class="mb-3">
+                                <small class="text-muted">Создал: {{ template.created.get_full_name|default_if_none:template.created.username }}</small>
+                            </div>
+
+                            <div class="template-fields">
+                                <h6 class="text-muted">Основные поля:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for field in template.fields_templatefield.all|slice:":5" %}
+                                        <span class="badge bg-light text-dark border">
+                                            {{ field.title }}
+                                            {% if field.is_primary %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}
+                                        </span>
+                                    {% endfor %}
+                                    {% if template.fields_templatefield.count > 5 %}
+                                        <span class="badge bg-light text-muted">+{{ template.fields_templatefield.count|add:"-5" }} ещё</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent d-flex justify-content-between">
+                            <small class="text-muted">Создан: {{ template.create_at|date:"d.m.Y" }}</small>
+                            <div class="btn-group">
+                                <a href=""
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href=""
+                                   class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href=""
+                                   class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-file-earmark-text display-1 text-muted"></i>
+                    <h3 class="mt-3">Шаблоны не найдены</h3>
+                    <p class="text-muted">Создайте свой первый шаблон, нажав на кнопку выше</p>
+                    <a href="{% url 'resumes:template_create' %}" class="btn btn-primary">Создать шаблон</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {% include "resumes/pagination.html" %}
+<!-- HTMX конфигурация -->
+<script>
+    document.body.addEventListener('htmx:beforeRequest', function(e) {
+        if (e.detail.target.id === 'template-list') {
+            e.detail.target.classList.add('loading');
+        }
+    });
+
+    document.body.addEventListener('htmx:afterRequest', function(e) {
+        if (e.detail.target.id === 'template-list') {
+            e.detail.target.classList.remove('loading');
+        }
+    });
+
+    // Функция для поиска шаблонов
+    function searchTemplates() {
+        const searchTerm = document.getElementById('searchInput').value;
+        htmx.ajax('GET', `{% url 'resumes:template_list' %}?search=${encodeURIComponent(searchTerm)}`, {
+            target: '#template-list',
+            swap: 'innerHTML'
+        });
+    }
+
+    // Автоматический поиск при изменении поля ввода
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        if (e.target.value.length === 0 || e.target.value.length > 2) {
+            searchTemplates();
+        }
+    });
+</script>
+
+<style>
+    .template-fields {
+        max-height: 100px;
+        overflow-y: auto;
+    }
+
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+    .loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+</style>
+{% endblock %}
