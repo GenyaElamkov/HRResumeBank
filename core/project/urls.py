@@ -21,11 +21,6 @@ from django.urls import (
     path,
 )
 
-from core.apps.resumes.views import (
-    ResumeDetailView,
-    ResumeListView,
-)
-
 
 handler403 = "core.apps.resumes.views.tr_handler403"
 handler404 = "core.apps.resumes.views.tr_handler404"
@@ -35,6 +30,5 @@ handler500 = "core.apps.resumes.views.tr_handler500"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("core.apps.authentication.urls")),
-    path("", ResumeListView.as_view(), name="resume-list"),
-    path("resume/<int:entity_id>/", ResumeDetailView.as_view(), name="resume-detail"),
+    path("", include("core.apps.resumes.urls")),
 ]

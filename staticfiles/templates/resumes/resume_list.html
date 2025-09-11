@@ -1,0 +1,66 @@
+<div class="row">
+    {% for entity in entities %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ entity.main_name|default:"Без названия" }}</h5>
+                <p class="card-text text-muted">
+                    Шаблон: {{ entity.template.title }}<br>
+                    Создано: {{ entity.create_at|date:"d.m.Y H:i" }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{% url 'resumes:resume_detail' entity.id %}"
+                   class="btn btn-primary btn-sm">Просмотреть</a>
+                <button class="btn btn-outline-danger btn-sm ms-2"
+                        hx-delete="{% url 'resumes:resume_delete' entity.id %}"
+                        hx-confirm="Удалить это резюме?"
+                        hx-target="closest .card"
+                        hx-swap="outerHTML">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <p>Резюме еще не созданы</p>
+            <a href="{% url 'template_list' %}" class="btn btn-primary">Создать первое резюме</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link"
+               hx-get="{% url 'resumes:resume_list' %}?page={{ page_obj.previous_page_number }}"
+               hx-target="#resume-list"
+               hx-push-url="true">&laquo;</a>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link"
+               hx-get="{% url 'resumes:resume_list' %}?page={{ num }}"
+               hx-target="#resume-list"
+               hx-push-url="true">{{ num }}</a>
+        </li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+               hx-get="{% url 'resumes:resume_list' %}?page={{ page_obj.next_page_number }}"
+               hx-target="#resume-list"
+               hx-push-url="true">&raquo;</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

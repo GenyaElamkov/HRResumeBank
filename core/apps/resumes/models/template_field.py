@@ -57,3 +57,4 @@ class TemplateField(models.Model):
         verbose_name = "Полe шаблона"
         verbose_name_plural = "Поля шаблона"
         db_table = "template_field"
+        ordering = ["order"]
