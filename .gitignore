@@ -21,4 +21,5 @@ static/*
 
 core/apps/resumes/migrations/
 
-media/
+media/*
+staticfiles/*
