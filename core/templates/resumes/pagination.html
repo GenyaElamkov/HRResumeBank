@@ -1,39 +1,38 @@
- <!-- Пагинация -->
  {% if is_paginated %}
  <nav aria-label="Page navigation">
      <ul class="pagination justify-content-center">
-         {% if page_obj.has_previous %}
-         <li class="page-item">
-             <a class="page-link"
-                hx-get="{% url 'resumes:resume_list' %}?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.template %}&template={{ request.GET.template }}{% endif %}"
-                hx-target="#resume-list"
-                hx-push-url="true">
-                 Назад
-             </a>
-         </li>
-         {% endif %}
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    hx-get="{% url 'resumes:card_list' %}?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.template %}&template={{ request.GET.template }}{% endif %}"
+                    hx-target="#card-list"
+                    hx-push-url="true">
+                    Назад
+                </a>
+            </li>
+        {% endif %}
 
-         {% for num in page_obj.paginator.page_range %}
-         <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-             <a class="page-link"
-                hx-get="{% url 'resumes:resume_list' %}?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.template %}&template={{ request.GET.template }}{% endif %}"
-                hx-target="#resume-list"
-                hx-push-url="true">
-                 {{ num }}
-             </a>
-         </li>
-         {% endfor %}
+        {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link"
+                    hx-get="{% url 'resumes:card_list' %}?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.template %}&template={{ request.GET.template }}{% endif %}"
+                    hx-target="#card-list"
+                    hx-push-url="true">
+                    {{ num }}
+                </a>
+            </li>
+        {% endfor %}
 
-         {% if page_obj.has_next %}
-         <li class="page-item">
-             <a class="page-link"
-                hx-get="{% url 'resumes:resume_list' %}?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.template %}&template={{ request.GET.template }}{% endif %}"
-                hx-target="#resume-list"
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                hx-get="{% url 'resumes:card_list' %}?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.template %}&template={{ request.GET.template }}{% endif %}"
+                hx-target="#card-list"
                 hx-push-url="true">
-                 Вперед
-             </a>
-         </li>
-         {% endif %}
+                    Вперед
+                </a>
+            </li>
+        {% endif %}
      </ul>
  </nav>
  {% endif %}

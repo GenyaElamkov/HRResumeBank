@@ -1,22 +1,27 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models.entity_data import EntityData
+from .models.card import Card
+from .models.template_field import TemplateField
 
 
-@receiver(post_save, sender=EntityData)
+@receiver(post_save, sender=Card)
 def update_entity_main_name(sender, instance, **kwargs):
-    field = instance.field
-    entity = instance.entity
+    primary_fields = TemplateField.objects.filter(
+        template=instance.template,
+        is_primary=True,
+    )
+    for primary_field in primary_fields:
+        field_title = primary_field.title
 
-    # если поле основное — обновляем main_name у Entity
-    if field.is_primary:
-        value = (
-            instance.value_text
-            or instance.value_number
-            or instance.value_date
-            or instance.value_boolean
-            or (instance.file.original_name if instance.file else None)
-        )
-        entity.main_name = str(value) if value else None
-        entity.save(update_fields=["main_name"])
+        if field_title in instance.values:
+            field_value = instance.values[field_title]
+
+            if field_value:
+                instance.main_name = str(field_value)
+                Card.objects.filter(pk=instance.pk).update(main_name=instance.main_name)
+                return
+
+    if not instance.main_name:
+        instance.main_name = f"{instance.template.title} #{instance.id}"
+        Card.objects.filter(pk=instance.pk).update(main_name=instance.main_name)

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Расширенный поиск карточек</h2>
+<form method="get" action="{% url 'resumes:advanced_search_cards' %}">
+    <input type="text" name="q" placeholder="Слова или фраза" value="{{ query }}">
+    <label>Шаблон:</label>
+    <select name="template">
+        <option value="">Все шаблоны</option>
+        {% for t in templates %}
+        <option value="{{ t.id }}" {% if template_id|stringformat:"s" == t.id|stringformat:"s" %}selected{% endif %}>{{ t.title }}</option>
+        {% endfor %}
+    </select>
+    <label>Пользователь:</label>
+    <select name="user">
+        <option value="">Все пользователи</option>
+        {% for u in users %}
+        <option value="{{ u.id }}" {% if user_id|stringformat:"s" == u.id|stringformat:"s" %}selected{% endif %}>{{ u.username }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Поиск</button>
+</form>
+
+{% if query %}
+<h3>Результаты для "{{ query }}":</h3>
+{% if results %}
+<ul>
+    {% for card in results %}
+    <li><a href="{% url 'resumes:card_detail' card.id %}">{{ card.template.name }} — Карточка #{{ card.id }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Ничего не найдено.</p>
+{% endif %}
+{% endif %}
+<a href="{% url 'resumes:create_card' %}">Создать новую карточку</a>
+{% endblock %}

@@ -1,17 +1,19 @@
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
 from core.apps.common.models import TimeBaseModel
 
 
-class Entity(TimeBaseModel):
-    """Запись резюме/Сущность"""
+class Card(TimeBaseModel):
+    """Карточка"""
 
     template = models.ForeignKey(
         to="resumes.Template",
         verbose_name="Шаблон",
         on_delete=models.CASCADE,
-        related_name="entity_template",
+        related_name="cards",
     )
     created = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -19,7 +21,12 @@ class Entity(TimeBaseModel):
         on_delete=models.CASCADE,
         related_name="created_template",
     )
+    values = models.JSONField(
+        encoder=DjangoJSONEncoder,
+        default=dict,
+    )
     main_name = models.CharField(
+        verbose_name="Наименование карточки",
         max_length=255,
         blank=True,
         null=True,
@@ -27,9 +34,13 @@ class Entity(TimeBaseModel):
     )
 
     def __str__(self):
-        return self.main_name or f"Entity #{self.id}"
+        return f"{self.template.title} Карточка #{self.id}"
 
     class Meta:
-        verbose_name = "Запись резюме/Сущность"
-        verbose_name_plural = "Записи резюме/Сущности"
-        db_table = "entity"
+        verbose_name = "Карточка"
+        verbose_name_plural = "Карточки"
+        db_table = "card"
+
+        indexes = [
+            GinIndex(fields=["values"]),
+        ]
