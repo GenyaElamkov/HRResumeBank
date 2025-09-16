@@ -23,7 +23,7 @@ class CardListView(ListView):
     """Список карточек"""
     template_name = "resumes/card_list.html"
     context_object_name = "entities"
-    paginate_by = 20
+    paginate_by = 52
     allow_empty = True
     queryset = Card.objects.all()
 

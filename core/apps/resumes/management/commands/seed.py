@@ -22,6 +22,7 @@ class Command(BaseCommand):
     TURN - включает (True) заполнение данными БД
     """
     TURN = True
+    COUNTER = 1000
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING("=== Очищаем старые данные ==="))
@@ -110,7 +111,7 @@ class Command(BaseCommand):
         )
 
         # --- Генерация 100 записей ---
-        for i in range(100):
+        for i in range(self.COUNTER):
             created_user = choice([user1, user2, user3, user4])
 
             # Создание карточки резюме
@@ -155,4 +156,4 @@ class Command(BaseCommand):
                 details=f"Создана организация {entity_organization.id}",
             )
 
-        self.stdout.write(self.style.SUCCESS("✅ Создано 100 резюме и 100 организаций"))
+        self.stdout.write(self.style.SUCCESS(f"✅ Создано {self.COUNTER} резюме и {self.COUNTER} организаций"))
