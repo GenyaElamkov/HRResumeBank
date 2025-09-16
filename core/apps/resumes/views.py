@@ -91,7 +91,6 @@ def advanced_search_cards(request):
         results = results.filter(q_objects)
 
     templates = Template.objects.all()
-    print(templates)
     users = CustomUser.objects.all()
 
     return render(

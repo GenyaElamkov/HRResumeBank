@@ -247,6 +247,11 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'resumes:advanced_search_cards' %}">
+                            <i class="bi bi-search me-1"></i>Расширенный поиск
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" href="{% url 'resumes:card_list' %}">
                             <i class="bi bi-list-check me-1"></i>Все резюме
                         </a>
@@ -281,7 +286,7 @@
 
         {% block content %}
         {% endblock %}
-        
+
     </main>
 
     <!-- Подвал -->
