@@ -96,7 +96,7 @@ class Command(BaseCommand):
         field_bio, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Биография",
-            field_type=TemplateField.TypeField.IMAGE,
+            field_type=TemplateField.TypeField.TEXT,
             description=fake.text(),
         )
         # Поля шаблона организации

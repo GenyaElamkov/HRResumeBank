@@ -9,33 +9,44 @@ class CardCreateForm(forms.ModelForm):
         fields = ["template"]
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("created")
+        self.user = kwargs.pop('created', None)
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
         card = super().save(commit=False)
-        card.created = self.user
+        if self.user:
+            card.created = self.user
         card.values = {}
         if commit:
             card.save()
         return card
 
 
-class CardFillForm(forms.Form):
-    def __init__(self, card: Card, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.card = card
-        self.template_fields = card.template.fields.all()
+class CardFillForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        fields = []
 
-        for field in self.template_fields:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._created_dinamic_fields()
+
+    def _created_dinamic_fields(self):
+        if not self.instance or not self.instance.template:
+            return
+
+        template_fields = self.instance.template.fields.all()
+
+        for field in template_fields:
             field_name = field.title
-            initial = card.values.get(field_name)
+            initial = self.instance.values.get(field_name)
 
             if field.field_type == "text":
                 self.fields[field_name] = forms.CharField(
                     label=field_name,
                     required=field.is_required,
                     initial=initial,
+                    widget=forms.Textarea,
                 )
             elif field.field_type == "number":
                 self.fields[field_name] = forms.IntegerField(
@@ -45,11 +56,23 @@ class CardFillForm(forms.Form):
                 )
             elif field.field_type == "date":
                 self.fields[field_name] = forms.DateField(
-                    label=field_name, required=field.is_required, initial=initial,
+                    label=field_name,
+                    required=field.is_required,
+                    initial=initial,
                     widget=forms.DateInput(attrs={"type": "date"}),
                 )
-            elif field.field_type == "bool":
-                self.fields[field_name] = forms.BooleanField(label=field_name, required=False, initial=initial)
+            elif field.field_type == "boolean":
+                self.fields[field_name] = forms.BooleanField(
+                    label=field_name,
+                    required=False,
+                    initial=initial,
+                )
+            elif field.field_type == "email":
+                self.fields[field_name] = forms.EmailField(
+                    label=field_name,
+                    required=False,
+                    initial=initial,
+                )
             elif field.field_type == "choice":
                 choices = [(c.strip(), c.strip()) for c in field.choices.split(",")]
                 self.fields[field_name] = forms.ChoiceField(
@@ -58,9 +81,26 @@ class CardFillForm(forms.Form):
                     required=field.is_required,
                     initial=initial,
                 )
+            elif field.field_type == "image":
+                self.fields[field_name] = forms.ImageField(
+                    label=field_name,
+                    required=field.is_required,
+                    initial=initial,
+                )
+            elif field.field_type == "file":
+                self.fields[field_name] = forms.FileField(
+                    label=field_name,
+                    required=field.is_required,
+                    initial=initial,
+                )
 
-    def save(self):
+    def save(self, commit=True):
+        card = super().save(commit=False)
+
         for key, value in self.cleaned_data.items():
-            self.card.values[key] = value
-        self.card.save()
-        return self.card
+            if key not in ['csrfmiddlewaretoken']:
+                card.values[key] = value
+
+        if commit:
+            card.save()
+        return card

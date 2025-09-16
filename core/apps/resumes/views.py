@@ -1,13 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.shortcuts import (
-    get_object_or_404,
-    redirect,
-    render,
-)
+from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
+    UpdateView,
 )
 
 from core.apps.accounts.models import CustomUser
@@ -26,9 +25,7 @@ class CardListView(ListView):
     context_object_name = "entities"
     paginate_by = 20
     allow_empty = True
-
-    def get_queryset(self):
-        return Card.objects.all()
+    queryset = Card.objects.all()
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -40,12 +37,7 @@ class CardListView(ListView):
         return self.render_to_response(context)
 
 
-class CardCreateView(CreateView):
-    """Создать карточку"""
-    ...
-
-
-class CartDetailView(DetailView):
+class CardDetailView(DetailView):
     """Показать документ по pk"""
     model = Card
     template_name = "resumes/card_detail.html"
@@ -54,32 +46,28 @@ class CartDetailView(DetailView):
         return super().get_queryset().select_related("template", "created")
 
 
-def create_card(request):
-    if request.method == "POST":
-        form = CardCreateForm(request.POST, created=request.user)
-        if form.is_valid():
-            card = form.save()
-            return redirect("resumes:fill_card", card_id=card.id)
-    else:
-        form = CardCreateForm(created=request.user)
-    return render(request, "resumes/create_card.html", {"form": form})
+class CardCreateView(LoginRequiredMixin, CreateView):
+    """Создать карточку"""
+    form_class = CardCreateForm
+    template_name = "resumes/create_card.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['created'] = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("resumes:fill_card", kwargs={"pk": self.object.pk})
 
 
-def fill_card(request, card_id):
-    card = get_object_or_404(Card, id=card_id, created=request.user)
-    if request.method == "POST":
-        form = CardFillForm(card, request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("resumes:card_detail", card_id=card.id)
-    else:
-        form = CardFillForm(card)
-    return render(request, "resumes/fill_card.html", {"form": form, "card": card})
+class CardUpdateView(UpdateView):
+    """Обновление карточки"""
+    model = Card
+    form_class = CardFillForm
+    template_name = "resumes/fill_card.html"
 
-
-def card_detail(request, card_id):
-    card = get_object_or_404(Card, id=card_id, created=request.user)
-    return render(request, "resumes/card_detail.html", {"card": card})
+    def get_success_url(self):
+        return reverse("resumes:card_detail", kwargs={"pk": self.object.pk})
 
 
 def advanced_search_cards(request):
