@@ -1,4 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import (
+    EmptyPage,
+    PageNotAnInteger,
+    Paginator,
+)
 from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse
@@ -70,37 +75,76 @@ class CardUpdateView(UpdateView):
         return reverse("resumes:card_detail", kwargs={"pk": self.object.pk})
 
 
+def get_field_search(results_query, words: list) -> list:
+    """Получает поля, значения поиска с оптимизацией"""
+    cards_with_matches = []
+
+    for card in results_query:
+        matched_fields = {}
+        for field_name, field_value in card.values.items():
+            if isinstance(field_value, str) and any(word.lower() in field_value.lower() for word in words):
+                matched_fields[field_name] = field_value
+            elif isinstance(field_value, (int, float)) and any(str(word) in str(field_value) for word in words):
+                matched_fields[field_name] = str(field_value)
+            elif isinstance(field_value, list):
+                for item in field_value:
+                    if isinstance(item, str) and any(word.lower() in item.lower() for word in words):
+                        matched_fields[field_name] = str(field_value)
+                        break
+
+        if matched_fields:
+            card.matched_fields = matched_fields
+            cards_with_matches.append(card)
+
+    return cards_with_matches
+
+
 def advanced_search_cards(request):
     query = request.GET.get("q", "").strip()
     template_id = request.GET.get("template")
     user_id = request.GET.get("created")
+    page = request.GET.get('page', 1)
 
     results = Card.objects.all()
+    cards_matches = []
 
     if user_id:
         results = results.filter(user_id=user_id)
 
     if template_id:
         results = results.filter(template_id=template_id)
-
     if query:
         words = query.split()
         q_objects = Q()
         for word in words:
             q_objects &= Q(values__icontains=word)
+
         results = results.filter(q_objects)
+
+        cards_matches = get_field_search(results_query=results, words=words)
+
+    paginator = Paginator(cards_matches, 20)
+    try:
+        paginated_results = paginator.page(page)
+    except PageNotAnInteger:
+        paginated_results = paginator.page(1)
+    except EmptyPage:
+        paginated_results = paginator.page(paginator.num_pages)
 
     templates = Template.objects.all()
     users = CustomUser.objects.all()
 
     return render(
         request, "resumes/advanced_search.html", {
-            "results": results,
+            "results": paginated_results,
             "query": query,
             "template_id": template_id,
             "user_id": user_id,
             "templates": templates,
             "users": users,
+            "paginator": paginator,
+            "page_obj": paginated_results,
+            "is_paginated": paginator.num_pages > 1,
         },
     )
 
