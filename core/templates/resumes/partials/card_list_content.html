@@ -1,13 +1,14 @@
 <!-- ТОЛЬКО карточки для HTMX -->
 <div class="resume-grid">
-    {% if entities %}
-        {% for entity in entities %}
+    {% if results %}
+        {% for entity in results %}
             <div class="resume-card mb-2">
                 <div class="card-header mb-2 d-flex justify-content-between align-items-center">
                     <span>{{ entity.main_name|default:"Без названия" }}</span>
                     <span class="security-badge">{{ entity.template.title }}</span>
                 </div>
                 <div class="card-body">
+                    <!-- TODO: Добавить отображение полей -->
                     {% for data in entity.date_entitydate.all|slice:":3" %}
                         <div class="mx-2">
                             {% if data.value_text %}

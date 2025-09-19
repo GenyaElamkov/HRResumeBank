@@ -1,10 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import (
-    EmptyPage,
-    PageNotAnInteger,
-    Paginator,
-)
-from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import (
@@ -14,20 +8,19 @@ from django.views.generic import (
     UpdateView,
 )
 
-from core.apps.accounts.models import CustomUser
+from core.apps.resumes.service.search import BaseCardSearchView
 
 from .forms import (
     CardCreateForm,
     CardFillForm,
 )
 from .models.card import Card
-from .models.template import Template
 
 
 class CardListView(ListView):
     """Список карточек"""
     template_name = "resumes/card_list.html"
-    context_object_name = "entities"
+    context_object_name = "results"
     paginate_by = 52
     allow_empty = True
     queryset = Card.objects.all()
@@ -75,78 +68,64 @@ class CardUpdateView(UpdateView):
         return reverse("resumes:card_detail", kwargs={"pk": self.object.pk})
 
 
-def get_field_search(results_query, words: list) -> list:
-    """Получает поля, значения поиска с оптимизацией"""
-    cards_with_matches = []
+class AdvancedCardSearchView(BaseCardSearchView):
+    """Представление расширенного поиска карточек"""
 
-    for card in results_query:
-        matched_fields = {}
-        for field_name, field_value in card.values.items():
-            if isinstance(field_value, str) and any(word.lower() in field_value.lower() for word in words):
-                matched_fields[field_name] = field_value
-            elif isinstance(field_value, (int, float)) and any(str(word) in str(field_value) for word in words):
-                matched_fields[field_name] = str(field_value)
-            elif isinstance(field_value, list):
-                for item in field_value:
-                    if isinstance(item, str) and any(word.lower() in item.lower() for word in words):
-                        matched_fields[field_name] = str(field_value)
-                        break
+    def get_field_search(self, results_query, words: list) -> list:
+        """Получает поля, значения поиска с оптимизацией"""
+        cards_with_matches = []
 
-        if matched_fields:
-            card.matched_fields = matched_fields
-            cards_with_matches.append(card)
+        for card in results_query:
+            matched_fields = {}
+            for field_name, field_value in card.values.items():
+                if isinstance(field_value, str) and any(word.lower() in field_value.lower() for word in words):
+                    matched_fields[field_name] = field_value
+                elif isinstance(field_value, (int, float)) and any(str(word) in str(field_value) for word in words):
+                    matched_fields[field_name] = str(field_value)
+                elif isinstance(field_value, list):
+                    for item in field_value:
+                        if isinstance(item, str) and any(word.lower() in item.lower() for word in words):
+                            matched_fields[field_name] = str(field_value)
+                            break
 
-    return cards_with_matches
+            if matched_fields:
+                card.matched_fields = matched_fields
+                cards_with_matches.append(card)
+
+        return cards_with_matches
+
+    def render_to_response(self, context):
+        """Рендеринг с использованием шаблона advanced_search.html"""
+        return render(
+            self.request,
+            "resumes/advanced_search.html",
+            context,
+        )
 
 
-def advanced_search_cards(request):
-    query = request.GET.get("q", "").strip()
-    template_id = request.GET.get("template")
-    user_id = request.GET.get("created")
-    page = request.GET.get('page', 1)
+class HomeScreenCardSearchView(BaseCardSearchView):
+    """Представление поиска карточек на основном экране"""
 
-    results = Card.objects.all()
-    cards_matches = []
+    def get_field_search(self, results_query, words: list) -> list:
+        """"""
+        return results_query
 
-    if user_id:
-        results = results.filter(user_id=user_id)
-
-    if template_id:
-        results = results.filter(template_id=template_id)
-    if query:
-        words = query.split()
-        q_objects = Q()
-        for word in words:
-            q_objects &= Q(values__icontains=word)
-
-        results = results.filter(q_objects)
-
-        cards_matches = get_field_search(results_query=results, words=words)
-
-    paginator = Paginator(cards_matches, 20)
-    try:
-        paginated_results = paginator.page(page)
-    except PageNotAnInteger:
-        paginated_results = paginator.page(1)
-    except EmptyPage:
-        paginated_results = paginator.page(paginator.num_pages)
-
-    templates = Template.objects.all()
-    users = CustomUser.objects.all()
-
-    return render(
-        request, "resumes/advanced_search.html", {
-            "results": paginated_results,
-            "query": query,
-            "template_id": template_id,
-            "user_id": user_id,
-            "templates": templates,
-            "users": users,
-            "paginator": paginator,
-            "page_obj": paginated_results,
-            "is_paginated": paginator.num_pages > 1,
-        },
-    )
+    def render_to_response(self, context):
+        """Рендеринг с использованием шаблона card_list.html"""
+        if self.request.headers.get('HX-Request'):
+            # HTMX запрос - возвращаем только контент
+            return render(
+                self.request,
+                "resumes/partials/card_list_content.html",
+                context,
+            )
+        else:
+            # Обычный запрос - возвращаем полную страницу
+            return render(
+                self.request,
+                "resumes/card_list.html",
+                context,
+            )
 
 
 def tr_handler404(request, exception):

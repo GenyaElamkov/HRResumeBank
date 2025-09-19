@@ -1,11 +1,12 @@
 from django.urls import path
 
-from . import views
 from .views import (
+    AdvancedCardSearchView,
     CardCreateView,
     CardDetailView,
     CardListView,
     CardUpdateView,
+    HomeScreenCardSearchView,
 )
 
 
@@ -16,5 +17,6 @@ urlpatterns = [
     path("card/create/", CardCreateView.as_view(), name="create_card"),
     path("card/<int:pk>/fill/", CardUpdateView.as_view(), name="fill_card"),
     path("card/<int:pk>/", CardDetailView.as_view(), name="card_detail"),
-    path("cards/advanced_search/", views.advanced_search_cards, name="advanced_search_cards"),
+    path("cards/advanced-search/", AdvancedCardSearchView.as_view(), name="advanced_search_cards"),
+    path("cards/home-screen/", HomeScreenCardSearchView.as_view(), name="home_screen_search"),
 ]
