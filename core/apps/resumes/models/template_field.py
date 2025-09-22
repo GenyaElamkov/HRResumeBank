@@ -50,6 +50,16 @@ class TemplateField(models.Model):
             для отображения в загаловке карточки (например ФИО или Название компании).",
         default=False,
     )
+    is_visible = models.BooleanField(
+        help_text="Если отмечено — это поле будет видно \
+            в карточке резюме на главном экране",
+        default=False,
+    )
+    order = models.PositiveSmallIntegerField(
+        verbose_name="Порядок",
+        help_text="Порядок отображения в карточке",
+        default=0,
+    )
 
     def __str__(self):
         return f"{self.template} -> {self.title}"
@@ -58,3 +68,4 @@ class TemplateField(models.Model):
         verbose_name = "Полe шаблона"
         verbose_name_plural = "Поля шаблона"
         db_table = "template_field"
+        ordering = ['order']

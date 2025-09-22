@@ -8,18 +8,19 @@
                     <span class="security-badge">{{ entity.template.title }}</span>
                 </div>
                 <div class="card-body">
-                    <!-- TODO: Добавить отображение полей -->
-                    {% for data in entity.date_entitydate.all|slice:":3" %}
-                        <div class="mx-2">
-                            {% if data.value_text %}
-                                <p class="mb-1"><strong>{{ data.field.title }}:</strong> {{ data.value_text }}</p>
-                            {% elif data.value_number %}
-                                <p class="mb-1"><strong>{{ data.field.title }}:</strong> {{ data.value_number }}</p>
-                            {% elif data.value_date %}
-                                <p class="mb-1"><strong>{{ data.field.title }}:</strong> {{ data.value_date }}</p>
-                            {% endif %}
-                        </div>
+
+                    {% for field in entity.template.fields.all|dictsort:"order" %}
+                        {% if field.is_visible %}
+                            {% for key, value in entity.values.items %}
+                                {% if key == field.title %}
+                                    <div class="mx-2">
+                                        <p class="mb-1"><strong>{{ key }}:</strong> {{ value }}</p>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     {% endfor %}
+
                     <div class="d-flex mx-2 justify-content-between">
                         <small class="card-text small text-muted">Обновлено: {{ entity.update_at|date:"d.m.Y H:i" }}</small>
                         <a href="{% url 'resumes:card_detail' entity.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
