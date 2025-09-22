@@ -50,17 +50,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for key, value in card.values.items %}
-                        <tr>
-                            <td class="fw-bold text-primary">{{ key }}</td>
-                            <td>
-                                {% if value %}
-                                    {{ value }}
-                                {% else %}
-                                    <span class="text-muted">Не указано</span>
+                        {% for field in card.template.fields.all|dictsort:"order" %}
+                            {% for key, value in card.values.items %}
+                                {% if key == field.title %}
+                                    <tr>
+                                        <td class="fw-bold text-primary">{{ key }}</td>
+                                        <td>
+                                            {% if value %}
+                                                {{ value }}
+                                            {% else %}
+                                                <span class="text-muted">Не указано</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
                                 {% endif %}
-                            </td>
-                        </tr>
+                            {% endfor %}
                         {% endfor %}
                     </tbody>
                 </table>
