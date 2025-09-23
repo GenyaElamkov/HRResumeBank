@@ -1,3 +1,4 @@
+import sys
 from random import (  # noqa
     choice,
     randint,
@@ -9,15 +10,19 @@ from django.core.management.base import BaseCommand
 
 from faker import Faker
 
-from core.apps.resumes.models.entity import Entity
-from core.apps.resumes.models.entity_data import EntityData
+from core.apps.resumes.models.card import Card
 from core.apps.resumes.models.log import Log
 from core.apps.resumes.models.template import Template
 from core.apps.resumes.models.template_field import TemplateField
 
 
 class Command(BaseCommand):
-    """Заполняет базу тестовыми данными (seed)"""
+    """
+    Заполняет базу тестовыми данными (seed)
+    TURN - включает (True) заполнение данными БД
+    """
+    TURN = True
+    COUNTER = 10
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING("=== Очищаем старые данные ==="))
@@ -26,12 +31,14 @@ class Command(BaseCommand):
 
         Template.objects.all().delete()
         TemplateField.objects.all().delete()
-        EntityData.objects.all().delete()
-        Entity.objects.all().delete()
+        Card.objects.all().delete()
         Log.objects.all().delete()
         User.objects.exclude(is_superuser=True).delete()
 
         self.stdout.write(self.style.SUCCESS("Данные очищены!"))
+
+        if not self.TURN:
+            sys.exit(0)
 
         fake = Faker("ru_RU")
 
@@ -45,86 +52,82 @@ class Command(BaseCommand):
         user4, _ = User.objects.get_or_create(username="vasilek")
 
         # --- Шаблоны ---
-        template, _ = Template.objects.get_or_create(title="Резюме")
-        template_organization, _ = Template.objects.get_or_create(title="Организация")
+        template, _ = Template.objects.get_or_create(
+            title="Резюме",
+            description=fake.text(),
+        )
+        template_organization, _ = Template.objects.get_or_create(
+            title="Организация",
+            description=fake.text(),
+        )
 
         # --- Поля шаблона ---
         field_name, _ = TemplateField.objects.get_or_create(
             template=template,
             title="ФИО",
-            type_field=TemplateField.TypeField.TEXT,
+            field_type=TemplateField.TypeField.TEXT,
+            description=fake.text(),
             is_required=True,
             is_primary=True,
-            order=1,
         )
         field_birth, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Дата рождения",
-            type_field=TemplateField.TypeField.DATE,
-            order=2,
+            field_type=TemplateField.TypeField.DATE,
+            description=fake.text(),
         )
         field_experience, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Опыт (лет)",
-            type_field=TemplateField.TypeField.NUMBER,
-            order=3,
+            field_type=TemplateField.TypeField.NUMBER,
+            description=fake.text(),
         )
         field_email, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Email",
-            type_field=TemplateField.TypeField.EMAIL,
-            order=4,
+            field_type=TemplateField.TypeField.EMAIL,
+            description=fake.text(),
         )
         field_images, _ = TemplateField.objects.get_or_create(
             template=template,
             title="Фотография",
-            type_field=TemplateField.TypeField.IMAGE,
-            order=5,
+            field_type=TemplateField.TypeField.IMAGE,
+            description=fake.text(),
+        )
+        field_bio, _ = TemplateField.objects.get_or_create(
+            template=template,
+            title="Биография",
+            field_type=TemplateField.TypeField.TEXT,
+            description=fake.text(),
         )
         # Поля шаблона организации
         field_name_organization, _ = TemplateField.objects.get_or_create(
             template=template_organization,
             title="ИНН",
-            type_field=TemplateField.TypeField.TEXT,
+            field_type=TemplateField.TypeField.TEXT,
             is_required=True,
             is_primary=True,
-            order=1,
+            description=fake.text(),
         )
 
         # --- Генерация 100 записей ---
-        for i in range(100):
+        for i in range(self.COUNTER):
             created_user = choice([user1, user2, user3, user4])
 
-            entity = Entity.objects.create(
+            # Создание карточки резюме
+            resume_values = {
+                "ФИО": fake.name(),
+                "Дата рождения": fake.date_of_birth(minimum_age=18, maximum_age=60).isoformat(),
+                "Опыт (лет)": randint(0, 30),
+                "Email": fake.email(),
+                "Фотография": fake.image_url(),
+                "Биография": fake.texts(),
+            }
+
+            entity = Card.objects.create(
                 template=template,
                 created=created_user,
-            )
-
-            # Значения
-            EntityData.objects.create(
-                entity=entity,
-                field=field_name,
-                value_text=fake.name(),
-            )
-            EntityData.objects.create(
-                entity=entity,
-                field=field_birth,
-                value_date=fake.date_of_birth(minimum_age=18, maximum_age=60),
-            )
-            EntityData.objects.create(
-                entity=entity,
-                field=field_experience,
-                value_number=randint(0, 30),
-            )
-            EntityData.objects.create(
-                entity=entity,
-                field=field_email,
-                value_email=fake.email(),
-            )
-            EntityData.objects.create(
-                entity=entity,
-                field=field_images,
-                value_images=fake.image_url(),
+                values=resume_values,
             )
 
             # Лог действия
@@ -134,17 +137,18 @@ class Command(BaseCommand):
                 details=f"Создано резюме {entity.id}",
             )
 
-            inn = randrange(1000, 26444546)
-            entity_organization = Entity.objects.create(
+            # Создание карточки организации
+            inn = randrange(1000000000, 9999999999)
+            organization_values = {
+                "ИНН": str(inn),
+            }
+
+            entity_organization = Card.objects.create(
                 template=template_organization,
                 created=created_user,
+                values=organization_values,
             )
-            # Значение для организации
-            EntityData.objects.create(
-                entity=entity_organization,
-                field=field_name_organization,
-                value_number=inn,
-            )
+
             # Лог действия для организации
             Log.objects.create(
                 user=created_user,
@@ -152,4 +156,4 @@ class Command(BaseCommand):
                 details=f"Создана организация {entity_organization.id}",
             )
 
-        self.stdout.write(self.style.SUCCESS("✅ Создано 100 резюме"))
+        self.stdout.write(self.style.SUCCESS(f"✅ Создано {self.COUNTER} резюме и {self.COUNTER} организаций"))

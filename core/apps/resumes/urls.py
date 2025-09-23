@@ -1,17 +1,22 @@
 from django.urls import path
 
-from core.apps.resumes.views import (
-    ResumeDetailView,
-    ResumeListView,
-    TemplateListView,
+from .views import (
+    AdvancedCardSearchView,
+    CardCreateView,
+    CardDetailView,
+    CardListView,
+    CardUpdateView,
+    HomeScreenCardSearchView,
 )
 
 
 app_name = "resumes"
 
 urlpatterns = [
-    path('', ResumeListView.as_view(), name='resume_list'),
-    path('resumes/', ResumeListView.as_view(), name='resume_list'),
-    path('resumes/<int:pk>/', ResumeDetailView.as_view(), name='resume_detail'),
-    path('templates/', TemplateListView.as_view(), name='template_list'),
+    path("", CardListView.as_view(), name="card_list"),
+    path("card/create/", CardCreateView.as_view(), name="create_card"),
+    path("card/<int:pk>/fill/", CardUpdateView.as_view(), name="fill_card"),
+    path("card/<int:pk>/", CardDetailView.as_view(), name="card_detail"),
+    path("cards/advanced-search/", AdvancedCardSearchView.as_view(), name="advanced_search_cards"),
+    path("cards/home-screen/", HomeScreenCardSearchView.as_view(), name="home_screen_search"),
 ]

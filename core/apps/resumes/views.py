@@ -1,69 +1,131 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import (
+    CreateView,
     DetailView,
     ListView,
+    UpdateView,
 )
 
-from .models.entity import Entity
-from .models.template import Template
+from core.apps.resumes.service.search import BaseCardSearchView
+
+from .forms import (
+    CardCreateForm,
+    CardFillForm,
+)
+from .models.card import Card
 
 
-# @method_decorator(login_required, name="dispatch")
-class ResumeListView(ListView):
-    """Список всех резюме (Entity)"""
-    template_name = "resumes/resume_list.html"
-    context_object_name = "entities"
-    paginate_by = 20
+class CardListView(ListView):
+    """Список карточек"""
+    template_name = "resumes/card_list.html"
+    context_object_name = "results"
+    paginate_by = 52
     allow_empty = True
+    queryset = Card.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+
+        if request.headers.get('HX-Request'):
+            return render(request, 'resumes/partials/card_list_content.html', context)
+
+        return self.render_to_response(context)
+
+
+class CardDetailView(DetailView):
+    """Показать документ по pk"""
+    model = Card
+    template_name = "resumes/card_detail.html"
 
     def get_queryset(self):
-        return (
-            Entity.objects
-            .select_related("template", "created")
-            .order_by("-create_at").all()
+        return super().get_queryset().select_related("template", "created")
+
+
+class CardCreateView(LoginRequiredMixin, CreateView):
+    """Создать карточку"""
+    form_class = CardCreateForm
+    template_name = "resumes/create_card.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['created'] = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("resumes:fill_card", kwargs={"pk": self.object.pk})
+
+
+class CardUpdateView(UpdateView):
+    """Обновление карточки"""
+    model = Card
+    form_class = CardFillForm
+    template_name = "resumes/fill_card.html"
+
+    def get_success_url(self):
+        return reverse("resumes:card_detail", kwargs={"pk": self.object.pk})
+
+
+class AdvancedCardSearchView(BaseCardSearchView):
+    """Представление расширенного поиска карточек"""
+
+    def get_field_search(self, results_query, words: list) -> list:
+        """Получает поля, значения поиска с оптимизацией"""
+        cards_with_matches = []
+
+        for card in results_query:
+            matched_fields = {}
+            for field_name, field_value in card.values.items():
+                if isinstance(field_value, str) and any(word.lower() in field_value.lower() for word in words):
+                    matched_fields[field_name] = field_value
+                elif isinstance(field_value, (int, float)) and any(str(word) in str(field_value) for word in words):
+                    matched_fields[field_name] = str(field_value)
+                elif isinstance(field_value, list):
+                    for item in field_value:
+                        if isinstance(item, str) and any(word.lower() in item.lower() for word in words):
+                            matched_fields[field_name] = str(field_value)
+                            break
+
+            if matched_fields:
+                card.matched_fields = matched_fields
+                cards_with_matches.append(card)
+
+        return cards_with_matches
+
+    def render_to_response(self, context):
+        """Рендеринг с использованием шаблона advanced_search.html"""
+        return render(
+            self.request,
+            "resumes/advanced_search.html",
+            context,
         )
 
 
-class ResumeDetailView(DetailView):
-    """Резюме по pk"""
-    model = Entity
-    template_name = "resumes/resume_detail.html"
-    context_object_name = "entity"
+class HomeScreenCardSearchView(BaseCardSearchView):
+    """Представление поиска карточек на основном экране"""
 
-    def get_queryset(self):
-        return (
-            super().get_queryset()
-            .select_related("template", "created")
-            .prefetch_related("date_entitydate__field")
-        )
+    def get_field_search(self, results_query, words: list) -> list:
+        """"""
+        return results_query
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        entity = self.object
-
-        entity_data = entity.date_entitydate.all()
-
-        primary_field = entity_data.filter(field__is_primary=True).first()
-        if primary_field:
-            entity.main_name = getattr(primary_field, f'value_{primary_field.field.type_field}', 'Резюме')
-
-        context['entity_data'] = entity_data
-        return context
-
-
-class TemplateListView(ListView):
-    """Список всех шаблонов (Temlate)"""
-    template_name = "resumes/template_list.html"
-    context_object_name = "templates"
-    paginate_by = 9
-    allow_empty = True
-
-    def get_queryset(self):
-        return (
-            Template.objects
-            .select_related("created")
-            .order_by("-create_at").all()
-        )
+    def render_to_response(self, context):
+        """Рендеринг с использованием шаблона card_list.html"""
+        if self.request.headers.get('HX-Request'):
+            # HTMX запрос - возвращаем только контент
+            return render(
+                self.request,
+                "resumes/partials/card_list_content.html",
+                context,
+            )
+        else:
+            # Обычный запрос - возвращаем полную страницу
+            return render(
+                self.request,
+                "resumes/card_list.html",
+                context,
+            )
 
 
 def tr_handler404(request, exception):

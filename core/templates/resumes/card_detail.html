@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Заголовок карточки -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-file-earmark-text-fill me-2 text-primary"></i>
+            {{ card.template.title }}
+        </h2>
+    </div>
+
+    <!-- Информация о карточке -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Информация о карточке: ID №{{ card.pk }}</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Создана:</small>
+                            <p class="mb-2 fw-bold">{{ card.create_at|date:"d.m.Y H:i" }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Обновлена:</small>
+                            <p class="mb-2 fw-bold">{{ card.update_at|date:"d.m.Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Данные карточки -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-card-checklist me-2"></i>
+                Данные карточки
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 30%">Поле</th>
+                            <th style="width: 70%">Значение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for field in card.template.fields.all|dictsort:"order" %}
+                            {% for key, value in card.values.items %}
+                                {% if key == field.title %}
+                                    <tr>
+                                        <td class="fw-bold text-primary">{{ key }}</td>
+                                        <td>
+                                            {% if field.field_type == 'image' %}
+                                                <img src="{{ value }}"
+                                                    alt="{{ key }}"
+                                                    class="rounded"
+                                                    style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
+                                                    data-bs-toggle="tooltip"
+                                                    title="{{ key }}">
+                                            {% elif value %}
+                                                {{ value }}
+                                            {% else %}
+                                                <span class="text-muted">Не указано</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопки действий -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a href="{% url 'resumes:fill_card' card.id %}" class="btn btn-primary flex-fill flex-md-grow-0">
+            <i class="bi bi-pencil-square me-2"></i><span class="d-none d-sm-inline">Редактировать</span>
+        </a>
+        <button type="button" class="btn btn-outline-success flex-fill flex-md-grow-0" onclick="window.print()">
+            <i class="bi bi-printer me-2"></i><span class="d-none d-sm-inline">Распечатать</span>
+        </button>
+        <!-- <button type="button" class="btn btn-outline-info flex-fill flex-md-grow-0">
+            <i class="bi bi-send me-2"></i><span class="d-none d-sm-inline">Отправить</span>
+        </button>
+        <button type="button" class="btn btn-outline-secondary flex-fill flex-md-grow-0">
+            <i class="bi bi-download me-2"></i><span class="d-none d-sm-inline">Скачать</span>
+        </button> -->
+        <a href="#" class="btn btn-outline-dark flex-fill flex-md-grow-0 ms-md-auto" onclick="window.history.go(-1); return false;">
+            <i class="bi bi-arrow-left me-2"></i><span class="d-none d-sm-inline">Назад к списку</span>
+        </a>
+    </div>
+</div>
+
+<style>
+    .table th {
+        font-weight: 600;
+        border-top: none;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: top;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .btn {
+        border-radius: 0.375rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        min-width: auto;
+        flex: 1 1 auto;
+    }
+
+    @media (max-width: 575.98px) {
+        .d-flex.flex-wrap {
+            gap: 0.5rem !important;
+        }
+
+        .btn {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            flex: 1 1 calc(50% - 0.25rem);
+            min-width: calc(50% - 0.25rem);
+        }
+
+        .btn .bi {
+            margin-right: 0.25rem !important;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .btn {
+            flex: 1 1 calc(33.333% - 0.5rem);
+            min-width: calc(33.333% - 0.5rem);
+        }
+
+        .ms-md-auto {
+            margin-left: 0 !important;
+            margin-top: 0.5rem;
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .flex-md-grow-0 {
+            flex-grow: 0 !important;
+        }
+
+        .btn {
+            flex: 0 1 auto;
+            min-width: auto;
+        }
+    }
+
+    @media print {
+        .btn, .d-flex.flex-wrap,
+        .d-flex.justify-content-between,
+        nav.navbar,
+        header,
+        footer,
+        .card-header
+        {
+            display: none !important;
+        }
+
+        .container {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .card {
+            border: 1px solid #000 !important;
+            box-shadow: none !important;
+        }
+
+        .table {
+            border-collapse: collapse !important;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #000 !important;
+            padding: 8px !important;
+        }
+
+        .card-body {
+            display: block !important;
+        }
+    }
+</style>
+{% endblock %}
