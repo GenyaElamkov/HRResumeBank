@@ -1,4 +1,9 @@
+import os
+
 from django import forms
+from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 from .models.card import Card
 
@@ -94,12 +99,23 @@ class CardFillForm(forms.ModelForm):
                     initial=initial,
                 )
 
+    # TODO: Не удаляет значнеия в полях
     def save(self, commit=True):
         card = super().save(commit=False)
 
         for key, value in self.cleaned_data.items():
             if key not in ['csrfmiddlewaretoken']:
-                card.values[key] = value
+                if value:
+                    if hasattr(value, 'read'):
+                        path = default_storage.save(os.path.join("uploads", value.name), ContentFile(value.read()))
+                        card.values[key] = os.path.join(settings.MEDIA_URL, path)
+                    else:
+                        card.values[key] = value
+                else:
+                    if key in card.values:
+                        continue
+                    else:
+                        card.values[key] = None
 
         if commit:
             card.save()

@@ -14,6 +14,8 @@ services:
       - postgres2
     volumes:
       - ..:/app/
+      - media_volume:/app/media
+      - static_volume:/app/staticfiles
 
     networks:
       - hrresumebank-network
@@ -21,3 +23,7 @@ services:
 networks:
   hrresumebank-network:
     external: true
+
+volumes:
+  media_volume:
+  static_volume:

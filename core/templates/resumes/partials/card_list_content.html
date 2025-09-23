@@ -14,8 +14,19 @@
                             {% for key, value in entity.values.items %}
                                 {% if key == field.title %}
                                     <div class="mx-2">
-                                        <p class="mb-1"><strong>{{ key }}:</strong> {{ value }}</p>
-                                    </div>
+                                        {% if field.field_type == 'image' %}
+                                            <div class="card-image-preview px-2 py-2 text-center border-bottom">
+                                                <img src="{{ value }}"
+                                                    alt="{{ key }}"
+                                                    class="rounded"
+                                                    style="height: 80px; width: auto; max-width: 120px; object-fit: cover;"
+                                                    data-bs-toggle="tooltip"
+                                                    title="{{ key }}">
+                                            </div>
+                                            {% else %}
+                                                <p class="mb-1"><strong>{{ key }}:</strong> {{ value }}</p>
+                                            {% endif %}
+                                        </div>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}

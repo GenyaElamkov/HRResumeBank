@@ -22,7 +22,7 @@ class Command(BaseCommand):
     TURN - включает (True) заполнение данными БД
     """
     TURN = True
-    COUNTER = 100
+    COUNTER = 10
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING("=== Очищаем старые данные ==="))
