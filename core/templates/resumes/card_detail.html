@@ -57,12 +57,29 @@
                                         <td class="fw-bold text-primary">{{ key }}</td>
                                         <td>
                                             {% if field.field_type == 'image' %}
-                                                <img src="{{ value }}"
-                                                    alt="{{ key }}"
-                                                    class="rounded"
-                                                    style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
-                                                    data-bs-toggle="tooltip"
-                                                    title="{{ key }}">
+                                                {% if value %}
+                                                    <img src="{{ value }}"
+                                                            alt="{{ key }}"
+                                                            class="rounded"
+                                                            style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{ key }}">
+                                                {% else %}
+                                                    <span class="text-muted">{{ field.title }} отсуствует</span>
+                                                {% endif %}
+
+                                            {% elif field.field_type == 'file' %}
+                                                {% if value %}
+                                                    <img src="{{ value }}"
+                                                            alt="{{ key }}"
+                                                            class="rounded"
+                                                            style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{ key }}">
+                                                {% else %}
+                                                    <span class="text-muted">{{ field.title }} отсуствует</span>
+                                                {% endif %}
+
                                             {% elif value %}
                                                 {{ value }}
                                             {% else %}

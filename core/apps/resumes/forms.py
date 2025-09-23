@@ -99,15 +99,19 @@ class CardFillForm(forms.ModelForm):
                     initial=initial,
                 )
 
+    def _save_file(self, card_id: int | str, file_name: str) -> str:
+        """Cохраняет файл в папку карточки и возвращает путь к файлу"""
+        return os.path.join("uploads", str(card_id), file_name)
+
     # TODO: Не удаляет значнеия в полях
     def save(self, commit=True):
         card = super().save(commit=False)
-
+        card_id = self.instance.id
         for key, value in self.cleaned_data.items():
             if key not in ['csrfmiddlewaretoken']:
                 if value:
                     if hasattr(value, 'read'):
-                        path = default_storage.save(os.path.join("uploads", value.name), ContentFile(value.read()))
+                        path = default_storage.save(self._save_file(card_id, value.name), ContentFile(value.read()))
                         card.values[key] = os.path.join(settings.MEDIA_URL, path)
                     else:
                         card.values[key] = value
