@@ -59,8 +59,8 @@
                                         <td class="fw-bold text-primary">{{ key }}</td>
                                         <td>
                                             {% if field.field_type == 'image' %}
-                                                {% if value %}
-                                                    <img src="{{ value }}"
+                                                {% if images %}
+                                                    <img src="{{ images.first.image.url }}"
                                                             alt="{{ key }}"
                                                             class="rounded"
                                                             style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"

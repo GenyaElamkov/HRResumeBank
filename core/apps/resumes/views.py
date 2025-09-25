@@ -18,6 +18,7 @@ from .forms import (
 )
 from .models.card import Card
 from .models.file_storage import FileStorage
+from .models.profile_image import ProfileImage
 
 
 class CardListView(ListView):
@@ -37,6 +38,18 @@ class CardListView(ListView):
 
         return self.render_to_response(context)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["card_list"] = [
+            {
+                "card": card,
+                "values": {field.title: card.values.get(field.title, "") for field in card.template.fields.all()},
+                "image": ProfileImage.objects.filter(card=card).first(),
+            }
+            for card in context["results"]
+        ]
+        return context
+
 
 class CardDetailView(DetailView):
     """Показать документ по pk"""
@@ -50,6 +63,11 @@ class CardDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         card = self.object
 
+        self._add_files_to_context(context, card)
+        self._add_images_to_context(context, card)
+        return context
+
+    def _add_files_to_context(self, context, card):
         files = FileStorage.objects.filter(card=card)
         if files.exists():
             files_name = [os.path.basename(file.uploaded_file.name) for file in files]
@@ -57,7 +75,13 @@ class CardDetailView(DetailView):
         else:
             context['files'] = None
 
-        return context
+    def _add_images_to_context(self, context, card):
+        images = ProfileImage.objects.filter(card=card)
+        images = ProfileImage.objects.filter(card=card)
+        if images.exists():
+            context['images'] = images
+        else:
+            context['images'] = None
 
 
 class CardCreateView(LoginRequiredMixin, CreateView):

@@ -1,31 +1,38 @@
-<!-- ТОЛЬКО карточки для HTMX -->
 <div class="resume-grid">
-    {% if results %}
-        {% for entity in results %}
+    {% if card_list %}
+        {% for item in card_list %}
             <div class="resume-card mb-2 d-flex flex-column h-100">
                 <div class="card-header mb-2 d-flex justify-content-between align-items-center">
-                    <span>{{ entity.main_name|default:"Без названия" }}</span>
-                    <span class="security-badge">{{ entity.template.title }}</span>
+                    <span>{{ item.card.main_name|default:"Без названия" }}</span>
+                    <span class="security-badge">{{ item.card.template.title }}</span>
                 </div>
                 <div class="card-body flex-grow-1">
-                    {% for field in entity.template.fields.all|dictsort:"order" %}
+                    {% for field in item.card.template.fields.all|dictsort:"order" %}
                         {% if field.is_visible %}
-                            {% for key, value in entity.values.items %}
+                            {% for key, value in item.values.items %}
                                 {% if key == field.title %}
                                     <div class="mx-2">
+
                                         {% if field.field_type == 'image' %}
                                             <div class="card-image-preview px-2 py-2 text-center border-bottom">
-                                                <img src="{{ value }}"
-                                                    alt="{{ key }}"
-                                                    class="rounded"
-                                                    style="height: 80px; width: auto; max-width: 120px; object-fit: cover;"
-                                                    data-bs-toggle="tooltip"
-                                                    title="{{ key }}">
+
+                                                {% if item.image %}
+                                                    <img src="{{ item.image.image.url }}"
+                                                        alt="{{ field.title }}"
+                                                        class="rounded"
+                                                        style="height: 150px; width: auto; max-width: 150px; object-fit: cover;"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Фотография">
+                                                {% else %}
+                                                    <span class="text-muted">{{ field.title }} отсуствует</span>
+                                                {% endif %}
+
                                             </div>
-                                            {% else %}
-                                                <p class="mb-1"><strong>{{ key }}:</strong> {{ value }}</p>
-                                            {% endif %}
-                                        </div>
+
+                                        {% else %}
+                                            <p class="mb-1"><strong>{{ key }}:</strong> {{ value }}</p>
+                                        {% endif %}
+                                    </div>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
@@ -33,8 +40,8 @@
                 </div>
                 <div class="card-footer mt-auto bg-transparent border-0">
                     <div class="d-flex mx-2 justify-content-between align-items-center">
-                        <small class="card-text small text-muted">Обновлено: {{ entity.update_at|date:"d.m.Y H:i" }}</small>
-                        <a href="{% url 'resumes:card_detail' entity.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                        <small class="card-text small text-muted">Обновлено: {{ item.card.update_at|date:"d.m.Y H:i" }}</small>
+                        <a href="{% url 'resumes:card_detail' item.card.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
                     </div>
                 </div>
             </div>

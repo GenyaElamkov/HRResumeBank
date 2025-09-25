@@ -6,6 +6,7 @@ from django.dispatch import receiver
 
 from .models.card import Card
 from .models.file_storage import FileStorage
+from .models.profile_image import ProfileImage
 from .models.template_field import TemplateField
 
 
@@ -37,3 +38,10 @@ def delete_file_on_card_delete(sender, instance, **kwargs):
     """Удаление файла при удалении карточки"""
     if instance.uploaded_file:
         instance.uploaded_file.delete(save=False)
+
+
+@receiver(post_delete, sender=ProfileImage)
+def delete_image_on_card_delete(sender, instance, **kwargs):
+    """Удаление изображения при удалении карточки"""
+    if instance.image:
+        instance.image.delete(save=False)
