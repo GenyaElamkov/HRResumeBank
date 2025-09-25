@@ -51,7 +51,9 @@
                     </thead>
                     <tbody>
                         {% for field in card.template.fields.all|dictsort:"order" %}
+
                             {% for key, value in card.values.items %}
+
                                 {% if key == field.title %}
                                     <tr>
                                         <td class="fw-bold text-primary">{{ key }}</td>
@@ -68,22 +70,35 @@
                                                     <span class="text-muted">{{ field.title }} отсуствует</span>
                                                 {% endif %}
 
-                                            {% elif field.field_type == 'file' %}
-                                                {% if value %}
-                                                    <img src="{{ value }}"
-                                                            alt="{{ key }}"
-                                                            class="rounded"
-                                                            style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
-                                                            data-bs-toggle="tooltip"
-                                                            title="{{ key }}">
+                                            {% elif field.field_type == 'file'%}
+                                                {% if files %}
+                                                    {% for file, file_name in files %}
+
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-file-earmark me-2 fs-4 text-secondary"></i>
+                                                                <div>
+                                                                    <a href="{{ file.uploaded_file.url }}" class="text-decoration-none fw-bold" target="_blank">
+                                                                        {{ file_name }}
+                                                                    </a>
+                                                                    <br>
+                                                                    <small class="text-muted">
+                                                                        {{ file.uploaded_file.size|filesizeformat }} |
+                                                                        {{ file.create_at|date:"d.m.Y H:i" }}
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+
+                                                    {% endfor %}
                                                 {% else %}
-                                                    <span class="text-muted">{{ field.title }} отсуствует</span>
+                                                    <span class="text-muted">{{ field.title }} отсутствует</span>
                                                 {% endif %}
 
                                             {% elif value %}
                                                 {{ value }}
+
                                             {% else %}
                                                 <span class="text-muted">Не указано</span>
+
                                             {% endif %}
                                         </td>
                                     </tr>

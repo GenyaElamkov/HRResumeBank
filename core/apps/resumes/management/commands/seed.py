@@ -21,7 +21,7 @@ class Command(BaseCommand):
     Заполняет базу тестовыми данными (seed)
     TURN - включает (True) заполнение данными БД
     """
-    TURN = True
+    TURN = False
     COUNTER = 10
 
     def handle(self, *args, **options):

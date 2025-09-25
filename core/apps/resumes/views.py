@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse
@@ -15,6 +17,7 @@ from .forms import (
     CardFillForm,
 )
 from .models.card import Card
+from .models.file_storage import FileStorage
 
 
 class CardListView(ListView):
@@ -42,6 +45,19 @@ class CardDetailView(DetailView):
 
     def get_queryset(self):
         return super().get_queryset().select_related("template", "created")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        card = self.object
+
+        files = FileStorage.objects.filter(card=card)
+        if files.exists():
+            files_name = [os.path.basename(file.uploaded_file.name) for file in files]
+            context['files'] = zip(files, files_name)
+        else:
+            context['files'] = None
+
+        return context
 
 
 class CardCreateView(LoginRequiredMixin, CreateView):

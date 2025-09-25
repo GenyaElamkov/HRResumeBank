@@ -1,11 +1,10 @@
 import os
+import uuid
 
 from django import forms
-from django.conf import settings
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 
 from .models.card import Card
+from .models.file_storage import FileStorage
 
 
 class CardCreateForm(forms.ModelForm):
@@ -99,27 +98,30 @@ class CardFillForm(forms.ModelForm):
                     initial=initial,
                 )
 
-    def _save_file(self, card_id: int | str, file_name: str) -> str:
-        """Cохраняет файл в папку карточки и возвращает путь к файлу"""
-        return os.path.join("uploads", str(card_id), file_name)
+    def _save_avatar(self, card_id: int | str, file_name: str) -> str:
+        unique_filename = f"avatar_{uuid.uuid4()}"
+        return os.path.join(
+            'avatars',
+            str(card_id),
+            f"{unique_filename}{os.path.splitext(file_name)[1]}",
+        )
 
     # TODO: Не удаляет значнеия в полях
     def save(self, commit=True):
         card = super().save(commit=False)
-        card_id = self.instance.id
+        card.save()
+
         for key, value in self.cleaned_data.items():
-            if key not in ['csrfmiddlewaretoken']:
-                if value:
-                    if hasattr(value, 'read'):
-                        path = default_storage.save(self._save_file(card_id, value.name), ContentFile(value.read()))
-                        card.values[key] = os.path.join(settings.MEDIA_URL, path)
-                    else:
-                        card.values[key] = value
-                else:
-                    if key in card.values:
-                        continue
-                    else:
-                        card.values[key] = None
+            if key in ['csrfmiddlewaretoken']:
+                continue
+
+            # Обработка файлов
+            if value and hasattr(value, 'read'):
+                file_storage = FileStorage(card=card, uploaded_file=value)
+                file_storage.save()
+                card.values[key] = file_storage.uploaded_file.name
+            else:
+                card.values[key] = value
 
         if commit:
             card.save()
