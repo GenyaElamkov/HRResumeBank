@@ -24,30 +24,30 @@ from .models.profile_image import ProfileImage
 class CardListView(ListView):
     """Список карточек"""
     template_name = "resumes/card_list.html"
-    context_object_name = "results"
+    context_object_name = "card_list"
     paginate_by = 52
     allow_empty = True
-    queryset = Card.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        context = self.get_context_data()
-
-        if request.headers.get('HX-Request'):
-            return render(request, 'resumes/partials/card_list_content.html', context)
-
-        return self.render_to_response(context)
+    def get_queryset(self):
+        return Card.objects.all().select_related('template')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["card_list"] = [
-            {
+
+        # Преобразуем данные для шаблона
+        cards = []
+        for card in context["card_list"]:
+            cards.append({
                 "card": card,
-                "values": {field.title: card.values.get(field.title, "") for field in card.template.fields.all()},
+                "values": {
+                    field.title: card.values.get(field.title, "")
+                    for field in card.template.fields.all()
+                },
                 "image": ProfileImage.objects.filter(card=card).first(),
-            }
-            for card in context["results"]
-        ]
+            })
+
+        context["card_list"] = cards
+        context["query"] = self.request.GET.get('q', '')
         return context
 
 
@@ -147,11 +147,31 @@ class HomeScreenCardSearchView(BaseCardSearchView):
     """Представление поиска карточек на основном экране"""
 
     def get_field_search(self, results_query, words: list) -> list:
-        """"""
-        return results_query
+        """Упрощенный поиск по ключевым словам"""
+        matching_cards = []
+
+        for card in results_query:
+            card_values = ' '.join(str(value) for value in card.values.values()).lower()
+
+            if any(word.lower() in card_values for word in words):
+                matching_cards.append(card)
+
+        return matching_cards
 
     def render_to_response(self, context):
         """Рендеринг с использованием шаблона card_list.html"""
+        card_list = []
+        for card in context['results']:
+            card_list.append({
+                "card": card,
+                "values": {
+                    field.title: card.values.get(field.title, "")
+                    for field in card.template.fields.all()
+                },
+                "image": ProfileImage.objects.filter(card=card).first(),
+            })
+
+        context["card_list"] = card_list
         if self.request.headers.get('HX-Request'):
             # HTMX запрос - возвращаем только контент
             return render(
