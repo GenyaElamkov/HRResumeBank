@@ -1,10 +1,8 @@
-import os
-import uuid
-
 from django import forms
 
 from .models.card import Card
 from .models.file_storage import FileStorage
+from .models.profile_image import ProfileImage
 
 
 class CardCreateForm(forms.ModelForm):
@@ -98,14 +96,6 @@ class CardFillForm(forms.ModelForm):
                     initial=initial,
                 )
 
-    def _save_avatar(self, card_id: int | str, file_name: str) -> str:
-        unique_filename = f"avatar_{uuid.uuid4()}"
-        return os.path.join(
-            'avatars',
-            str(card_id),
-            f"{unique_filename}{os.path.splitext(file_name)[1]}",
-        )
-
     # TODO: Не удаляет значнеия в полях
     def save(self, commit=True):
         card = super().save(commit=False)
@@ -115,8 +105,16 @@ class CardFillForm(forms.ModelForm):
             if key in ['csrfmiddlewaretoken']:
                 continue
 
+            # Обработка изображений
+            if value and hasattr(value, 'read') and key in [
+                field.title for field in card.template.fields.all() if field.field_type == "image"
+            ]:
+                profile_image = ProfileImage(card=card, image=value)
+                profile_image.save()
+                card.values[key] = profile_image.image.name
+
             # Обработка файлов
-            if value and hasattr(value, 'read'):
+            elif value and hasattr(value, 'read'):
                 file_storage = FileStorage(card=card, uploaded_file=value)
                 file_storage.save()
                 card.values[key] = file_storage.uploaded_file.name

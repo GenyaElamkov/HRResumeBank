@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import (
     CreateView,
+    DeleteView,
     DetailView,
     ListView,
     UpdateView,
@@ -77,7 +78,6 @@ class CardDetailView(DetailView):
 
     def _add_images_to_context(self, context, card):
         images = ProfileImage.objects.filter(card=card)
-        images = ProfileImage.objects.filter(card=card)
         if images.exists():
             context['images'] = images
         else:
@@ -104,8 +104,52 @@ class CardUpdateView(UpdateView):
     form_class = CardFillForm
     template_name = "resumes/fill_card.html"
 
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        card = self.object
+
+        images = ProfileImage.objects.filter(card=card).order_by("-create_at")
+
+        self._add_files_to_context(context, card)
+        context['card_images'] = images
+
+        return context
+
+    def _add_files_to_context(self, context, card):
+        files = FileStorage.objects.filter(card=card)
+        if files.exists():
+            files_with_names = []
+            for file in files:
+                file_name = os.path.basename(file.uploaded_file.name)
+                files_with_names.append((file, file_name))
+            context['files'] = files_with_names
+        else:
+            context['files'] = None
+
     def get_success_url(self):
         return reverse("resumes:card_detail", kwargs={"pk": self.object.pk})
+
+
+class FileDeleteView(DeleteView):
+    """Удаление файлов"""
+    model = FileStorage
+    template_name = "resumes/partials/confirm_file_delete.html"
+
+    def get_success_url(self):
+        return reverse(
+            "resumes:fill_card", kwargs={"pk": self.object.card.pk},
+        )
+
+
+class ImageDeleteView(DeleteView):
+    """Удаление изображений"""
+    model = ProfileImage
+    template_name = "resumes/partials/confirm_image_delete.html"
+
+    def get_success_url(self):
+        return reverse(
+            "resumes:fill_card", kwargs={"pk": self.object.card.pk},
+        )
 
 
 class AdvancedCardSearchView(BaseCardSearchView):
