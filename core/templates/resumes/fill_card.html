@@ -22,35 +22,37 @@
                                     {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
 
                                 </label>
-
-                                {{ field }}
-
+                                <div class="mb-2">
+                                    {{ field }}
+                                </div>
                                 {% for template_field in card.template.fields.all %}
                                     {% if template_field.title == field.name %}
 
                                         <!-- Обработка изображений -->
                                         {% if template_field.field_type == "image" and field.value %}
-                                            {% for image in card_images %}
-                                                <div class="mb-2">
-                                                    <img src="{{ image.image.url }}"
-                                                        class="img-thumbnail me-2"
-                                                        style="max-height: 200px; max-width: 200px;">
-                                                    <br>
-                                                    <button type="button"
-                                                        class="btn btn-outline-danger btn-sm delete-image-btn"
-                                                        data-image-id="{{ image.pk }}"
-                                                        data-url="{% url 'resumes:delete_image' image.pk %}">
-                                                        <i class="bi bi-trash me-1"></i>Удалить
-                                                    </button>
-                                                </div>
-                                            {% endfor %}
+                                            <div class="d-flex flex-wrap gap-3">
+                                                {% for image in card_images %}
+                                                    <div class="text-center">
+                                                        <img src="{{ image.image.url }}"
+                                                            class="img-thumbnail"
+                                                            style="max-height: 200px; max-width: 200px;">
+                                                        <br>
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-sm delete-image-btn mt-2"
+                                                            data-image-id="{{ image.pk }}"
+                                                            data-url="{% url 'resumes:delete_image' image.pk %}">
+                                                            <i class="bi bi-trash me-1"></i>Удалить
+                                                        </button>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
 
                                         <!-- Обработка файлов -->
                                         {% elif field.field.widget.input_type == 'file'%}
                                             {% for file, file_name in files %}
                                                 {% if file_name %}
                                                     <div class="mb-2">
-                                                        <div class="d-flex align-items-center mb-2">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
                                                             <span class="me-2 text-truncate">
                                                                 <a href="{{ file.uploaded_file.url }}" target="_blank">
                                                                     {{ file_name }}

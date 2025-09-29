@@ -60,12 +60,14 @@
                                         <td>
                                             {% if field.field_type == 'image' %}
                                                 {% if images %}
-                                                    <img src="{{ images.first.image.url }}"
-                                                            alt="{{ key }}"
-                                                            class="rounded"
-                                                            style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
-                                                            data-bs-toggle="tooltip"
-                                                            title="{{ key }}">
+                                                    {% for image in images %}
+                                                        <img src="{{ image.image.url }}"
+                                                                alt="{{ key }}"
+                                                                class="rounded mb-1"
+                                                                style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
+                                                                data-bs-toggle="tooltip"
+                                                                title="{{ key }}">
+                                                    {% endfor %}
                                                 {% else %}
                                                     <span class="text-muted">{{ field.title }} отсуствует</span>
                                                 {% endif %}

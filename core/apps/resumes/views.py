@@ -108,7 +108,7 @@ class CardUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         card = self.object
 
-        images = ProfileImage.objects.filter(card=card).order_by("-create_at")
+        images = ProfileImage.objects.filter(card=card).order_by("create_at")
 
         self._add_files_to_context(context, card)
         context['card_images'] = images
