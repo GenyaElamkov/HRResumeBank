@@ -6,7 +6,9 @@ from .views import (
     CardDetailView,
     CardListView,
     CardUpdateView,
+    FileDeleteView,
     HomeScreenCardSearchView,
+    ImageDeleteView,
 )
 
 
@@ -19,4 +21,6 @@ urlpatterns = [
     path("card/<int:pk>/", CardDetailView.as_view(), name="card_detail"),
     path("cards/advanced-search/", AdvancedCardSearchView.as_view(), name="advanced_search_cards"),
     path("cards/home-screen/", HomeScreenCardSearchView.as_view(), name="home_screen_search"),
+    path("card/file/<int:pk>/delete/", FileDeleteView.as_view(), name="delete_file"),
+    path("card/image/<int:pk>/delete/", ImageDeleteView.as_view(), name="delete_image"),
 ]

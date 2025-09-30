@@ -1,11 +1,8 @@
-import os
-
 from django import forms
-from django.conf import settings
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 
 from .models.card import Card
+from .models.file_storage import FileStorage
+from .models.profile_image import ProfileImage
 
 
 class CardCreateForm(forms.ModelForm):
@@ -64,7 +61,11 @@ class CardFillForm(forms.ModelForm):
                     label=field_name,
                     required=field.is_required,
                     initial=initial,
-                    widget=forms.DateInput(attrs={"type": "date"}),
+                    widget=forms.DateInput(
+                        attrs={
+                            "type": "date",
+                        },
+                    ),
                 )
             elif field.field_type == "boolean":
                 self.fields[field_name] = forms.BooleanField(
@@ -99,27 +100,30 @@ class CardFillForm(forms.ModelForm):
                     initial=initial,
                 )
 
-    def _save_file(self, card_id: int | str, file_name: str) -> str:
-        """Cохраняет файл в папку карточки и возвращает путь к файлу"""
-        return os.path.join("uploads", str(card_id), file_name)
-
     # TODO: Не удаляет значнеия в полях
     def save(self, commit=True):
         card = super().save(commit=False)
-        card_id = self.instance.id
+        card.save()
+
         for key, value in self.cleaned_data.items():
-            if key not in ['csrfmiddlewaretoken']:
-                if value:
-                    if hasattr(value, 'read'):
-                        path = default_storage.save(self._save_file(card_id, value.name), ContentFile(value.read()))
-                        card.values[key] = os.path.join(settings.MEDIA_URL, path)
-                    else:
-                        card.values[key] = value
-                else:
-                    if key in card.values:
-                        continue
-                    else:
-                        card.values[key] = None
+            if key in ['csrfmiddlewaretoken']:
+                continue
+
+            # Обработка изображений
+            if value and hasattr(value, 'read') and key in [
+                field.title for field in card.template.fields.all() if field.field_type == "image"
+            ]:
+                profile_image = ProfileImage(card=card, image=value)
+                profile_image.save()
+                card.values[key] = profile_image.image.name
+
+            # Обработка файлов
+            elif value and hasattr(value, 'read'):
+                file_storage = FileStorage(card=card, uploaded_file=value)
+                file_storage.save()
+                card.values[key] = file_storage.uploaded_file.name
+            else:
+                card.values[key] = value
 
         if commit:
             card.save()

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load file_filters %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Подтверждение удаления
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <h5>Вы уверены, что хотите удалить файл?</h5>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-file-earmark me-2"></i>
+                        <strong>{{ object.uploaded_file.name|basename }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Размер: {{ object.uploaded_file.size|filesizeformat }} |
+                            Добавлен: {{ object.create_at|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+
+                    <p class="text-muted">
+                        Это действие нельзя отменить. Файл будет полностью удален из системы.
+                    </p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'resumes:fill_card' pk=object.card.id %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Отмена
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i>Удалить файл
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

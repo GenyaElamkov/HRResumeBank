@@ -15,26 +15,78 @@
                         {% csrf_token %}
 
                         {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                {{ field.label }}
-                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
-                            </label>
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
 
-                            {{ field }}
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
 
-                            {% if field.help_text %}
-                            <div class="form-text">{{ field.help_text }}</div>
-                            {% endif %}
+                                </label>
+                                <div class="mb-2">
+                                    {{ field }}
+                                </div>
+                                {% for template_field in card.template.fields.all %}
+                                    {% if template_field.title == field.name %}
 
-                            {% if field.errors %}
-                            <div class="alert alert-danger mt-2 p-2">
-                                {% for error in field.errors %}
-                                <small><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</small>
+                                        <!-- Обработка изображений -->
+                                        {% if template_field.field_type == "image" and field.value %}
+                                            <div class="d-flex flex-wrap gap-3">
+                                                {% for image in card_images %}
+                                                    <div class="text-center">
+                                                        <img src="{{ image.image.url }}"
+                                                            class="img-thumbnail"
+                                                            style="max-height: 200px; max-width: 200px;">
+                                                        <br>
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-sm delete-image-btn mt-2"
+                                                            data-image-id="{{ image.pk }}"
+                                                            data-url="{% url 'resumes:delete_image' image.pk %}">
+                                                            <i class="bi bi-trash me-1"></i>Удалить
+                                                        </button>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+
+                                        <!-- Обработка файлов -->
+                                        {% elif field.field.widget.input_type == 'file'%}
+                                            {% for file, file_name in files %}
+                                                {% if file_name %}
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="me-2 text-truncate">
+                                                                <a href="{{ file.uploaded_file.url }}" target="_blank">
+                                                                    {{ file_name }}
+                                                                </a>
+                                                            </span>
+
+                                                            <button type="button"
+                                                                class="btn btn-outline-danger btn-sm delete-file-btn"
+                                                                data-file-id="{{ file.pk }}"
+                                                                data-file-url="{% url 'resumes:delete_file' file.pk %}">
+                                                                <i class="bi bi-trash me-1"></i>Удалить
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endif %}
                                 {% endfor %}
+
+
+
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+
+                                {% if field.errors %}
+                                    <div class="alert alert-danger mt-2 p-2">
+                                        {% for error in field.errors %}
+                                            <small><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                        </div>
                         {% endfor %}
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
@@ -51,6 +103,20 @@
         </div>
     </div>
 </div>
+{% comment %}
+{% for image in card_images %}
+    <form method="post" action="{% url 'resumes:delete_image' image.pk %}" id="delete-image-form-{{ image.pk }}" style="display: none;">
+        {% csrf_token %}
+    </form>
+{% endfor %}
+{% endcomment %}
+{% comment %}
+{% for file, file_name in files %}
+    <form method="post" action="{% url 'resumes:delete_file' file.pk %}" id="delete-file-form-{{ file.pk }}" style="display: none;">
+        {% csrf_token %}
+    </form>
+{% endfor %}
+{% endcomment %}
 
 <style>
     .form-control:focus {
@@ -95,6 +161,54 @@
             }, false);
         });
     });
+
+
+
+    // Обработка удаления изображений
+    document.querySelectorAll('.delete-image-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const imageId = this.getAttribute('data-image-id');
+            const url = this.getAttribute('data-url');
+            window.location.href = url;
+
+            // if (confirm('Удалить изображение?')) {
+            //     const form = document.getElementById('delete-image-form-' + imageId);
+            //     if (form) {
+            //         form.submit();
+            //     }
+            // }
+        });
+    });
+
+    // Обработка удаления файлов
+    document.querySelectorAll('.delete-file-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const fileId = this.getAttribute('data-file-id');
+            const url = this.getAttribute('data-file-url');
+            window.location.href = url;
+
+            // if (confirm('Удалить файл?')) {
+            //     const form = document.getElementById('delete-file-form-' + fileId);
+            //     if (form) {
+            //         form.submit();
+            //     }
+            // }
+        });
+    });
+
+
+        // Функция для очистки поля файла
+    //     function clearFileInput(inputId) {
+    //     const input = document.getElementById(inputId);
+    //     if (input) {
+    //         input.value = '';
+    //         // Скрываем кнопку удаления после очистки
+    //         const deleteButton = input.previousElementSibling;
+    //         if (deleteButton && deleteButton.classList.contains('d-flex')) {
+    //             deleteButton.style.display = 'none';
+    //         }
+    //     }
+    // }
 </script>
 
 {% endblock %}

@@ -15,14 +15,12 @@ class BaseCardSearchView(View):
     """Базовое представление поиска карточек с общей логикой"""
 
     def get(self, request, *args, **kwargs):
-        # Получение параметров запроса
         query = request.GET.get("q", "").strip()
         template_id = request.GET.get("template")
         user_id = request.GET.get("created")
         page = request.GET.get('page', 1)
 
-        # Базовый queryset
-        results = Card.objects.all()
+        results = Card.objects.all().select_related('template')
         cards_matches = []
 
         # Фильтрация по пользователям
@@ -37,9 +35,13 @@ class BaseCardSearchView(View):
         if query:
             words = query.split()
             q_objects = Q()
+
+            # Если | в поисковой строке, то поиск по OR
+            # Если & в поисковой строке, то поиск по AND
             for word in words:
                 q_objects &= Q(values__icontains=word)
-            results = results.filter(q_objects)
+
+            results = results.filter(q_objects).distinct()
             cards_matches = self.get_field_search(results, words)
         else:
             cards_matches = list(results)
@@ -57,7 +59,7 @@ class BaseCardSearchView(View):
         templates = Template.objects.all()
         users = CustomUser.objects.all()
 
-        return self.render_to_response({
+        context = {
             "results": paginated_results,
             "query": query,
             "template_id": template_id,
@@ -67,7 +69,8 @@ class BaseCardSearchView(View):
             "paginator": paginator,
             "page_obj": paginated_results,
             "is_paginated": paginator.num_pages > 1,
-        })
+        }
+        return self.render_to_response(context=context)
 
     def get_field_search(self, results, words):
         """Метод поиска по полям (должен быть реализован в подклассах)"""

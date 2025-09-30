@@ -1,8 +1,11 @@
+import os
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import (
     CreateView,
+    DeleteView,
     DetailView,
     ListView,
     UpdateView,
@@ -15,24 +18,38 @@ from .forms import (
     CardFillForm,
 )
 from .models.card import Card
+from .models.file_storage import FileStorage
+from .models.profile_image import ProfileImage
 
 
 class CardListView(ListView):
     """Список карточек"""
     template_name = "resumes/card_list.html"
-    context_object_name = "results"
+    context_object_name = "card_list"
     paginate_by = 52
     allow_empty = True
-    queryset = Card.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        context = self.get_context_data()
+    def get_queryset(self):
+        return Card.objects.all().select_related('template')
 
-        if request.headers.get('HX-Request'):
-            return render(request, 'resumes/partials/card_list_content.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        return self.render_to_response(context)
+        # Преобразуем данные для шаблона
+        cards = []
+        for card in context["card_list"]:
+            cards.append({
+                "card": card,
+                "values": {
+                    field.title: card.values.get(field.title, "")
+                    for field in card.template.fields.all()
+                },
+                "image": ProfileImage.objects.filter(card=card).first(),
+            })
+
+        context["card_list"] = cards
+        context["query"] = self.request.GET.get('q', '')
+        return context
 
 
 class CardDetailView(DetailView):
@@ -42,6 +59,29 @@ class CardDetailView(DetailView):
 
     def get_queryset(self):
         return super().get_queryset().select_related("template", "created")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        card = self.object
+
+        self._add_files_to_context(context, card)
+        self._add_images_to_context(context, card)
+        return context
+
+    def _add_files_to_context(self, context, card):
+        files = FileStorage.objects.filter(card=card)
+        if files.exists():
+            files_name = [os.path.basename(file.uploaded_file.name) for file in files]
+            context['files'] = zip(files, files_name)
+        else:
+            context['files'] = None
+
+    def _add_images_to_context(self, context, card):
+        images = ProfileImage.objects.filter(card=card)
+        if images.exists():
+            context['images'] = images
+        else:
+            context['images'] = None
 
 
 class CardCreateView(LoginRequiredMixin, CreateView):
@@ -64,8 +104,52 @@ class CardUpdateView(UpdateView):
     form_class = CardFillForm
     template_name = "resumes/fill_card.html"
 
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        card = self.object
+
+        images = ProfileImage.objects.filter(card=card).order_by("create_at")
+
+        self._add_files_to_context(context, card)
+        context['card_images'] = images
+
+        return context
+
+    def _add_files_to_context(self, context, card):
+        files = FileStorage.objects.filter(card=card)
+        if files.exists():
+            files_with_names = []
+            for file in files:
+                file_name = os.path.basename(file.uploaded_file.name)
+                files_with_names.append((file, file_name))
+            context['files'] = files_with_names
+        else:
+            context['files'] = None
+
     def get_success_url(self):
         return reverse("resumes:card_detail", kwargs={"pk": self.object.pk})
+
+
+class FileDeleteView(DeleteView):
+    """Удаление файлов"""
+    model = FileStorage
+    template_name = "resumes/partials/confirm_file_delete.html"
+
+    def get_success_url(self):
+        return reverse(
+            "resumes:fill_card", kwargs={"pk": self.object.card.pk},
+        )
+
+
+class ImageDeleteView(DeleteView):
+    """Удаление изображений"""
+    model = ProfileImage
+    template_name = "resumes/partials/confirm_image_delete.html"
+
+    def get_success_url(self):
+        return reverse(
+            "resumes:fill_card", kwargs={"pk": self.object.card.pk},
+        )
 
 
 class AdvancedCardSearchView(BaseCardSearchView):
@@ -107,11 +191,31 @@ class HomeScreenCardSearchView(BaseCardSearchView):
     """Представление поиска карточек на основном экране"""
 
     def get_field_search(self, results_query, words: list) -> list:
-        """"""
-        return results_query
+        """Упрощенный поиск по ключевым словам"""
+        matching_cards = []
+
+        for card in results_query:
+            card_values = ' '.join(str(value) for value in card.values.values()).lower()
+
+            if any(word.lower() in card_values for word in words):
+                matching_cards.append(card)
+
+        return matching_cards
 
     def render_to_response(self, context):
         """Рендеринг с использованием шаблона card_list.html"""
+        card_list = []
+        for card in context['results']:
+            card_list.append({
+                "card": card,
+                "values": {
+                    field.title: card.values.get(field.title, "")
+                    for field in card.template.fields.all()
+                },
+                "image": ProfileImage.objects.filter(card=card).first(),
+            })
+
+        context["card_list"] = card_list
         if self.request.headers.get('HX-Request'):
             # HTMX запрос - возвращаем только контент
             return render(
