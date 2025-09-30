@@ -1,3 +1,5 @@
+{% load parse_date %}
+
 <div class="resume-grid">
     {% if card_list %}
         {% for item in card_list %}
@@ -29,9 +31,16 @@
 
                                             </div>
 
+                                        {% elif value %}
+                                            {% if field.field_type == 'date' %}
+                                                <p class="mb-1"><strong>{{ key }}:</strong> {{ value|parse_date|date:"d.m.Y" }}</p>
+                                            {% else %}
+                                                <p class="mb-1"><strong>{{ key }}:</strong> {{ value }}</p>
+                                            {% endif %}
                                         {% else %}
-                                            <p class="mb-1"><strong>{{ key }}:</strong> {{ value }}</p>
+                                            <p class="mb-1"><strong>{{ key }}:</strong> Не указано</p>
                                         {% endif %}
+
                                     </div>
                                 {% endif %}
                             {% endfor %}

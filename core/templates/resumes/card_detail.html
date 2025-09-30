@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load parse_date %}
 
 {% block content %}
 <div class="container mt-4">
@@ -96,11 +97,13 @@
                                                 {% endif %}
 
                                             {% elif value %}
-                                                {{ value }}
-
+                                                {% if field.field_type == 'date' %}
+                                                    {{ value|parse_date|date:"d.m.Y" }}
+                                                {% else %}
+                                                    {{ value }}
+                                                {% endif %}
                                             {% else %}
                                                 <span class="text-muted">Не указано</span>
-
                                             {% endif %}
                                         </td>
                                     </tr>
