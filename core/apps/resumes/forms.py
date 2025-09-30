@@ -1,5 +1,7 @@
 from django import forms
 
+from tinymce.widgets import TinyMCE
+
 from .models.card import Card
 from .models.file_storage import FileStorage
 from .models.profile_image import ProfileImage
@@ -48,7 +50,18 @@ class CardFillForm(forms.ModelForm):
                     label=field_name,
                     required=field.is_required,
                     initial=initial,
-                    widget=forms.Textarea,
+                    # 'cols': 50, для чего
+                    widget=TinyMCE(
+                        attrs={'rows': 10},
+                        mce_attrs={
+                            'branding': False,
+
+                            'help_tabs': [
+                                'shortcuts',
+                                'keyboardnav',
+                            ],
+                        },
+                    ),
                 )
             elif field.field_type == "number":
                 self.fields[field_name] = forms.IntegerField(

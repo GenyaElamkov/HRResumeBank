@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load strip_html %}
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
@@ -31,7 +32,7 @@
 <div class="row">
     <div class="col-12">
         <h3 class="mb-3">
-            {% if query %}Результаты для "{{ query }}":{% else %}Результаты фильтрации:{% endif %}
+            {% if query %}Результаты для «{{ query }}»:{% else %}Результаты фильтрации:{% endif %}
             <span class="badge bg-secondary ms-2">{{ page_obj.paginator.count }}</span>
         </h3>
 
@@ -40,7 +41,7 @@
             {% for card in results %}
             <div class="list-group-item">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ card.template.title }} — {{ card.main_name }}</h5>
+                    <h5 class="mb-1">{{ card.template.title }} — {{ card.main_name|strip_html }}</h5>
                     <small class="text-muted">#{{ card.id }}</small>
                 </div>
 
@@ -51,7 +52,7 @@
                         {% for field_name, field_value in card.matched_fields.items %}
                         <li>
                             <span class="fw-medium">{{ field_name }}:</span>
-                            <span class="text-primary">{{ field_value|truncatechars:100 }}</span>
+                            <span class="text-primary">{{ field_value|truncatechars:100|strip_html }}</span>
                         </li>
                         {% endfor %}
                     </ul>
