@@ -35,7 +35,6 @@ class CardListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Преобразуем данные для шаблона
         cards = []
         for card in context["card_list"]:
             cards.append({
@@ -193,7 +192,6 @@ class HomeScreenCardSearchView(BaseCardSearchView):
     def get_field_search(self, results_query, words: list) -> list:
         """Упрощенный поиск по ключевым словам"""
         matching_cards = []
-
         for card in results_query:
             card_values = ' '.join(str(value) for value in card.values.values()).lower()
 

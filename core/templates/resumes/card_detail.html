@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load parse_date %}
 
 {% block content %}
 <div class="container mt-4">
@@ -13,7 +14,7 @@
 
     <!-- Информация о карточке -->
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card bg-light">
                 <div class="card-body">
                     <h6 class="card-title text-muted">Информация о карточке: ID №{{ card.pk }}</h6>
@@ -58,50 +59,54 @@
                                     <tr>
                                         <td class="fw-bold text-primary">{{ key }}</td>
                                         <td>
-                                            {% if field.field_type == 'image' %}
-                                                {% if images %}
-                                                    {% for image in images %}
-                                                        <img src="{{ image.image.url }}"
-                                                                alt="{{ key }}"
-                                                                class="rounded mb-1"
-                                                                style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
-                                                                data-bs-toggle="tooltip"
-                                                                title="{{ key }}">
-                                                    {% endfor %}
-                                                {% else %}
-                                                    <span class="text-muted">{{ field.title }} отсуствует</span>
-                                                {% endif %}
+                                            <div class="scrollable-field">
+                                                {% if field.field_type == 'image' %}
+                                                    {% if images %}
+                                                        {% for image in images %}
+                                                            <img src="{{ image.image.url }}"
+                                                                    alt="{{ key }}"
+                                                                    class="rounded mb-1"
+                                                                    style="height: 200px; width: auto; max-width: 200px; object-fit: cover;"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="{{ key }}">
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <span class="text-muted">{{ field.title }} отсуствует</span>
+                                                    {% endif %}
 
-                                            {% elif field.field_type == 'file'%}
-                                                {% if files %}
-                                                    {% for file, file_name in files %}
+                                                {% elif field.field_type == 'file'%}
+                                                    {% if files %}
+                                                        {% for file, file_name in files %}
 
-                                                            <div class="d-flex align-items-center">
-                                                                <i class="bi bi-file-earmark me-2 fs-4 text-secondary"></i>
-                                                                <div>
-                                                                    <a href="{{ file.uploaded_file.url }}" class="text-decoration-none fw-bold" target="_blank">
-                                                                        {{ file_name }}
-                                                                    </a>
-                                                                    <br>
-                                                                    <small class="text-muted">
-                                                                        {{ file.uploaded_file.size|filesizeformat }} |
-                                                                        {{ file.create_at|date:"d.m.Y H:i" }}
-                                                                    </small>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-file-earmark me-2 fs-4 text-secondary"></i>
+                                                                    <div>
+                                                                        <a href="{{ file.uploaded_file.url }}" class="text-decoration-none fw-bold" target="_blank">
+                                                                            {{ file_name }}
+                                                                        </a>
+                                                                        <br>
+                                                                        <small class="text-muted">
+                                                                            {{ file.uploaded_file.size|filesizeformat }} |
+                                                                            {{ file.create_at|date:"d.m.Y H:i" }}
+                                                                        </small>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
 
-                                                    {% endfor %}
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <span class="text-muted">{{ field.title }} отсутствует</span>
+                                                    {% endif %}
+
+                                                {% elif value %}
+                                                    {% if field.field_type == 'date' %}
+                                                        {{ value|parse_date|date:"d.m.Y" }}
+                                                    {% else %}
+                                                        {{ value|safe }}
+                                                    {% endif %}
                                                 {% else %}
-                                                    <span class="text-muted">{{ field.title }} отсутствует</span>
+                                                    <span class="text-muted">Не указано</span>
                                                 {% endif %}
-
-                                            {% elif value %}
-                                                {{ value }}
-
-                                            {% else %}
-                                                <span class="text-muted">Не указано</span>
-
-                                            {% endif %}
+                                            </div>
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -161,6 +166,18 @@
         padding: 0.5rem 1rem;
         min-width: auto;
         flex: 1 1 auto;
+    }
+
+    .scrollable-field {
+        max-height: 1000px;
+        overflow-y: auto;
+        white-space: normal;
+    }
+
+    @media (max-width: 768px) {
+        .scrollable-field {
+            max-height: 1000px;
+        }
     }
 
     @media (max-width: 575.98px) {

@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "core.apps.resumes.apps.ResumesConfig",
     # app
     'django_extensions',
+    'tinymce',
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
