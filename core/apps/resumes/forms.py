@@ -61,7 +61,11 @@ class CardFillForm(forms.ModelForm):
                     label=field_name,
                     required=field.is_required,
                     initial=initial,
-                    widget=forms.DateInput(attrs={"type": "date"}),
+                    widget=forms.DateInput(
+                        attrs={
+                            "type": "date",
+                        },
+                    ),
                 )
             elif field.field_type == "boolean":
                 self.fields[field_name] = forms.BooleanField(
