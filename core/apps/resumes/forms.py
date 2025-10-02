@@ -42,20 +42,20 @@ class CardFillForm(forms.ModelForm):
         template_fields = self.instance.template.fields.all()
 
         for field in template_fields:
-            field_name = field.title
-            initial = self.instance.values.get(field_name)
+            # для редактора текста в TinyMCE
+            field_name = field.title.replace(' ', '_')
+
+            initial = self.instance.values.get(field.title)
 
             if field.field_type == "text":
                 self.fields[field_name] = forms.CharField(
-                    label=field_name,
+                    label=field.title,
                     required=field.is_required,
                     initial=initial,
-                    # 'cols': 50, для чего
                     widget=TinyMCE(
-                        attrs={'rows': 10},
+                        attrs={'cols': 100, 'rows': 10},
                         mce_attrs={
                             'branding': False,
-
                             'help_tabs': [
                                 'shortcuts',
                                 'keyboardnav',
@@ -65,13 +65,13 @@ class CardFillForm(forms.ModelForm):
                 )
             elif field.field_type == "number":
                 self.fields[field_name] = forms.IntegerField(
-                    label=field_name,
+                    label=field.title,
                     required=field.is_required,
                     initial=initial,
                 )
             elif field.field_type == "date":
                 self.fields[field_name] = forms.DateField(
-                    label=field_name,
+                    label=field.title,
                     required=field.is_required,
                     initial=initial,
                     widget=forms.DateInput(
@@ -82,33 +82,33 @@ class CardFillForm(forms.ModelForm):
                 )
             elif field.field_type == "boolean":
                 self.fields[field_name] = forms.BooleanField(
-                    label=field_name,
+                    label=field.title,
                     required=False,
                     initial=initial,
                 )
             elif field.field_type == "email":
                 self.fields[field_name] = forms.EmailField(
-                    label=field_name,
+                    label=field.title,
                     required=False,
                     initial=initial,
                 )
             elif field.field_type == "choice":
                 choices = [(c.strip(), c.strip()) for c in field.choices.split(",")]
                 self.fields[field_name] = forms.ChoiceField(
-                    label=field_name,
+                    label=field.title,
                     choices=choices,
                     required=field.is_required,
                     initial=initial,
                 )
             elif field.field_type == "image":
                 self.fields[field_name] = forms.ImageField(
-                    label=field_name,
+                    label=field.title,
                     required=field.is_required,
                     initial=initial,
                 )
             elif field.field_type == "file":
                 self.fields[field_name] = forms.FileField(
-                    label=field_name,
+                    label=field.title,
                     required=field.is_required,
                     initial=initial,
                 )
@@ -121,7 +121,8 @@ class CardFillForm(forms.ModelForm):
         for key, value in self.cleaned_data.items():
             if key in ['csrfmiddlewaretoken']:
                 continue
-
+            # для сохранения изображений в values
+            key = key.replace('_', ' ')
             # Обработка изображений
             if value and hasattr(value, 'read') and key in [
                 field.title for field in card.template.fields.all() if field.field_type == "image"

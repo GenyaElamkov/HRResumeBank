@@ -55,7 +55,7 @@ superuser:
 
 .PHONY: collectstatic
 collectstatic:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) collectstatic
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) collectstatic --clear
 
 # Faker
 .PHONY: seed

@@ -8,6 +8,7 @@ from .models.card import Card
 from .models.file_storage import FileStorage
 from .models.profile_image import ProfileImage
 from .models.template_field import TemplateField
+from .templatetags.strip_html import strip_html
 
 
 @receiver(post_save, sender=Card)
@@ -24,7 +25,7 @@ def update_entity_main_name(sender, instance, **kwargs):
             field_value = instance.values[field_title]
 
             if field_value:
-                instance.main_name = str(field_value)
+                instance.main_name = strip_html(str(field_value))
                 Card.objects.filter(pk=instance.pk).update(main_name=instance.main_name)
                 return
 

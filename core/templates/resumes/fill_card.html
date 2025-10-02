@@ -163,8 +163,6 @@
         });
     });
 
-
-
     // Обработка удаления изображений
     document.querySelectorAll('.delete-image-btn').forEach(button => {
         button.addEventListener('click', function() {
@@ -197,6 +195,13 @@
         });
     });
 
+    // Для корректной работы ID с подчеркиваниями
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     // Автоматическая замена ID с подчеркиваниями на пробелы для корректной работы
+    //     document.querySelectorAll('[id^="id_"]').forEach(el => {
+    //         el.id = el.id.replace(/_/g, ' ')
+    //     })
+    // })
 
         // Функция для очистки поля файла
     //     function clearFileInput(inputId) {
