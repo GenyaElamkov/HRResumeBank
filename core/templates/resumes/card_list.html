@@ -9,6 +9,11 @@
         <div class="col-md-8">
             <h1 class="h3 mb-0">База резюме службы безопасности</h1>
             <p class="text-muted">Управление кандидатами и сотрудниками</p>
+            {% if user.is_authenticated %}
+                <p class="text-muted mt-2 small">
+                    <i class="bi bi-person-fill me-1"></i>Вы вошли как: <strong>{{ user.get_full_name|default:user.username }}</strong>
+                </p>
+            {% endif %}
         </div>
     </div>
 
