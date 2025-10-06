@@ -22,15 +22,19 @@
                                     {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
 
                                 </label>
+
                                 <div class="mb-2">
                                     {{ form.media }}
                                     {{ field }}
                                 </div>
+
                                 {% for template_field in card.template.fields.all %}
+
                                     {% if template_field.title == field.name %}
 
-                                        <!-- Обработка изображений -->
                                         {% if template_field.field_type == "image" and field.value %}
+                                            <!-- Обработка изображений -->
+
                                             <div class="d-flex flex-wrap gap-3">
                                                 {% for image in card_images %}
                                                     <div class="text-center">
@@ -48,8 +52,9 @@
                                                 {% endfor %}
                                             </div>
 
-                                        <!-- Обработка файлов -->
-                                        {% elif field.field.widget.input_type == 'file'%}
+                                        {% elif template_field.field_type == 'file' %}
+                                            <!-- Обработка файлов -->
+
                                             {% for file, file_name in files %}
                                                 {% if file_name %}
                                                     <div class="mb-2">
@@ -70,11 +75,11 @@
                                                     </div>
                                                 {% endif %}
                                             {% endfor %}
+
                                         {% endif %}
+
                                     {% endif %}
                                 {% endfor %}
-
-
 
                                 {% if field.help_text %}
                                     <div class="form-text">{{ field.help_text }}</div>
@@ -104,20 +109,6 @@
         </div>
     </div>
 </div>
-{% comment %}
-{% for image in card_images %}
-    <form method="post" action="{% url 'resumes:delete_image' image.pk %}" id="delete-image-form-{{ image.pk }}" style="display: none;">
-        {% csrf_token %}
-    </form>
-{% endfor %}
-{% endcomment %}
-{% comment %}
-{% for file, file_name in files %}
-    <form method="post" action="{% url 'resumes:delete_file' file.pk %}" id="delete-file-form-{{ file.pk }}" style="display: none;">
-        {% csrf_token %}
-    </form>
-{% endfor %}
-{% endcomment %}
 
 <style>
     .form-control:focus {
@@ -138,6 +129,7 @@
     select.form-control {
         background-color: #fff;
     }
+
 </style>
 
 <script>
@@ -169,13 +161,6 @@
             const imageId = this.getAttribute('data-image-id');
             const url = this.getAttribute('data-url');
             window.location.href = url;
-
-            // if (confirm('Удалить изображение?')) {
-            //     const form = document.getElementById('delete-image-form-' + imageId);
-            //     if (form) {
-            //         form.submit();
-            //     }
-            // }
         });
     });
 
@@ -185,13 +170,6 @@
             const fileId = this.getAttribute('data-file-id');
             const url = this.getAttribute('data-file-url');
             window.location.href = url;
-
-            // if (confirm('Удалить файл?')) {
-            //     const form = document.getElementById('delete-file-form-' + fileId);
-            //     if (form) {
-            //         form.submit();
-            //     }
-            // }
         });
     });
 
@@ -203,18 +181,6 @@
     //     })
     // })
 
-        // Функция для очистки поля файла
-    //     function clearFileInput(inputId) {
-    //     const input = document.getElementById(inputId);
-    //     if (input) {
-    //         input.value = '';
-    //         // Скрываем кнопку удаления после очистки
-    //         const deleteButton = input.previousElementSibling;
-    //         if (deleteButton && deleteButton.classList.contains('d-flex')) {
-    //             deleteButton.style.display = 'none';
-    //         }
-    //     }
-    // }
 </script>
 
 {% endblock %}

@@ -94,6 +94,12 @@ class CardFillForm(forms.ModelForm):
             label=field.title,
             required=field.is_required,
             initial=initial,
+            widget=forms.CheckboxInput(
+                # Bootstrap
+                attrs={
+                    'class': 'form-check-input',
+                },
+            ),
         )
 
     def _add_email_field(self, field, field_name: str, initial):
