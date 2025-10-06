@@ -40,7 +40,7 @@ class Card(TimeBaseModel):
         verbose_name = "Карточка"
         verbose_name_plural = "Карточки"
         db_table = "card"
-        ordering = ['create_at']
+        ordering = ['-create_at']
         indexes = [
             GinIndex(fields=["values"]),
         ]
