@@ -29,8 +29,8 @@ class TemplateFieldPerm(StrEnum):
     """Разрешение на динамические поля модели EntityData"""
     ADD = 'add_templatefield'
     CHANGE = 'change_templatefield'
-    DELETE = 'delete_template_field'
-    VIEW = 'view_template_field'
+    DELETE = 'delete_templatefield'
+    VIEW = 'view_templatefield'
 
 
 class CardPerm(StrEnum):
