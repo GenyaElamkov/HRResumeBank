@@ -25,20 +25,20 @@ class TemplatePerm(StrEnum):
     VIEW = 'view_template'
 
 
-class EntityPerm(StrEnum):
-    """Разрешения в резуюме/сущность модели Entity"""
-    ADD = 'add_entity'
-    CHANGE = 'change_entity'
-    DELETE = 'delete_entity'
-    VIEW = 'view_entity'
-
-
-class EntityDataPerm(StrEnum):
+class TemplateFieldPerm(StrEnum):
     """Разрешение на динамические поля модели EntityData"""
-    ADD = 'add_entitydata'
-    CHANGE = 'change_entitydata'
-    DELETE = 'delete_entitydata'
-    VIEW = 'view_entitydata'
+    ADD = 'add_templatefield'
+    CHANGE = 'change_templatefield'
+    DELETE = 'delete_template_field'
+    VIEW = 'view_template_field'
+
+
+class CardPerm(StrEnum):
+    """Разрешения в резуюме/сущность модели Entity"""
+    ADD = 'add_card'
+    CHANGE = 'change_card'
+    DELETE = 'delete_card'
+    VIEW = 'view_card'
 
 
 def create_default_groups(sender, **kwargs):
@@ -57,26 +57,23 @@ def create_default_groups(sender, **kwargs):
             TemplatePerm.CHANGE,
             TemplatePerm.DELETE,
             TemplatePerm.VIEW,
-            EntityPerm.ADD,
-            EntityPerm.CHANGE,
-            EntityPerm.DELETE,
-            EntityPerm.VIEW,
-            EntityDataPerm.ADD,
-            EntityDataPerm.CHANGE,
-            EntityDataPerm.DELETE,
-            EntityDataPerm.VIEW,
+            TemplateFieldPerm.ADD,
+            TemplateFieldPerm.CHANGE,
+            TemplateFieldPerm.DELETE,
+            TemplateFieldPerm.VIEW,
+            CardPerm.ADD,
+            CardPerm.CHANGE,
+            CardPerm.DELETE,
+            CardPerm.VIEW,
         ],
         "Редактор": [
-            EntityPerm.ADD,
-            EntityPerm.CHANGE,
-            EntityPerm.VIEW,
-            EntityDataPerm.ADD,
-            EntityDataPerm.CHANGE,
-            EntityDataPerm.VIEW,
+            CardPerm.ADD,
+            CardPerm.CHANGE,
+            CardPerm.VIEW,
+
         ],
         "Читатель": [
-            EntityPerm.VIEW,
-            EntityDataPerm.VIEW,
+            CardPerm.VIEW,
         ],
     }
 

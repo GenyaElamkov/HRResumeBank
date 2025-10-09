@@ -18,7 +18,7 @@ class Card(TimeBaseModel):
     created = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name="Кто создал запись",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="created_template",
     )
     values = models.JSONField(
@@ -40,7 +40,7 @@ class Card(TimeBaseModel):
         verbose_name = "Карточка"
         verbose_name_plural = "Карточки"
         db_table = "card"
-        ordering = ['create_at']
+        ordering = ['-create_at']
         indexes = [
             GinIndex(fields=["values"]),
         ]

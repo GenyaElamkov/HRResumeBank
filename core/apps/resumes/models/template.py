@@ -19,6 +19,6 @@ class Template(TimeBaseModel):
         return self.title
 
     class Meta:
-        verbose_name = "Шаблон резюме/карточка"
-        verbose_name_plural = "Шаблоны резюме/карточки"
+        verbose_name = "Шаблон"
+        verbose_name_plural = "Шаблоны"
         db_table = "template"

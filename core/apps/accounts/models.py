@@ -3,7 +3,7 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    """Кастомная модель User"""
+    """Кастомная модель пользователя Django с поддержкой отчества."""
 
     surname = models.CharField(
         verbose_name="Отчество",
@@ -13,12 +13,15 @@ class CustomUser(AbstractUser):
     )
 
     def get_full_name(self):
+        """Формирует полное имя с отчеством."""
         full_name = super().get_full_name()
+        parts = full_name.split(" ") if full_name else []
         if self.surname:
-            full_name = f"{full_name} {self.surname}" if full_name else self.surname
-        return full_name or self.username
+            parts.insert(1, self.surname)
+        return ' '.join(parts) or self.username
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
         db_table = "custom_user"
+        indexes = [models.Index(fields=['username']), models.Index(fields=['email'])]

@@ -100,9 +100,14 @@
                                                 {% elif value %}
                                                     {% if field.field_type == 'date' %}
                                                         {{ value|parse_date|date:"d.m.Y" }}
+                                                    {% endif %}
+
+                                                    {% if value == True %}
+                                                        <i class="bi bi-check-circle-fill text-success"></i>
                                                     {% else %}
                                                         {{ value|safe }}
                                                     {% endif %}
+                                                    
                                                 {% else %}
                                                     <span class="text-muted">Не указано</span>
                                                 {% endif %}

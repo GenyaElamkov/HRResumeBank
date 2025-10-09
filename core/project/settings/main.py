@@ -17,6 +17,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'main-app']
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -31,7 +33,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'tinymce',
 ]
-
+# X_FRAME_OPTIONS = "SAMEORIGIN"                      # noqa
+# SILENCED_SYSTEM_CHECKS = ["security.W019"]          # noqa
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 MIDDLEWARE = [

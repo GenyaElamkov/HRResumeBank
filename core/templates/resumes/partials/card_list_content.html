@@ -35,6 +35,10 @@
                                         {% elif value %}
                                             {% if field.field_type == 'date' %}
                                                 <p class="mb-1"><strong>{{ key }}:</strong> {{ value|parse_date|date:"d.m.Y" }}</p>
+                                            {% endif %}
+
+                                            {% if value == True %}
+                                                <p class="mb-1"><strong>{{ key }}:</strong> <i class="bi bi-check-circle-fill text-success"></i></p>
                                             {% else %}
                                                 <p class="mb-1"><strong>{{ key }}:</strong> {{ value|strip_html }}</p>
                                             {% endif %}
