@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
@@ -23,7 +24,6 @@ class CustomUserAdmin(UserAdmin):
                     "is_staff",
                     "is_superuser",
                     "groups",
-                    # "user_permissions",
                 ),
             },
         ),
@@ -49,3 +49,17 @@ class CustomUserAdmin(UserAdmin):
 
     search_fields = ("username", "email")
     ordering = ("username",)
+
+    def get_form(self, request, obj=None, **kwargs):
+        """Скрываем поле is_superuser для обычных пользователей"""
+        form = super().get_form(request, obj, **kwargs)
+        if not request.user.is_superuser:
+            form.base_fields['is_superuser'].widget = forms.HiddenInput()
+            print('-->', form.base_fields['is_superuser'])
+        return form
+
+    def get_queryset(self, request):
+        """Скрываем superuser для обычных пользователей"""
+        if not request.user.is_superuser:
+            return super().get_queryset(request).filter(is_superuser=False)
+        return super().get_queryset(request)
