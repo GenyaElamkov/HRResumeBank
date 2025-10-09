@@ -3,11 +3,7 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    """Кастомная модель пользователя Django с поддержкой отчества.
-
-    Attributes:
-        surname (CharField): Отчество пользователя. Необязательное поле.
-    """
+    """Кастомная модель пользователя Django с поддержкой отчества."""
 
     surname = models.CharField(
         verbose_name="Отчество",
@@ -17,11 +13,7 @@ class CustomUser(AbstractUser):
     )
 
     def get_full_name(self):
-        """Формирует полное имя с отчеством.
-
-        Returns:
-            str: Имя, отчество, фамилия или username.
-        """
+        """Формирует полное имя с отчеством."""
         full_name = super().get_full_name()
         parts = full_name.split(" ") if full_name else []
         if self.surname:
