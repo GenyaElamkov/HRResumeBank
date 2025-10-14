@@ -15,18 +15,19 @@ class HelpCategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
 
-@admin.register(HelpArticle)
-class HelpArticleAdmin(admin.ModelAdmin):
-    list_display = ['title', 'category', 'is_published', 'is_featured', 'view_count']
-    list_filter = ['is_published', 'is_featured', 'category']
-    search_fields = ['title', 'content', 'short_description']
-    prepopulated_fields = {'slug': ('title',)}
-    filter_horizontal = []
-
-
 class HelpMediaInline(admin.TabularInline):
     model = HelpMedia
     extra = 1
+
+
+@admin.register(HelpArticle)
+class HelpArticleAdmin(admin.ModelAdmin):
+    inlines = [HelpMediaInline]
+    list_display = ['title', 'category', 'is_published', 'view_count']
+    list_filter = ['is_published', 'category']
+    search_fields = ['title', 'content', 'short_description']
+    prepopulated_fields = {'slug': ('title',)}
+    filter_horizontal = []
 
 
 @admin.register(FAQ)

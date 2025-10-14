@@ -6,6 +6,8 @@ from django.views.generic import (
     ListView,
 )
 
+from core.apps.resumes.views import PermissionComposer
+
 from .models.faq import FAQ
 from .models.help_article import HelpArticle
 from .models.help_category import HelpCategory
@@ -19,11 +21,18 @@ class HelpHomeView(ListView):
     def get_queryset(self):
         return HelpArticle.objects.filter(
             is_published=True,
-            is_featured=True,
-        )[:8]
+        ).order_by('-view_count')[:4]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+
         context['categories'] = HelpCategory.objects.filter(
             is_active=True,
             parent__isnull=True,
@@ -51,6 +60,13 @@ class HelpCategoryView(DetailView):
             parent=self.object,
             is_active=True,
         )
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
         return context
 
 
@@ -77,6 +93,13 @@ class HelpArticleView(DetailView):
             category=self.object.category,
             is_published=True,
         ).exclude(id=self.object.id)[:5]
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
         return context
 
 
@@ -107,6 +130,12 @@ class HelpSearchView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q', '')
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
         return context
 
 
@@ -127,4 +156,10 @@ class FAQListView(ListView):
             faqs__isnull=False,
         ).distinct()
         context['categories'] = categories
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
         return context

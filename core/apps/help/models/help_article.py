@@ -36,10 +36,6 @@ class HelpArticle(TimeBaseModel):
         verbose_name="Опубликовано",
         default=True,
     )
-    is_featured = models.BooleanField(
-        verbose_name="Популярная статья",
-        default=False,
-    )
     view_count = models.PositiveIntegerField(
         verbose_name="Количество просмотров",
         default=0,
@@ -63,7 +59,6 @@ class HelpArticle(TimeBaseModel):
         ordering = ['order', 'title']
         indexes = [
             models.Index(fields=['is_published', 'category']),
-            models.Index(fields=['is_featured']),
         ]
 
     def __str__(self):

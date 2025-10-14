@@ -27,6 +27,9 @@ class FAQ(TimeBaseModel):
         default=0,
     )
 
+    def __str__(self):
+        return self.question
+
     class Meta:
         verbose_name = "Часто задаваемый вопрос"
         verbose_name_plural = "Часто задаваемые вопросы"

@@ -64,7 +64,6 @@ class Command(BaseCommand):
                     'content': article_data['content'],
                     'category': category,
                     'tags': article_data['tags'],
-                    'is_featured': article_data['is_featured'],
                     'order': article_data['order'],
                     'related_template': related_template,
                 },

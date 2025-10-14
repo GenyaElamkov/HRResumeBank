@@ -63,9 +63,6 @@
                             <div class="flex-grow-1">
                                 <h5 class="mb-2">
                                     {{ article.title }}
-                                    {% if article.is_featured %}
-                                    <span class="badge bg-warning text-dark ms-2">Популярная</span>
-                                    {% endif %}
                                 </h5>
                                 {% if article.short_description %}
                                 <p class="mb-2 text-muted">{{ article.short_description }}</p>
