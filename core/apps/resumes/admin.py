@@ -1,7 +1,6 @@
 from django.contrib import admin
 
 from .models.card import Card
-from .models.log import Log
 from .models.template import Template
 from .models.template_field import TemplateField
 
@@ -40,12 +39,3 @@ class CardAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=...):
         return False
-
-
-@admin.register(Log)
-class LogAdmin(admin.ModelAdmin):
-    def changelist_view(self, request, extra_context=None):
-        if extra_context is None:
-            extra_context = {}
-        extra_context['title'] = "Управление Журналом действий"
-        return super().changelist_view(request, extra_context=extra_context)

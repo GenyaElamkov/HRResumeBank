@@ -51,11 +51,16 @@ class CustomUserAdmin(UserAdmin):
     ordering = ("username",)
 
     def get_form(self, request, obj=None, **kwargs):
-        """Скрываем поле is_superuser для обычных пользователей"""
+        """Скрываем поля is_superuser, is_staff для обычных пользователей"""
         form = super().get_form(request, obj, **kwargs)
+
         if not request.user.is_superuser:
-            form.base_fields['is_superuser'].widget = forms.HiddenInput()
-            print('-->', form.base_fields['is_superuser'])
+            if 'is_superuser' in form.base_fields:
+                form.base_fields['is_superuser'].widget = forms.HiddenInput()
+
+            if 'is_staff' in form.base_fields:
+                form.base_fields['is_staff'].widget = forms.HiddenInput()
+
         return form
 
     def get_queryset(self, request):

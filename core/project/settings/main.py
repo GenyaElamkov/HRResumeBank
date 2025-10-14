@@ -29,9 +29,11 @@ INSTALLED_APPS = [
     "core.apps.accounts.apps.AccountsConfig",
     "core.apps.authentication.apps.AuthenticationConfig",
     "core.apps.resumes.apps.ResumesConfig",
+    "core.apps.audit.apps.AuditConfig",
     # app
     'django_extensions',
     'tinymce',
+    'easyaudit',
 ]
 # X_FRAME_OPTIONS = "SAMEORIGIN"                      # noqa
 # SILENCED_SYSTEM_CHECKS = ["security.W019"]          # noqa
@@ -43,6 +45,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Customs middleware для авторизации

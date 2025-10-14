@@ -61,3 +61,8 @@ collectstatic:
 .PHONY: seed
 seed:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed
+
+# Очистить историю audilog
+.PHONY: clear_history
+clear_history:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) auditlogflush -y
