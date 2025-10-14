@@ -52,7 +52,6 @@ MIDDLEWARE = [
     "core.apps.authentication.middleware.LoginRequiredMiddleware",
 ]
 
-
 ROOT_URLCONF = "core.project.urls"
 
 TEMPLATES = [
