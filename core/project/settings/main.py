@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "core.apps.authentication.apps.AuthenticationConfig",
     "core.apps.resumes.apps.ResumesConfig",
     "core.apps.audit.apps.AuditConfig",
+    "core.apps.help.apps.HelpConfig",
     # app
     'django_extensions',
     'tinymce',
@@ -64,6 +65,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'core.apps.help.context_processors.help_system_context',
             ],
         },
     },

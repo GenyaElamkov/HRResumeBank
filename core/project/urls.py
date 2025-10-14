@@ -34,6 +34,8 @@ urlpatterns = [
     path("auth/", include("core.apps.authentication.urls")),
     path("", include("core.apps.resumes.urls")),
     path('tinymce/', include('tinymce.urls')),
+    path('help/', include('core.apps.help.urls')),
+
 ]
 
 

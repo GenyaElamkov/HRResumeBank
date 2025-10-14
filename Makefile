@@ -66,3 +66,8 @@ seed:
 .PHONY: clear_history
 clear_history:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) auditlogflush -y
+
+# Fixture
+.PHONY: fixture
+fixture:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) load_help_data

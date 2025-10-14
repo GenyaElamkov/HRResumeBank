@@ -296,9 +296,11 @@
         <div class="container text-center">
             <p class="mb-2">&copy; {% now "Y" %} Система управления резюме службы безопасности</p>
             <div class="d-flex justify-content-center flex-wrap gap-3 mt-2">
-                <a href="" class="text-decoration-none text-light fw-semibold d-flex align-items-center">
-                    <i class="bi bi-question-circle me-1"></i>Справка
-                </a>
+                {% if show_help_button %}
+                    <a href="{% url 'help_system:help_home' %}" class="text-decoration-none text-light fw-semibold d-flex align-items-center">
+                        <i class="bi bi-question-circle me-1"></i>Справка
+                    </a>
+                {% endif %}
 
                 {% if is_admin_or_superuser %}
                     <a href="{% url 'admin:index' %}" class="text-decoration-none text-warning fw-semibold d-flex align-items-center">

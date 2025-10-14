@@ -1,0 +1,90 @@
+<!-- help_article.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <!-- Хлебные крошки -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'help_system:help_home' %}">Справка</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'help_system:category' article.category.slug %}">{{ article.category.title }}</a></li>
+                <li class="breadcrumb-item active">{{ article.title }}</li>
+            </ol>
+        </nav>
+
+        <article>
+            <header class="mb-4">
+                <h2 class="mb-3">{{ article.title }}</h2>
+                <div class="d-flex flex-wrap gap-3 text-muted mb-3">
+                    <small><i class="bi bi-calendar me-1"></i>{{ article.create_at|date:"d.m.Y" }}</small>
+                    <small><i class="bi bi-eye me-1"></i>{{ article.view_count }} просмотров</small>
+                    <small><i class="bi bi-folder me-1"></i>{{ article.category.title }}</small>
+                    {% if article.tags %}
+                    <small><i class="bi bi-tags me-1"></i>{{ article.tags }}</small>
+                    {% endif %}
+                </div>
+            </header>
+
+            <div class="article-content">
+                {{ article.content|safe }}
+            </div>
+        </article>
+
+        <!-- Похожие статьи -->
+        {% if related_articles %}
+        <div class="mt-5 pt-4 border-top">
+            <h4 class="mb-3">Похожие статьи</h4>
+            <div class="row">
+                {% for related in related_articles %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ related.title }}</h5>
+                            {% if related.short_description %}
+                            <p class="card-text text-muted small">{{ related.short_description|truncatewords:20 }}</p>
+                            {% endif %}
+                            <a href="{% url 'help_system:article' related.slug %}" class="btn btn-sm btn-outline-primary">
+                                Читать
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.article-content {
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+.article-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-dark);
+}
+
+.article-content h4 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary);
+}
+
+.article-content ul, .article-content ol {
+    padding-left: 1.5rem;
+}
+
+.article-content table {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.article-content .alert {
+    margin: 1.5rem 0;
+}
+</style>
+{% endblock %}

@@ -100,7 +100,7 @@ def update_is_staff_on_group_change(sender, instance, action, **kwargs):
     """Обновляет is_staff в зависимости от наличия в группе «Администратор»"""
     admin_group = Group.objects.filter(name="Администратор").first()
     if not admin_group:
-        return  # Группа ещё не создана — ничего не делаем
+        return
 
     # Проверяем, был ли изменён статус вхождения в группу «Администратор»
     in_admin_group = admin_group in instance.groups.all()
