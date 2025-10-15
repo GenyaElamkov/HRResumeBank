@@ -1,4 +1,3 @@
-# help_system/admin.py
 from django.contrib import admin
 
 from .models.faq import FAQ
