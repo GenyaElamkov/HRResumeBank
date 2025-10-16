@@ -10,7 +10,7 @@ def _get_uploaded_file_name(instance, filename: str) -> str:
     """Генерация пути к файлу"""
     ext = os.path.splitext(filename)[1]
     allowed_extensions = [
-        '.pdf', '.docx', '.doc', '.txt', '.jpg', '.jpeg', '.png', '.xlsx',
+        '.pdf', '.docx', '.doc', '.txt', '.jpg', '.jpeg', '.png', '.xlsx', '.xls',
     ]
 
     if not ext.lower() in allowed_extensions:
