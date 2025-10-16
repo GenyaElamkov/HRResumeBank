@@ -13,6 +13,7 @@ class LoginRequiredMiddleware:
             reverse("authentication:login"),
             #
             reverse("authentication:logout"),
+            reverse("authentication:locked"),
             # "/admin/",
         ]
 

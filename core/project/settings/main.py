@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'tinymce',
     'easyaudit',
+    'axes',
 ]
 # X_FRAME_OPTIONS = "SAMEORIGIN"                      # noqa
 # SILENCED_SYSTEM_CHECKS = ["security.W019"]          # noqa
@@ -51,7 +52,17 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Customs middleware для авторизации
     "core.apps.authentication.middleware.LoginRequiredMiddleware",
+    'axes.middleware.AxesMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesStandaloneBackend',
+
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 ROOT_URLCONF = "core.project.urls"
 
@@ -131,3 +142,17 @@ LOGIN_URL = 'authentication:login'
 SESSION_COOKIE_AGE = 1209600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
+
+
+# Настройки django-axes
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1/60  # 1 минута
+AXES_RESET_ON_SUCCESS = True
+AXES_LOCKOUT_URL = 'authentication:locked'
+AXES_LOCKOUT_TEMPLATE = 'authentication/locked.html'
+
+AXES_SUPERUSER = True
+AXES_DISABLE_ACCESS_LOG = True
+
+AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username']
+AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = True

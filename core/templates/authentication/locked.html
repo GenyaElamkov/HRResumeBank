@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аккаунт временно заблокирован</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="alert">
+        <h1>🔒 Аккаунт временно заблокирован</h1>
+        <p>Превышено количество попыток входа. Попробуйте через 1 минуту.</p>
+
+        {% if cooloff_time %}
+        <p><strong>Время блокировки:</strong> {{ cooloff_time }} минут</p>
+        {% endif %}
+
+        {% if failure_limit %}
+        <p><strong>Лимит попыток:</strong> {{ failure_limit }}</p>
+        {% endif %}
+
+        <p><a href="{% url 'authentication:login' %}">Попробовать снова</a></p>
+    </div>
+</body>
+</html>

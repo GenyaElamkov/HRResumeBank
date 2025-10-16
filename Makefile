@@ -71,3 +71,7 @@ clear_history:
 .PHONY: fixture
 fixture:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) load_help_data
+
+.PHONY: check
+check:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) check
