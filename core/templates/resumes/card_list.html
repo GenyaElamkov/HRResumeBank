@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}Все резюме - Система резюме{% endblock %}
-
 {% block content %}
 
 <!-- Заголовок и панель поиска -->
@@ -37,25 +35,4 @@
     <div id="card-list">
         {% include "resumes/partials/card_list_content.html" %}
     </div>
-
-
-<!-- HTMX конфигурация -->
-<script>
-    document.body.addEventListener('htmx:beforeRequest', function(e) {
-        e.detail.target.classList.add('loading');
-    });
-
-    document.body.addEventListener('htmx:afterRequest', function(e) {
-        e.detail.target.classList.remove('loading');
-    });
-
-    // Функция для поиска резюме
-    function searchResumes() {
-        const searchTerm = document.getElementById('searchInput').value;
-        htmx.ajax('GET', `/?search=${encodeURIComponent(searchTerm)}`, {
-            target: '#card-list',
-            swap: 'innerHTML'
-        });
-    }
-</script>
 {% endblock %}

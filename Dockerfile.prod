@@ -29,3 +29,5 @@ RUN chmod +x /app/entrypoint.prod.sh
 
 # Создаем директорию для статики
 RUN mkdir -p /app/staticfiles /app/media
+
+ENTRYPOINT ["/app/entrypoint.prod.sh"]

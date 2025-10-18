@@ -6,7 +6,7 @@ services:
       context: ..
       dockerfile: Dockerfile.prod
     container_name: main-app
-    command: "gunicorn -c /app/gunicorn.conf.py core.project.wsgi:application"
+    # command: "gunicorn -c /app/gunicorn.conf.py core.project.wsgi:application"
     env_file:
       - ../.env
     volumes:
