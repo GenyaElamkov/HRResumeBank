@@ -1,0 +1,49 @@
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px 15px;
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(119, 141, 169, 0.2);
+}
+
+.card {
+    border: 1px solid #d1d1d1;
+    border-radius: 8px;
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.btn {
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--secondary), var(--primary));
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline-secondary {
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    color: white;
+}
