@@ -254,6 +254,14 @@ class AdvancedCardSearchView(BaseCardSearchView):
 
     def render_to_response(self, context):
         """Рендеринг с использованием шаблона advanced_search.html"""
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+
         return render(
             self.request,
             "resumes/advanced_search.html",
@@ -289,6 +297,14 @@ class HomeScreenCardSearchView(BaseCardSearchView):
             })
 
         context["card_list"] = card_list
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+
         if self.request.headers.get('HX-Request'):
             # HTMX запрос - возвращаем только контент
             return render(

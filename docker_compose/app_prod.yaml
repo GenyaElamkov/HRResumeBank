@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  postgres2:
+    extends:
+      file: storages.yaml
+      service: postgres2
+
+  gunicorn:
+    extends:
+      file: gunicorn.yaml
+      service: gunicorn
+
+  nginx:
+    extends:
+      file: nginx.yaml
+      service: nginx
+
+networks:
+  hrresumebank-network:
+    external: true
+
+volumes:
+  media_volume:
+  static_volume:
+  postgres_data2:

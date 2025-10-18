@@ -21,3 +21,4 @@ django-tinymce==4.0.0
 django-admin-interface==0.30.1
 django-easy-audit==1.3.7
 django-axes==8.0.0
+gunicorn==21.2.0
