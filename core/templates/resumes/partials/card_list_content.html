@@ -1,66 +1,66 @@
 {% load parse_date %}
 {% load strip_html %}
 
+{% if card_list %}
 <div class="resume-grid">
-    {% if card_list %}
-        {% for item in card_list %}
-            <div class="resume-card mb-2 d-flex flex-column h-100">
-                <div class="card-header mb-2 d-flex justify-content-between align-items-center">
-                    <span>{{ item.card.main_name|default:"Без названия"|strip_html }}</span>
-                    <span class="security-badge">{{ item.card.template.title }}</span>
-                </div>
-                <div class="card-body flex-grow-1">
-                    {% for field in item.card.template.fields.all|dictsort:"order" %}
-                        {% if field.is_visible %}
-                            {% for key, value in item.values.items %}
-                                {% if key == field.title %}
-                                    <div class="mx-2">
+    {% for item in card_list %}
+        <div class="resume-card mb-2 d-flex flex-column h-100">
+            <div class="card-header mb-2 d-flex justify-content-between align-items-center">
+                <span>{{ item.card.main_name|default:"Без названия"|strip_html }}</span>
+                <span class="security-badge">{{ item.card.template.title }}</span>
+            </div>
+            <div class="card-body flex-grow-1">
+                {% for field in item.card.template.fields.all|dictsort:"order" %}
+                    {% if field.is_visible %}
+                        {% for key, value in item.values.items %}
+                            {% if key == field.title %}
+                                <div class="mx-2">
 
-                                        {% if field.field_type == 'image' %}
-                                            <div class="card-image-preview px-2 py-2 text-center border-bottom">
+                                    {% if field.field_type == 'image' %}
+                                        <div class="card-image-preview px-2 py-2 text-center border-bottom">
 
-                                                {% if item.image %}
-                                                    <img src="{{ item.image.image.url }}"
-                                                        alt="{{ field.title }}"
-                                                        class="rounded"
-                                                        style="height: 150px; width: auto; max-width: 150px; object-fit: cover;"
-                                                        data-bs-toggle="tooltip"
-                                                        title="Фотография">
-                                                {% else %}
-                                                    <span class="text-muted">{{ field.title }} отсуствует</span>
-                                                {% endif %}
-
-                                            </div>
-
-                                        {% elif value %}
-                                            {% if field.field_type == 'date' %}
-                                                <p class="mb-1"><strong>{{ key }}:</strong> {{ value|parse_date|date:"d.m.Y" }}</p>
-                                            {% endif %}
-
-                                            {% if value == True %}
-                                                <p class="mb-1"><strong>{{ key }}:</strong> <i class="bi bi-check-circle-fill text-success"></i></p>
+                                            {% if item.image %}
+                                                <img src="{{ item.image.image.url }}"
+                                                    alt="{{ field.title }}"
+                                                    class="rounded"
+                                                    style="height: 150px; width: auto; max-width: 150px; object-fit: cover;"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Фотография">
                                             {% else %}
-                                                <p class="mb-1"><strong>{{ key }}:</strong> {{ value|strip_html }}</p>
+                                                <span class="text-muted">{{ field.title }} отсуствует</span>
                                             {% endif %}
-                                        {% else %}
-                                            <p class="mb-1"><strong>{{ key }}:</strong> Не указано</p>
+
+                                        </div>
+
+                                    {% elif value %}
+                                        {% if field.field_type == 'date' %}
+                                            <p class="mb-1"><strong>{{ key }}:</strong> {{ value|parse_date|date:"d.m.Y" }}</p>
                                         {% endif %}
 
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="card-footer mt-auto bg-transparent border-0">
-                    <div class="d-flex mx-2 justify-content-between align-items-center">
-                        <small class="card-text small text-muted">Обновлено: {{ item.card.update_at|date:"d.m.Y H:i" }}</small>
-                        <a href="{% url 'resumes:card_detail' item.card.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
-                    </div>
+                                        {% if value == True %}
+                                            <p class="mb-1"><strong>{{ key }}:</strong> <i class="bi bi-check-circle-fill text-success"></i></p>
+                                        {% else %}
+                                            <p class="mb-1"><strong>{{ key }}:</strong> {{ value|strip_html }}</p>
+                                        {% endif %}
+                                    {% else %}
+                                        <p class="mb-1"><strong>{{ key }}:</strong> Не указано</p>
+                                    {% endif %}
+
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="card-footer mt-auto bg-transparent border-0">
+                <div class="d-flex mx-2 justify-content-between align-items-center">
+                    <small class="card-text small text-muted">Обновлено: {{ item.card.update_at|date:"d.m.Y H:i" }}</small>
+                    <a href="{% url 'resumes:card_detail' item.card.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
                 </div>
             </div>
-        {% endfor %}
-    {% else %}
+        </div>
+    {% endfor %}
+{% else %}
         <div class="col-12">
             <div class="text-center py-5">
                 <i class="bi bi-file-earmark-text display-1 text-muted"></i>
@@ -68,8 +68,8 @@
                 <p class="text-muted">Попробуйте изменить параметры поиска</p>
             </div>
         </div>
-    {% endif %}
-</div>
+    </div>
+{% endif %}
 {% if is_paginated %}
     {% include "resumes/pagination.html" %}
 {% endif %}
