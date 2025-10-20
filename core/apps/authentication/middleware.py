@@ -14,7 +14,6 @@ class LoginRequiredMiddleware:
             #
             reverse("authentication:logout"),
             reverse("authentication:locked"),
-            # "/admin/",
         ]
 
         if not request.user.is_authenticated and not any(
@@ -25,7 +24,7 @@ class LoginRequiredMiddleware:
         return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if request.path.startswith('/admin/'):
+        if request.path.startswith('/secret-admin-panel/'):
             if not request.user.is_authenticated:
                 return redirect(f'{settings.LOGIN_URL}?next={request.path}')
             if not request.user.is_staff:

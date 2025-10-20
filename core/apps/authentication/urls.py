@@ -2,6 +2,8 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.generic import TemplateView
 
+from . import views
+
 
 app_name = "authentication"
 
@@ -15,8 +17,7 @@ urlpatterns = [
         name='login',
     ),
     path(
-        'logout/', auth_views.LogoutView.as_view(
-        ), name='logout',
+        'logout/', views.logout_everywhere, name='logout',
     ),
     path(
         'locked/',

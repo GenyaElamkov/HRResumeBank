@@ -17,8 +17,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'main-app']
 
 INSTALLED_APPS = [
+    # app
     "admin_interface",
     "colorfield",
+    # standart
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -141,8 +143,10 @@ LOGOUT_REDIRECT_URL = 'authentication:login'
 
 LOGIN_URL = 'authentication:login'
 SESSION_COOKIE_AGE = 1209600
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
+# SESSION_COOKIE_SECURE = True  # noqa
+SESSION_COOKIE_HTTPONLY = True
 
 
 # Настройки django-axes
