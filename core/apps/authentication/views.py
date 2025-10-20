@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 
 
 def logout_everywhere(request):
+    """Выход из системы и удаление всех сессий пользователя."""
     user = request.user
 
     user_id_str = str(user.id)

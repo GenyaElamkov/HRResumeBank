@@ -261,7 +261,6 @@ class AdvancedCardSearchView(BaseCardSearchView):
                 user=self.request.user,
             ),
         )
-
         return render(
             self.request,
             "resumes/advanced_search.html",
