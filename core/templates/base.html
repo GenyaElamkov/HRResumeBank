@@ -47,28 +47,25 @@
                     </li>
                     {% if can_edit %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'resumes:create_card' %}">
+                            <a class="nav-link active" href="{% url 'resumes:create_card' %}">
                                 <i class="bi bi-plus-circle me-1"></i>Создать карточку
                             </a>
                         </li>
                     {% endif %}
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="{% url 'authentication:logout' %}">
+                    <li class="nav-item">
+                        <!-- Ссылка с JS-триггером -->
+                        <a href="#" class="nav-link active" onclick="document.getElementById('logout-form').submit();">
                             <i class="bi bi-box-arrow-right me-1"></i>Выход
                         </a>
-                    </li> -->
-                    <!-- TODO: Подправить -->
-                    <li class="nav-item">
-                        <form action="{% url 'authentication:logout' %}" method="post" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-link btn btn-link" style="border: none; background: none;">
-                                <i class="bi bi-box-arrow-right me-1"></i>Выход
-                            </button>
-                        </form>
                     </li>
                 </ul>
-
             </div>
+
+            <!-- Скрытая форма для выхода -->
+            <form id="logout-form" action="{% url 'authentication:logout' %}" method="post" style="display: none;">
+                {% csrf_token %}
+            </form>
+
         </div>
     </nav>
 
