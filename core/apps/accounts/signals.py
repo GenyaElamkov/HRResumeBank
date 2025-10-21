@@ -6,7 +6,13 @@ from django.contrib.auth.models import (
     Permission,
 )
 from django.contrib.contenttypes.models import ContentType
-from django.db.models.signals import post_migrate
+from django.db.models.signals import (
+    m2m_changed,
+    post_migrate,
+)
+from django.dispatch import receiver
+
+from .models import CustomUser
 
 
 class UserPerm(StrEnum):
@@ -29,8 +35,8 @@ class TemplateFieldPerm(StrEnum):
     """Разрешение на динамические поля модели EntityData"""
     ADD = 'add_templatefield'
     CHANGE = 'change_templatefield'
-    DELETE = 'delete_template_field'
-    VIEW = 'view_template_field'
+    DELETE = 'delete_templatefield'
+    VIEW = 'view_templatefield'
 
 
 class CardPerm(StrEnum):
@@ -87,3 +93,22 @@ def create_default_groups(sender, **kwargs):
 
 
 post_migrate.connect(create_default_groups)
+
+
+@receiver(m2m_changed, sender=CustomUser.groups.through)
+def update_is_staff_on_group_change(sender, instance, action, **kwargs):
+    """Обновляет is_staff в зависимости от наличия в группе «Администратор»"""
+    admin_group = Group.objects.filter(name="Администратор").first()
+    if not admin_group:
+        return
+
+    # Проверяем, был ли изменён статус вхождения в группу «Администратор»
+    in_admin_group = admin_group in instance.groups.all()
+
+    # Обновляем is_staff только если нужно
+    if in_admin_group and not instance.is_staff:
+        instance.is_staff = True
+        instance.save(update_fields=["is_staff"])
+    elif not in_admin_group and instance.is_staff:
+        instance.is_staff = False
+        instance.save(update_fields=["is_staff"])

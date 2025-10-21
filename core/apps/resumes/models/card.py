@@ -22,6 +22,7 @@ class Card(TimeBaseModel):
         related_name="created_template",
     )
     values = models.JSONField(
+        verbose_name="Значения полей",
         encoder=DjangoJSONEncoder,
         default=dict,
     )

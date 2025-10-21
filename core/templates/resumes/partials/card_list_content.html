@@ -1,8 +1,8 @@
 {% load parse_date %}
 {% load strip_html %}
 
-<div class="resume-grid">
-    {% if card_list %}
+{% if card_list %}
+    <div class="resume-grid">
         {% for item in card_list %}
             <div class="resume-card mb-2 d-flex flex-column h-100">
                 <div class="card-header mb-2 d-flex justify-content-between align-items-center">
@@ -35,9 +35,7 @@
                                         {% elif value %}
                                             {% if field.field_type == 'date' %}
                                                 <p class="mb-1"><strong>{{ key }}:</strong> {{ value|parse_date|date:"d.m.Y" }}</p>
-                                            {% endif %}
-
-                                            {% if value == True %}
+                                            {% elif value == True %}
                                                 <p class="mb-1"><strong>{{ key }}:</strong> <i class="bi bi-check-circle-fill text-success"></i></p>
                                             {% else %}
                                                 <p class="mb-1"><strong>{{ key }}:</strong> {{ value|strip_html }}</p>
@@ -60,16 +58,14 @@
                 </div>
             </div>
         {% endfor %}
-    {% else %}
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="bi bi-file-earmark-text display-1 text-muted"></i>
-                <h3 class="mt-3">Резюме не найдены</h3>
-                <p class="text-muted">Попробуйте изменить параметры поиска</p>
-            </div>
+    </div>
+{% else %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="bi bi-file-earmark-text display-1 text-muted"></i>
+            <h3 class="mt-3">Резюме не найдены</h3>
+            <p class="text-muted">Попробуйте изменить параметры поиска</p>
         </div>
-    {% endif %}
-</div>
-{% if is_paginated %}
-    {% include "resumes/pagination.html" %}
+    </div>
 {% endif %}
+{% include "resumes/paginations/pagination.html" %}

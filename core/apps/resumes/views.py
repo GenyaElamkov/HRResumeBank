@@ -1,6 +1,6 @@
 import os
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import (
@@ -22,6 +22,31 @@ from .models.file_storage import FileStorage
 from .models.profile_image import ProfileImage
 
 
+class PermissionComposer:
+    """Права доступа для контекста"""
+    @staticmethod
+    def get_context_data(context, user):
+        context['is_admin_or_superuser'] = PermissionComposer.check_permission(user=user, permissions=['Администратор'])
+        context['can_edit'] = PermissionComposer.check_permission(user=user, permissions=["Администратор", "Редактор"])
+        return context
+
+    @staticmethod
+    def check_permission(user, permissions: list):
+        if user.is_superuser:
+            return True
+        return user.groups.filter(name__in=permissions).exists()
+
+
+class EditorRequiredMixin(UserPassesTestMixin):
+    """Права доступа для Редактора, Администратора и superuser"""
+    def test_func(self):
+        """Проверка, что пользователь является Администратором, Редактором и superuser"""
+        return (
+            self.request.user.groups.filter(name__in=["Администратор", "Редактор"]).exists()
+            or self.request.user.is_superuser
+        )
+
+
 class CardListView(ListView):
     """Список карточек"""
     template_name = "resumes/card_list.html"
@@ -34,6 +59,13 @@ class CardListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
 
         cards = []
         for card in context["card_list"]:
@@ -63,6 +95,13 @@ class CardDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         card = self.object
 
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+
         self._add_files_to_context(context, card)
         self._add_images_to_context(context, card)
         return context
@@ -83,10 +122,20 @@ class CardDetailView(DetailView):
             context['images'] = None
 
 
-class CardCreateView(LoginRequiredMixin, CreateView):
+class CardCreateView(EditorRequiredMixin, CreateView):
     """Создать карточку"""
     form_class = CardCreateForm
     template_name = "resumes/create_card.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+        return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -97,7 +146,7 @@ class CardCreateView(LoginRequiredMixin, CreateView):
         return reverse("resumes:fill_card", kwargs={"pk": self.object.pk})
 
 
-class CardUpdateView(UpdateView):
+class CardUpdateView(EditorRequiredMixin, UpdateView):
     """Обновление карточки"""
     model = Card
     form_class = CardFillForm
@@ -105,8 +154,14 @@ class CardUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
-        card = self.object
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
 
+        card = self.object
         images = ProfileImage.objects.filter(card=card).order_by("create_at")
 
         self._add_files_to_context(context, card)
@@ -134,6 +189,16 @@ class FileDeleteView(DeleteView):
     model = FileStorage
     template_name = "resumes/partials/confirm_file_delete.html"
 
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+        return context
+
     def get_success_url(self):
         return reverse(
             "resumes:fill_card", kwargs={"pk": self.object.card.pk},
@@ -144,6 +209,16 @@ class ImageDeleteView(DeleteView):
     """Удаление изображений"""
     model = ProfileImage
     template_name = "resumes/partials/confirm_image_delete.html"
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+        return context
 
     def get_success_url(self):
         return reverse(
@@ -179,6 +254,13 @@ class AdvancedCardSearchView(BaseCardSearchView):
 
     def render_to_response(self, context):
         """Рендеринг с использованием шаблона advanced_search.html"""
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
         return render(
             self.request,
             "resumes/advanced_search.html",
@@ -214,6 +296,14 @@ class HomeScreenCardSearchView(BaseCardSearchView):
             })
 
         context["card_list"] = card_list
+
+        context.update(
+            PermissionComposer.get_context_data(
+                context=context,
+                user=self.request.user,
+            ),
+        )
+
         if self.request.headers.get('HX-Request'):
             # HTMX запрос - возвращаем только контент
             return render(

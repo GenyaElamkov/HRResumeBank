@@ -30,10 +30,12 @@ handler500 = "core.apps.resumes.views.tr_handler500"
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("secret-admin-panel/", admin.site.urls),
     path("auth/", include("core.apps.authentication.urls")),
     path("", include("core.apps.resumes.urls")),
     path('tinymce/', include('tinymce.urls')),
+    path('help/', include('core.apps.help.urls')),
+
 ]
 
 

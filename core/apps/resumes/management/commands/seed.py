@@ -11,7 +11,6 @@ from django.core.management.base import BaseCommand
 from faker import Faker
 
 from core.apps.resumes.models.card import Card
-from core.apps.resumes.models.log import Log
 from core.apps.resumes.models.template import Template
 from core.apps.resumes.models.template_field import TemplateField
 
@@ -22,7 +21,7 @@ class Command(BaseCommand):
     TURN - включает (True) заполнение данными БД
     """
     TURN = True
-    COUNTER = 10
+    COUNTER = 1000
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING("=== Очищаем старые данные ==="))
@@ -32,7 +31,6 @@ class Command(BaseCommand):
         Template.objects.all().delete()
         TemplateField.objects.all().delete()
         Card.objects.all().delete()
-        Log.objects.all().delete()
         User.objects.exclude(is_superuser=True).delete()
 
         self.stdout.write(self.style.SUCCESS("Данные очищены!"))
@@ -124,17 +122,10 @@ class Command(BaseCommand):
                 "Биография": fake.texts(),
             }
 
-            entity = Card.objects.create(
+            Card.objects.create(
                 template=template,
                 created=created_user,
                 values=resume_values,
-            )
-
-            # Лог действия
-            Log.objects.create(
-                user=created_user,
-                action="Создание резюме",
-                details=f"Создано резюме {entity.id}",
             )
 
             # Создание карточки организации
@@ -143,17 +134,10 @@ class Command(BaseCommand):
                 "ИНН": str(inn),
             }
 
-            entity_organization = Card.objects.create(
+            Card.objects.create(
                 template=template_organization,
                 created=created_user,
                 values=organization_values,
-            )
-
-            # Лог действия для организации
-            Log.objects.create(
-                user=created_user,
-                action="Создание организации",
-                details=f"Создана организация {entity_organization.id}",
             )
 
         self.stdout.write(self.style.SUCCESS(f"✅ Создано {self.COUNTER} резюме и {self.COUNTER} организаций"))

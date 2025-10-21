@@ -1,0 +1,66 @@
+{% if is_paginated %}
+    <div class="col-12 d-flex justify-content-center align-items-center flex-column w-100">
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center mb-2">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link pagination-custom"
+                            hx-get="{% url 'resumes:home_screen_search' %}?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if template_id %}&template={{ template_id }}{% endif %}{% if user_id %}&created={{ user_id }}{% endif %}"
+                            hx-target="#card-list"
+                            hx-push-url="true">
+                            <i class="bi bi-chevron-left me-1"></i>Назад
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link pagination-custom">
+                            <i class="bi bi-chevron-left me-1"></i>Назад
+                        </span>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link pagination-custom">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link pagination-custom"
+                                hx-get="{% url 'resumes:home_screen_search' %}?page={{ num }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if template_id %}&template={{ template_id }}{% endif %}{% if user_id %}&created={{ user_id }}{% endif %}"
+                                hx-target="#card-list"
+                                hx-push-url="true">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link pagination-custom"
+                            hx-get="{% url 'resumes:home_screen_search' %}?page={{ page_obj.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if template_id %}&template={{ template_id }}{% endif %}{% if user_id %}&created={{ user_id }}{% endif %}"
+                            hx-target="#card-list"
+                            hx-push-url="true">
+                            Вперед<i class="bi bi-chevron-right ms-1"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link pagination-custom">
+                            Вперед<i class="bi bi-chevron-right ms-1"></i>
+                        </span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <!-- Информация о текущей странице -->
+        <div class="text-center w-100">
+            <small class="text-muted page-info">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                {% if query %} по запросу "{{ query }}"{% endif %}
+            </small>
+        </div>
+    </div>
+{% endif %}

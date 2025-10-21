@@ -4,7 +4,8 @@ LOGS = docker logs
 EXEC = docker exec -it
 DB_CONTAINER = example-db
 ENV = --env-file .env
-APP_FILE = docker_compose/app.yaml
+APP_FILE = docker_compose/app_dev.yaml
+APP_FILE_PROD = docker_compose/app_prod.yaml
 APP_CONTAINER = main-app
 MANAGE_PY = python manage.py
 
@@ -29,6 +30,10 @@ postgres:
 app:
 	$(DC) -f $(APP_FILE) -f $(STORAGES_FILE) $(ENV) up -d --build
 
+.PHONY: app-prod
+app-prod:
+	$(DC) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) up -d --build
+
 .PHONY: app-logs
 app-logs:
 	$(LOGS) $(APP_CONTAINER) -f
@@ -36,6 +41,10 @@ app-logs:
 .PHONY: app-down
 app-down:
 	$(DC) -f $(APP_FILE) -f $(STORAGES_FILE) $(ENV) down
+
+.PHONY: app-prod-down
+app-prod-down:
+	$(DC) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) down
 
 .PHONY: app-img-down
 app-img-down:
@@ -61,3 +70,17 @@ collectstatic:
 .PHONY: seed
 seed:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed
+
+# Очистить историю audilog
+.PHONY: clear_history
+clear_history:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) auditlogflush -y
+
+# Fixture
+.PHONY: fixture
+fixture:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) load_help_data
+
+.PHONY: check
+check:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) check

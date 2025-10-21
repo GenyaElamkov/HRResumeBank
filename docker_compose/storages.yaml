@@ -11,5 +11,3 @@ services:
       - ../.env
     networks:
       - hrresumebank-network
-volumes:
-  postgres_data2:
