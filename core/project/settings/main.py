@@ -9,12 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env")
 
-
 SECRET_KEY = env("DJANGO_SECRET_KEY")
-
-DEBUG = False
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'main-app']
 
 INSTALLED_APPS = [
     # app
@@ -142,16 +137,14 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = 'authentication:login'
 
 LOGIN_URL = 'authentication:login'
-SESSION_COOKIE_AGE = 1209600
+SESSION_COOKIE_AGE = 86400
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
-# SESSION_COOKIE_SECURE = True  # noqa
 SESSION_COOKIE_HTTPONLY = True
-
 
 # Настройки django-axes
 AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 1/60  # 1 минута
+AXES_COOLOFF_TIME = 60
 AXES_RESET_ON_SUCCESS = True
 AXES_LOCKOUT_URL = 'authentication:locked'
 AXES_LOCKOUT_TEMPLATE = 'authentication/locked.html'
