@@ -12,7 +12,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'main-app']
 
@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'easyaudit',
     'axes',
 ]
-# X_FRAME_OPTIONS = "SAMEORIGIN"                      # noqa
-# SILENCED_SYSTEM_CHECKS = ["security.W019"]          # noqa
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 MIDDLEWARE = [
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Customs middleware для авторизации
     "core.apps.authentication.middleware.LoginRequiredMiddleware",
-    'axes.middleware.AxesMiddleware',
+    "axes.middleware.AxesMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -157,7 +157,8 @@ AXES_LOCKOUT_URL = 'authentication:locked'
 AXES_LOCKOUT_TEMPLATE = 'authentication/locked.html'
 
 AXES_SUPERUSER = True
-AXES_DISABLE_ACCESS_LOG = True
+# Включать логирование запросов
+AXES_DISABLE_ACCESS_LOG = False
 
 AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username']
 AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = True
