@@ -2,7 +2,7 @@
 
 # Ожидание доступности базы данных
 echo "Waiting for database..."
-# while ! nc -z postgres2 5432; do
+# while ! nc -z postgres 5432; do
 while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
   sleep 1
 done
