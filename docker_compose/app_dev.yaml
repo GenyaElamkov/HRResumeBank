@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  main-app2:
+  main-app:
     build:
       context: ..
       dockerfile: Dockerfile.dev
@@ -11,7 +11,7 @@ services:
     env_file:
       - ../.env
     depends_on:
-      - postgres2
+      - postgres
     volumes:
       - ..:/app/
       - media_volume:/app/media
@@ -27,4 +27,4 @@ networks:
 volumes:
   media_volume:
   static_volume:
-  postgres_data2:
+  postgres_data:
