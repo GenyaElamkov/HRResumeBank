@@ -58,6 +58,12 @@ migrate:
 migrations:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) makemigrations
 
+# Схлопывание миграции
+.PHONY: squashmigrations
+squashmigrations:
+	$(EXEC) $(MANAGE_PY) squashmigrations ${APP_CONTAINER}
+
+
 .PHONY: superuser
 superuser:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) createsuperuser
