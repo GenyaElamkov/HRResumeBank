@@ -80,7 +80,7 @@ seed:
 # Очистить историю audilog
 .PHONY: clear_history
 clear_history:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) auditlogflush -y
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) axec_reset
 
 # Fixture
 .PHONY: fixture
