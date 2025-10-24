@@ -3,7 +3,10 @@
 
 # Python-generated files
 __pycache__/
+*/migrations/__pycache__/
 *.py[oc]
+*.pyc
+*.pyo
 build/
 dist/
 wheels/
@@ -18,8 +21,6 @@ core/project/settings/local.py
 *.sqlite*
 .venv/
 
-core/apps/resumes/migrations/
-core/apps/accounts/migrations/
 
 media/*
 staticfiles/*

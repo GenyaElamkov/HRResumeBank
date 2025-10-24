@@ -7,7 +7,6 @@
             <div class="resume-card mb-2 d-flex flex-column h-100">
                 <div class="card-header mb-2 d-flex justify-content-between align-items-center">
                     <span>{{ item.card.main_name|default:"Без названия"|strip_html }}</span>
-                    <span class="security-badge">{{ item.card.template.title }}</span>
                 </div>
                 <div class="card-body flex-grow-1">
                     {% for field in item.card.template.fields.all|dictsort:"order" %}

@@ -60,13 +60,6 @@ class CardFillForm(forms.ModelForm):
             initial=initial,
             widget=TinyMCE(
                 attrs={'cols': 100, 'rows': 10},
-                mce_attrs={
-                    'branding': False,
-                    'help_tabs': [
-                        'shortcuts',
-                        'keyboardnav',
-                    ],
-                },
             ),
         )
 
