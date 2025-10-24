@@ -3,7 +3,10 @@
 
 # Python-generated files
 __pycache__/
+*/migrations/__pycache__/
 *.py[oc]
+*.pyc
+*.pyo
 build/
 dist/
 wheels/
