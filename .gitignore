@@ -18,8 +18,6 @@ core/project/settings/local.py
 *.sqlite*
 .venv/
 
-core/apps/resumes/migrations/
-core/apps/accounts/migrations/
 
 media/*
 staticfiles/*
