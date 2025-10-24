@@ -155,3 +155,44 @@ AXES_DISABLE_ACCESS_LOG = False
 
 AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username']
 AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = True
+
+# Настройка tinymce
+TINYMCE_DEFAULT_CONFIG = {
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'theme': 'silver',
+
+    'branding': False,      # Отключает брендинг
+    'promotion': False,     # Отключает промо-ссылки
+
+
+    'elementpath': False,
+
+    'plugins': '''
+        textcolor save link image media preview codesample
+        contextmenu table lists fullscreen insertdatetime
+        nonbreaking directionality searchreplace wordcount
+        visualblocks visualchars autolink charmap print
+        hr anchor pagebreak help
+    ''',
+
+    'toolbar': '''
+        fullscreen preview | bold italic underline |
+        fontselect fontsizeselect | forecolor backcolor |
+        alignleft alignright aligncenter alignjustify |
+        indent outdent | bullist numlist table |
+        link image media codesample |
+        visualblocks visualchars charmap hr pagebreak |
+        nonbreaking anchor code
+    ''',
+
+    'help_tabs': [
+        'shortcuts',
+        'keyboardnav',
+    ],
+    'contextmenu': 'formats | link image',
+    'menubar': True,
+    'statusbar': True,
+
+}
