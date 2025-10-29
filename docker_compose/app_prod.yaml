@@ -20,7 +20,6 @@ services:
 
 networks:
   hrresumebank-network:
-    external: true
 
 volumes:
   media_volume:
