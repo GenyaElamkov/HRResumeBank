@@ -97,11 +97,17 @@
         </div>
     </footer>
 
+    {% include 'includes/beta_warning.html' %}
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/fill_card.js' %}"></script>
 
     <!-- HTMX конфигурация -->
     <script src="{% static 'js/card_list.js' %}"></script>
+
+    <!-- Бета-предупреждение -->
+    <script src="{% static 'js/beta_warning.js' %}"></script>
+
 </body>
 </html>
