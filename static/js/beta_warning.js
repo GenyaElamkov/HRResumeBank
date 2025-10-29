@@ -3,6 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var betaModal = new bootstrap.Modal(document.getElementById('betaWarningModal'));
         betaModal.show();
 
-        // sessionStorage.setItem('betaWarningShown', 'true');
+        sessionStorage.setItem('betaWarningShown', 'true');
     }
 });
