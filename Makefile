@@ -1,4 +1,4 @@
-DC = docker-compose
+DC = docker compose
 STORAGES_FILE = docker_compose/storages.yaml
 LOGS = docker logs
 EXEC = docker exec -it
