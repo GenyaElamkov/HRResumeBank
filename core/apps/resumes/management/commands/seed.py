@@ -108,7 +108,6 @@ class Command(BaseCommand):
             description=fake.text(),
         )
 
-        # --- Генерация 100 записей ---
         for i in range(self.COUNTER):
             created_user = choice([user1, user2, user3, user4])
 

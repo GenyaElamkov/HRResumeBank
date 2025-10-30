@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import validate_email
 
 from tinymce.widgets import TinyMCE
 
@@ -42,6 +43,31 @@ class MultipleFileField(forms.FileField):
         else:
             result = single_file_clean(data, initial)
         return result
+
+
+class MultipleEmailField(forms.Field):
+    def to_python(self, value):
+        """Нормализация данных в список email'ов"""
+        if not value:
+            return ''
+        return [email.strip() for email in value.split(',') if email.strip()]
+
+    def validate(self, value):
+        """Проверка валидности всех email'ов"""
+        super().validate(value)
+        for email in value:
+            validate_email(email)
+
+    def prepare_value(self, value):
+        """Преобразование значения для отображения в форме"""
+        if isinstance(value, list):
+            return ', '.join(value)
+        return value
+
+    def clean(self, value):
+        data = super().clean(value)
+        # Возвращаем строку для сохранения в БД
+        return ', '.join(data) if isinstance(data, list) else data
 
 
 class CardFillForm(forms.ModelForm):
@@ -96,10 +122,11 @@ class CardFillForm(forms.ModelForm):
         )
 
     def _add_email_field(self, field, field_name: str, initial):
-        self.fields[field_name] = forms.EmailField(
+        self.fields[field_name] = MultipleEmailField(
             label=field.title,
             required=field.is_required,
             initial=initial,
+            help_text="Введите email-адреса через запятую",
         )
 
     def _add_choice_field(self, field, field_name: str, initial):
