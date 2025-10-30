@@ -1,0 +1,4 @@
+[flake8]
+
+exclude =
+    core/apps/resumes/fixtures/initial_data.py

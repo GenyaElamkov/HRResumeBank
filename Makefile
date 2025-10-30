@@ -77,6 +77,11 @@ collectstatic:
 seed:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed
 
+.PHONY: seed-prod
+seed-prod:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed_prod
+
+
 # Очистить историю audilog
 .PHONY: clear_history
 clear_history:
