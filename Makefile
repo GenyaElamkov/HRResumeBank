@@ -1,4 +1,6 @@
-DC = docker compose
+DC = docker-compose
+# Debian 12 использует команду: docker compose
+DC_PROD = docker compose
 STORAGES_FILE = docker_compose/storages.yaml
 LOGS = docker logs
 EXEC = docker exec -it
@@ -32,7 +34,7 @@ app:
 
 .PHONY: app-prod
 app-prod:
-	$(DC) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) up -d --build
+	$(DC_PROD) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) up -d --build
 
 .PHONY: app-logs
 app-logs:
@@ -44,7 +46,7 @@ app-down:
 
 .PHONY: app-prod-down
 app-prod-down:
-	$(DC) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) down
+	$(DC_PROD) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) down
 
 .PHONY: app-img-down
 app-img-down:
