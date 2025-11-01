@@ -31,7 +31,7 @@
                     <form method="post">
                         {% csrf_token %}
                         <div class="d-flex gap-2 justify-content-end">
-                            <a href="{% url 'resumes:fill_card' pk=object.card.id %}" class="btn btn-secondary">
+                            <a href="{% url 'resumes:update_card' pk=object.card.id %}" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left me-1"></i>Отмена
                             </a>
                             <button type="submit" class="btn btn-danger">

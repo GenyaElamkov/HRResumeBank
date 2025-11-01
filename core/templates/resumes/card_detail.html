@@ -123,7 +123,7 @@
     <!-- Кнопки действий -->
     <div class="d-flex flex-wrap gap-2 mb-4">
         {% if can_edit %}
-            <a href="{% url 'resumes:fill_card' card.id %}" class="btn btn-primary flex-fill flex-md-grow-0">
+            <a href="{% url 'resumes:update_card' card.id %}" class="btn btn-primary flex-fill flex-md-grow-0">
                 <i class="bi bi-pencil-square me-2"></i><span class="d-none d-sm-inline">Редактировать</span>
             </a>
         {% endif %}

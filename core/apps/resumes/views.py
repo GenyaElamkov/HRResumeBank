@@ -143,14 +143,14 @@ class CardCreateView(EditorRequiredMixin, CreateView):
         return kwargs
 
     def get_success_url(self):
-        return reverse("resumes:fill_card", kwargs={"pk": self.object.pk})
+        return reverse("resumes:update_card", kwargs={"pk": self.object.pk})
 
 
 class CardUpdateView(EditorRequiredMixin, UpdateView):
     """Обновление карточки"""
     model = Card
     form_class = CardFillForm
-    template_name = "resumes/fill_card.html"
+    template_name = "resumes/update_card.html"
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
@@ -201,7 +201,7 @@ class FileDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse(
-            "resumes:fill_card", kwargs={"pk": self.object.card.pk},
+            "resumes:update_card", kwargs={"pk": self.object.card.pk},
         )
 
 
@@ -222,7 +222,7 @@ class ImageDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse(
-            "resumes:fill_card", kwargs={"pk": self.object.card.pk},
+            "resumes:update_card", kwargs={"pk": self.object.card.pk},
         )
 
 

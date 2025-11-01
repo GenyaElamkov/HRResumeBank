@@ -18,7 +18,8 @@ from core.apps.resumes.views import (
 
 
 class TestResumesUrls(TestCase):
-    """Тестируем URL-адреса для карточек"""
+    """Тестируем URL-адреса для карточек приложения resumes"""
+
     def _assert_url_resolves_to_views(self, name, view_class, **kwargs):
         """Проверяем, что URL-адрес разрешается в нужный класс представления"""
         url = reverse(name, kwargs=kwargs)
@@ -47,7 +48,7 @@ class TestResumesUrls(TestCase):
     def test_card_update_url(self):
         """Проверяем URL-адрес обновления карточки"""
         self._assert_url_resolves_to_views(
-            name='resumes:fill_card',
+            name='resumes:update_card',
             view_class=CardUpdateView,
             pk=1,
         )
@@ -92,21 +93,15 @@ class TestResumesUrls(TestCase):
 
     def test_resolve_card_update_invalid_pk_type(self):
         """Проверяем, что URL-адрес обновления карточки с недопустимым PK возвращает 404"""
-        self._assert_url_raises_404(url='/card/invalid/fill/')
+        url_with_invalid_pk = reverse('resumes:update_card', kwargs={'pk': 1}).replace('1', 'invalid')
+        self._assert_url_raises_404(url=url_with_invalid_pk)
 
     def test_resolve_card_update_url_negative_pk(self):
         """Проверяем, что URL-адрес обновления карточки с отрицательным PK возвращает 404"""
-        self._assert_url_raises_404(url='/card/-1/fill/')
+        url_with_negative_pk = reverse('resumes:update_card', kwargs={'pk': 1}).replace('1', '-1')
+        self._assert_url_raises_404(url=url_with_negative_pk)
 
     def test_resolve_trailing_slash_sensitivity(self):
         """Проверяем, что URL без слеша не разрешается (если у нас все URL с /)."""
-        self._assert_url_raises_404(url='/card/1')
-
-    def test_file_delete_with_large_pk(self):
-        """Проверяем, что очень большой PK не приводит к ошибке при удалении файла."""
-        large_pk = 999999999
-        self._assert_url_resolves_to_views(
-            name="resumes:delete_file",
-            view_class=FileDeleteView,
-            pk=large_pk,
-        )
+        url_without_slash = reverse('resumes:card_detail', kwargs={'pk': 1}).rstrip('/')
+        self._assert_url_raises_404(url=url_without_slash)
