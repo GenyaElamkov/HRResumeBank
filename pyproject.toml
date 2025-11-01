@@ -23,6 +23,8 @@ dev = [
     "faker>=37.6.0",
     "isort>=6.0.1",
     "pre-commit>=4.2.0",
+    "pytest>=8.4.2",
+    "pytest-django>=4.11.1",
 ]
 
 
