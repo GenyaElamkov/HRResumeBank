@@ -7,9 +7,9 @@ from django.urls import (
 )
 
 
-handler403 = "core.apps.resumes.views.tr_handler403"
-handler404 = "core.apps.resumes.views.tr_handler404"
-handler500 = "core.apps.resumes.views.tr_handler500"
+handler403 = "core.apps.common.views.errors.tr_handler403"
+handler404 = "core.apps.common.views.errors.tr_handler404"
+handler500 = "core.apps.common.views.errors.tr_handler500"
 
 
 urlpatterns = [

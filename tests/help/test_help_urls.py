@@ -24,20 +24,37 @@ class TestHelpUrls(TestCase):
 
     def test_help_home(self):
         """Проверяем URL-адрес главной страницы помощи"""
-        self._assert_url_resolves_to_views('help_system:help_home', HelpHomeView)
+        self._assert_url_resolves_to_views(
+            name='help_system:help_home',
+            view_class=HelpHomeView,
+        )
 
     def test_help_search(self):
         """Проверяем URL-адрес поиска помощи"""
-        self._assert_url_resolves_to_views('help_system:search', HelpSearchView)
+        self._assert_url_resolves_to_views(
+            name='help_system:search',
+            view_class=HelpSearchView,
+        )
 
     def test_category(self):
         """Проверяем URL-адрес категории помощи"""
-        self._assert_url_resolves_to_views('help_system:category', HelpCategoryView, slug='test-slug')
+        self._assert_url_resolves_to_views(
+            name='help_system:category',
+            view_class=HelpCategoryView,
+            slug='test-slug',
+        )
 
     def test_article(self):
         """Проверяем URL-адрес статьи помощи"""
-        self._assert_url_resolves_to_views('help_system:article', HelpArticleView, slug='test-slug')
+        self._assert_url_resolves_to_views(
+            name='help_system:article',
+            view_class=HelpArticleView,
+            slug='test-slug',
+        )
 
     def test_faq(self):
         """Проверяем URL-адрес FAQ"""
-        self._assert_url_resolves_to_views('help_system:faq', FAQListView)
+        self._assert_url_resolves_to_views(
+            name='help_system:faq',
+            view_class=FAQListView,
+        )
