@@ -15,6 +15,8 @@ handler500 = "core.apps.common.views.errors.tr_handler500"
 urlpatterns = [
     path("secret-admin-panel/", admin.site.urls),
     path("auth/", include("core.apps.authentication.urls")),
+    # Переключение языка
+    path('i18n/', include('django.conf.urls.i18n')),
     path("", include("core.apps.resumes.urls")),
     path('tinymce/', include('tinymce.urls')),
     path('help/', include('core.apps.help.urls')),
