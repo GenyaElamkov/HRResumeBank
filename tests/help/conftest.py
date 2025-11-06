@@ -6,7 +6,7 @@ from core.apps.help.models.help_category import HelpCategory
 
 
 @pytest.fixture
-def get_faq_field():
+def get_field():
     """Фикстура поля модели"""
     def _get_field(model, field_name):
         return model._meta.get_field(field_name)
@@ -17,7 +17,11 @@ def get_faq_field():
 def help_category():
     """Фикстура категории помощи"""
     return HelpCategory.objects.create(
-            title="Техническая поддержка",
+            title="Тестовая категория",
+            slug="testovoy-kategoriya",
+            description="Описание тестовой категории",
+            order=1,
+            is_active=True,
     )
 
 

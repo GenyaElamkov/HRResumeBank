@@ -9,52 +9,52 @@ from core.apps.help.models.help_category import HelpCategory
 class TestHelpArticleModelStructure:
     """Проверка структуры модели HelpArticle"""
 
-    def test_title(self, get_faq_field):
+    def test_title(self, get_field):
         """Проверка поля title"""
-        field = get_faq_field(HelpArticle, 'title')
+        field = get_field(HelpArticle, 'title')
         assert isinstance(field, models.CharField)
         assert field.verbose_name == 'Заголовок'
         assert field.max_length == 300
         assert not field.blank
         assert not field.null
 
-    def test_slug(self, get_faq_field):
+    def test_slug(self, get_field):
         """Проверка поля slug"""
-        field = get_faq_field(HelpArticle, 'slug')
+        field = get_field(HelpArticle, 'slug')
         assert isinstance(field, models.SlugField)
         assert field.verbose_name == 'URL-адрес'
         assert field.unique is True
         assert not field.blank
         assert not field.null
 
-    def test_content(self, get_faq_field):
+    def test_content(self, get_field):
         """Проверка поля content"""
-        field = get_faq_field(HelpArticle, 'content')
+        field = get_field(HelpArticle, 'content')
         assert isinstance(field, models.TextField)
         assert field.verbose_name == 'Содержание'
         assert not field.blank
         assert not field.null
 
-    def test_short_description(self, get_faq_field):
+    def test_short_description(self, get_field):
         """Проверка поля short_description"""
-        field = get_faq_field(HelpArticle, 'short_description')
+        field = get_field(HelpArticle, 'short_description')
         assert isinstance(field, models.TextField)
         assert field.verbose_name == 'Краткое описание'
         assert field.blank is True
         assert field.null is False
 
-    def test_category(self, get_faq_field):
+    def test_category(self, get_field):
         """Проверка поля category"""
-        field = get_faq_field(HelpArticle, 'category')
+        field = get_field(HelpArticle, 'category')
         assert isinstance(field, models.ForeignKey)
         assert field.related_model == HelpCategory
         assert field.verbose_name == 'Категория'
         assert field.remote_field.on_delete == models.CASCADE
         assert field.remote_field.related_name == 'articles'
 
-    def test_tags(self, get_faq_field):
+    def test_tags(self, get_field):
         """Проверка поля tags"""
-        field = get_faq_field(HelpArticle, 'tags')
+        field = get_field(HelpArticle, 'tags')
         assert isinstance(field, models.CharField)
         assert field.verbose_name == 'Теги'
         assert field.max_length == 500
@@ -62,27 +62,27 @@ class TestHelpArticleModelStructure:
         assert field.null is False
         assert field.help_text == 'Разделяйте теги запятыми'
 
-    def test_is_published(self, get_faq_field):
+    def test_is_published(self, get_field):
         """Проверка поля is_published"""
-        field = get_faq_field(HelpArticle, 'is_published')
+        field = get_field(HelpArticle, 'is_published')
         assert isinstance(field, models.BooleanField)
         assert field.verbose_name == 'Опубликовано'
         assert field.default is True
         assert field.null is False
         assert field.blank is False
 
-    def test_view_count(self, get_faq_field):
+    def test_view_count(self, get_field):
         """Проверка поля view_count"""
-        field = get_faq_field(HelpArticle, 'view_count')
+        field = get_field(HelpArticle, 'view_count')
         assert isinstance(field, models.PositiveIntegerField)
         assert field.verbose_name == 'Количество просмотров'
         assert field.default == 0
         assert field.null is False
         assert field.blank is False
 
-    def test_order(self, get_faq_field):
+    def test_order(self, get_field):
         """Проверка поля order"""
-        field = get_faq_field(HelpArticle, 'order')
+        field = get_field(HelpArticle, 'order')
         assert isinstance(field, models.PositiveIntegerField)
         assert field.verbose_name == 'Порядок'
         assert field.default == 0

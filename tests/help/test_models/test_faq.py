@@ -12,42 +12,42 @@ from core.apps.help.models.help_category import HelpCategory
 class TestFAQModelStructure:
     """Проверка структуры модели FAQ"""
 
-    def test_question(self, get_faq_field):
+    def test_question(self, get_field):
         """Проверка поля question"""
-        field = get_faq_field(FAQ, 'question')
+        field = get_field(FAQ, 'question')
         assert isinstance(field, models.CharField)
         assert field.verbose_name == 'Вопрос'
         assert field.max_length == 500
         assert not field.blank
         assert not field.null
 
-    def test_answer(self, get_faq_field):
+    def test_answer(self, get_field):
         """Проверка поля answer"""
-        field = get_faq_field(FAQ, 'answer')
+        field = get_field(FAQ, 'answer')
         assert isinstance(field, models.TextField)
         assert field.verbose_name == 'Ответ'
         assert not field.blank
         assert not field.null
 
-    def test_category(self, get_faq_field):
+    def test_category(self, get_field):
         """Проверка поля category"""
-        field = get_faq_field(FAQ, 'category')
+        field = get_field(FAQ, 'category')
         assert isinstance(field, models.ForeignKey)
         assert field.related_model == HelpCategory
         assert field.verbose_name == 'Категория'
         assert field.remote_field.on_delete == models.CASCADE
         assert field.remote_field.related_name == 'faqs'
 
-    def test_is_published(self, get_faq_field):
+    def test_is_published(self, get_field):
         """Проверка поля is_published"""
-        field = get_faq_field(FAQ, 'is_published')
+        field = get_field(FAQ, 'is_published')
         assert isinstance(field, models.BooleanField)
         assert field.verbose_name == 'Опубликовано'
         assert field.default is True
 
-    def test_ordering(self, get_faq_field):
+    def test_ordering(self, get_field):
         """Проверка порядка сортировки"""
-        field = get_faq_field(FAQ, 'order')
+        field = get_field(FAQ, 'order')
         assert isinstance(field, models.PositiveIntegerField)
         assert field.verbose_name == 'Порядок'
         assert field.default == 0
