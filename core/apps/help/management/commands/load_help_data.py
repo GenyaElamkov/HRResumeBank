@@ -8,7 +8,6 @@ from core.apps.help.fixtures.initial_data import (
 from core.apps.help.models.faq import FAQ
 from core.apps.help.models.help_article import HelpArticle
 from core.apps.help.models.help_category import HelpCategory
-from core.apps.resumes.models.template import Template
 
 
 class Command(BaseCommand):
@@ -48,14 +47,6 @@ class Command(BaseCommand):
         for article_data in HELP_ARTICLES:
             category = HelpCategory.objects.get(slug=article_data['category'])
 
-            # Получаем связанный шаблон если указан
-            related_template = None
-            if article_data.get('related_template'):
-                try:
-                    related_template = Template.objects.get(title=article_data['related_template'])
-                except Template.DoesNotExist:
-                    self.stdout.write(f"Warning: Template {article_data['related_template']} not found")
-
             article, created = HelpArticle.objects.get_or_create(
                 slug=article_data['slug'],
                 defaults={
@@ -65,7 +56,6 @@ class Command(BaseCommand):
                     'category': category,
                     'tags': article_data['tags'],
                     'order': article_data['order'],
-                    'related_template': related_template,
                 },
             )
             if created:

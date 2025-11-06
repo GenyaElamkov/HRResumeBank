@@ -9,34 +9,6 @@ from core.apps.help.models.faq import FAQ
 from core.apps.help.models.help_category import HelpCategory
 
 
-@pytest.fixture
-def help_category():
-    """Фикстура категории помощи"""
-    return HelpCategory.objects.create(
-            title="Техническая поддержка",
-    )
-
-
-@pytest.fixture
-def faq(help_category):
-    """Фикстура FAQ"""
-    return FAQ.objects.create(
-            question="Тестовый вопрос",
-            answer="Тестовый ответ",
-            category=help_category,
-            is_published=True,
-            order=1,
-    )
-
-
-@pytest.fixture
-def get_faq_field():
-    """Фикстура поля модели"""
-    def _get_field(model, field_name):
-        return model._meta.get_field(field_name)
-    return _get_field
-
-
 class TestFAQModelStructure:
     """Проверка структуры модели FAQ"""
 
@@ -94,6 +66,7 @@ class TestFAQBehavior:
         assert faq.order == 1
 
     def test_question_required(self, help_category):
+        """Проверка обязательности поля question"""
         with pytest.raises(IntegrityError):
             FAQ.objects.create(question=None, answer="Ответ", category=help_category)
 

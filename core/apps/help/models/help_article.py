@@ -44,13 +44,6 @@ class HelpArticle(TimeBaseModel):
         verbose_name="Порядок",
         default=0,
     )
-    related_template = models.ForeignKey(
-        'resumes.Template',
-        verbose_name="Связанный шаблон",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
 
     class Meta:
         verbose_name = "Статья справки"
