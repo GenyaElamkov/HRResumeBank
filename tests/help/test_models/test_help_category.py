@@ -8,6 +8,25 @@ from core.apps.help.models.help_category import HelpCategory
 class TestHelpCategoryStructure:
     """Проверка структуры модели HelpCategory"""
 
+    def test_availability_fields(self, get_fields):
+        """Проверка наличие полей в модели"""
+        fields = get_fields(HelpCategory)
+        for field in fields:
+            assert field.name in [
+                'faqs',
+                'articles',
+                'title',
+                'children',
+                'id',
+                'create_at',
+                'update_at',
+                'slug',
+                'description',
+                'parent',
+                'order',
+                'is_active',
+            ]
+
     def test_title(self, get_field):
         """Проверка поля title"""
         field = get_field(HelpCategory, 'title')

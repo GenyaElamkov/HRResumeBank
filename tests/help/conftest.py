@@ -14,6 +14,14 @@ def get_field():
 
 
 @pytest.fixture
+def get_fields():
+    """Фикстура полей модели"""
+    def _get_fields(model):
+        return model._meta.get_fields(include_parents=False)
+    return _get_fields
+
+
+@pytest.fixture
 def help_category():
     """Фикстура категории помощи"""
     return HelpCategory.objects.create(

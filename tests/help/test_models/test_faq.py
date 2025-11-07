@@ -12,6 +12,21 @@ from core.apps.help.models.help_category import HelpCategory
 class TestFAQModelStructure:
     """Проверка структуры модели FAQ"""
 
+    def test_availability_fields(self, get_fields):
+        """Проверка наличие полей в модели"""
+        fields = get_fields(FAQ)
+        for field in fields:
+            assert field.name in [
+                'id',
+                'create_at',
+                'update_at',
+                'question',
+                'answer',
+                'category',
+                'is_published',
+                'order',
+            ]
+
     def test_question(self, get_field):
         """Проверка поля question"""
         field = get_field(FAQ, 'question')
