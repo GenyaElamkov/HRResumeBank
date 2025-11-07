@@ -27,31 +27,56 @@ class TestHelpCategoryStructure:
                 'is_active',
             ]
 
-    def test_title(self, get_field):
-        """Проверка поля title"""
-        field = get_field(HelpCategory, 'title')
-        assert isinstance(field, models.CharField)
-        assert field.verbose_name == 'Название категории'
-        assert field.max_length == 200
-        assert field.blank is False
-        assert field.null is False
-
-    def test_slug(self, get_field):
-        """Проверка поля slug"""
-        field = get_field(HelpCategory, 'slug')
-        assert isinstance(field, models.SlugField)
-        assert field.verbose_name == 'URL-адрес'
-        assert field.unique is True
-        assert field.blank is False
-        assert field.null is False
-
-    def test_description(self, get_field):
-        """Проверка поля description"""
-        field = get_field(HelpCategory, 'description')
-        assert isinstance(field, models.TextField)
-        assert field.verbose_name == 'Описание'
-        assert field.blank is True
-        assert field.null is False
+    @pytest.mark.parametrize(
+        "field_name, field_type, field_attrs",
+        [
+            (
+                "title", models.CharField, {
+                        "verbose_name": "Название категории",
+                        "max_length": 200,
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "slug", models.SlugField, {
+                        "verbose_name": "URL-адрес",
+                        "unique": True,
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "description", models.TextField, {
+                        "verbose_name": "Описание",
+                        "blank": True,
+                        "null": False,
+                },
+            ),
+            (
+                "order", models.PositiveIntegerField, {
+                        "verbose_name": "Порядок",
+                        "default": 0,
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "is_active", models.BooleanField, {
+                        "verbose_name": "Активна",
+                        "default": True,
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+        ],
+    )
+    def test_field_structure(self, get_field, field_name, field_type, field_attrs):
+        """Проверка полей"""
+        field = get_field(HelpCategory, field_name)
+        assert isinstance(field, field_type)
+        for attr, value in field_attrs.items():
+            assert getattr(field, attr) == value
 
     def test_parent(self, get_field):
         """Проверка поля parent"""
@@ -63,24 +88,6 @@ class TestHelpCategoryStructure:
         assert field.null is True
         assert field.blank is True
         assert field.remote_field.related_name == 'children'
-
-    def test_order(self, get_field):
-        """Проверка поля order"""
-        field = get_field(HelpCategory, 'order')
-        assert isinstance(field, models.PositiveIntegerField)
-        assert field.verbose_name == 'Порядок'
-        assert field.default == 0
-        assert field.blank is False
-        assert field.null is False
-
-    def test_is_active(self, get_field):
-        """Проверка поля is_active"""
-        field = get_field(HelpCategory, 'is_active')
-        assert isinstance(field, models.BooleanField)
-        assert field.verbose_name == 'Активна'
-        assert field.default is True
-        assert field.blank is False
-        assert field.null is False
 
 
 class TestHelpCategoryMeta:

@@ -27,22 +27,44 @@ class TestFAQModelStructure:
                 'order',
             ]
 
-    def test_question(self, get_field):
-        """Проверка поля question"""
-        field = get_field(FAQ, 'question')
-        assert isinstance(field, models.CharField)
-        assert field.verbose_name == 'Вопрос'
-        assert field.max_length == 500
-        assert not field.blank
-        assert not field.null
-
-    def test_answer(self, get_field):
-        """Проверка поля answer"""
-        field = get_field(FAQ, 'answer')
-        assert isinstance(field, models.TextField)
-        assert field.verbose_name == 'Ответ'
-        assert not field.blank
-        assert not field.null
+    @pytest.mark.parametrize(
+        "field_name, field_type, field_attrs",
+        [
+            (
+                "question", models.CharField, {
+                        "verbose_name": "Вопрос",
+                        "max_length": 500,
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "answer", models.TextField, {
+                        "verbose_name": "Ответ",
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "is_published", models.BooleanField, {
+                        "verbose_name": "Опубликовано",
+                        "default": True,
+                },
+            ),
+            (
+                "order", models.PositiveIntegerField, {
+                        "verbose_name": "Порядок",
+                        "default": 0,
+                },
+            ),
+        ],
+    )
+    def test_field_structure(self, get_field, field_name, field_type, field_attrs):
+        """Проверка полей"""
+        field = get_field(FAQ, field_name)
+        assert isinstance(field, field_type)
+        for attr, value in field_attrs.items():
+            assert getattr(field, attr) == value
 
     def test_category(self, get_field):
         """Проверка поля category"""
@@ -52,20 +74,6 @@ class TestFAQModelStructure:
         assert field.verbose_name == 'Категория'
         assert field.remote_field.on_delete == models.CASCADE
         assert field.remote_field.related_name == 'faqs'
-
-    def test_is_published(self, get_field):
-        """Проверка поля is_published"""
-        field = get_field(FAQ, 'is_published')
-        assert isinstance(field, models.BooleanField)
-        assert field.verbose_name == 'Опубликовано'
-        assert field.default is True
-
-    def test_ordering(self, get_field):
-        """Проверка порядка сортировки"""
-        field = get_field(FAQ, 'order')
-        assert isinstance(field, models.PositiveIntegerField)
-        assert field.verbose_name == 'Порядок'
-        assert field.default == 0
 
 
 @pytest.mark.django_db

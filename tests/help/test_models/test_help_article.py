@@ -28,39 +28,80 @@ class TestHelpArticleModelStructure:
                 'order',
             ]
 
-    def test_title(self, get_field):
-        """Проверка поля title"""
-        field = get_field(HelpArticle, 'title')
-        assert isinstance(field, models.CharField)
-        assert field.verbose_name == 'Заголовок'
-        assert field.max_length == 300
-        assert not field.blank
-        assert not field.null
-
-    def test_slug(self, get_field):
-        """Проверка поля slug"""
-        field = get_field(HelpArticle, 'slug')
-        assert isinstance(field, models.SlugField)
-        assert field.verbose_name == 'URL-адрес'
-        assert field.unique is True
-        assert not field.blank
-        assert not field.null
-
-    def test_content(self, get_field):
-        """Проверка поля content"""
-        field = get_field(HelpArticle, 'content')
-        assert isinstance(field, models.TextField)
-        assert field.verbose_name == 'Содержание'
-        assert not field.blank
-        assert not field.null
-
-    def test_short_description(self, get_field):
-        """Проверка поля short_description"""
-        field = get_field(HelpArticle, 'short_description')
-        assert isinstance(field, models.TextField)
-        assert field.verbose_name == 'Краткое описание'
-        assert field.blank is True
-        assert field.null is False
+    @pytest.mark.parametrize(
+        "field_name, field_type, field_attrs",
+        [
+            (
+                "title", models.CharField, {
+                        "verbose_name": "Заголовок",
+                        "max_length": 300,
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "slug", models.SlugField, {
+                        "verbose_name": "URL-адрес",
+                        "unique": True,
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "content", models.TextField, {
+                        "verbose_name": "Содержание",
+                        "blank": False,
+                        "null": False,
+                },
+            ),
+            (
+                "short_description", models.TextField, {
+                        "verbose_name": "Краткое описание",
+                        "blank": True,
+                        "null": False,
+                },
+            ),
+            (
+                "tags", models.CharField, {
+                        "verbose_name": "Теги",
+                        "max_length": 500,
+                        "blank": True,
+                        "null": False,
+                        "help_text": "Разделяйте теги запятыми",
+                },
+            ),
+            (
+                "is_published", models.BooleanField, {
+                        "verbose_name": "Опубликовано",
+                        "default": True,
+                        "null": False,
+                        "blank": False,
+                },
+            ),
+            (
+                "view_count", models.PositiveIntegerField, {
+                        "verbose_name": "Количество просмотров",
+                        "default": 0,
+                        "null": False,
+                        "blank": False,
+                },
+            ),
+            (
+                "order", models.PositiveIntegerField, {
+                        "verbose_name": "Порядок",
+                        "default": 0,
+                        "null": False,
+                        "blank": False,
+                },
+            ),
+        ],
+    )
+    def test_field_structure(self, get_field, field_name, field_type, field_attrs):
+        """Проверка полей"""
+        field = get_field(HelpArticle, field_name)
+        assert isinstance(field, field_type)
+        for attr, value in field_attrs.items():
+            assert getattr(field, attr) == value
 
     def test_category(self, get_field):
         """Проверка поля category"""
@@ -70,43 +111,6 @@ class TestHelpArticleModelStructure:
         assert field.verbose_name == 'Категория'
         assert field.remote_field.on_delete == models.CASCADE
         assert field.remote_field.related_name == 'articles'
-
-    def test_tags(self, get_field):
-        """Проверка поля tags"""
-        field = get_field(HelpArticle, 'tags')
-        assert isinstance(field, models.CharField)
-        assert field.verbose_name == 'Теги'
-        assert field.max_length == 500
-        assert field.blank is True
-        assert field.null is False
-        assert field.help_text == 'Разделяйте теги запятыми'
-
-    def test_is_published(self, get_field):
-        """Проверка поля is_published"""
-        field = get_field(HelpArticle, 'is_published')
-        assert isinstance(field, models.BooleanField)
-        assert field.verbose_name == 'Опубликовано'
-        assert field.default is True
-        assert field.null is False
-        assert field.blank is False
-
-    def test_view_count(self, get_field):
-        """Проверка поля view_count"""
-        field = get_field(HelpArticle, 'view_count')
-        assert isinstance(field, models.PositiveIntegerField)
-        assert field.verbose_name == 'Количество просмотров'
-        assert field.default == 0
-        assert field.null is False
-        assert field.blank is False
-
-    def test_order(self, get_field):
-        """Проверка поля order"""
-        field = get_field(HelpArticle, 'order')
-        assert isinstance(field, models.PositiveIntegerField)
-        assert field.verbose_name == 'Порядок'
-        assert field.default == 0
-        assert field.null is False
-        assert field.blank is False
 
 
 class TestHelpArticleMeta:
