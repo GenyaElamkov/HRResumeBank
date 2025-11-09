@@ -20,6 +20,7 @@ class TestFAQModelStructure:
                 'id',
                 'create_at',
                 'update_at',
+                # Основные поля
                 'question',
                 'answer',
                 'category',

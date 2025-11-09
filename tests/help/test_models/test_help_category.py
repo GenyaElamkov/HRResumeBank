@@ -13,13 +13,14 @@ class TestHelpCategoryStructure:
         fields = get_fields(HelpCategory)
         for field in fields:
             assert field.name in [
-                'faqs',
-                'articles',
-                'title',
-                'children',
                 'id',
                 'create_at',
                 'update_at',
+                'faqs',
+                'articles',
+                'children',
+                # Основные поля
+                'title',
                 'slug',
                 'description',
                 'parent',

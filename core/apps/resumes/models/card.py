@@ -19,7 +19,7 @@ class Card(TimeBaseModel):
         settings.AUTH_USER_MODEL,
         verbose_name="Кто создал запись",
         on_delete=models.PROTECT,
-        related_name="created_template",
+        related_name="created_card",
     )
     values = models.JSONField(
         verbose_name="Значения полей",

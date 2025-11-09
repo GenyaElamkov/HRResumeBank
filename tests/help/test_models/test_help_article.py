@@ -17,6 +17,7 @@ class TestHelpArticleModelStructure:
                 'id',
                 'create_at',
                 'update_at',
+                # Основные поля
                 'title',
                 'slug',
                 'content',
