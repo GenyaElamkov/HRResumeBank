@@ -43,12 +43,10 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width: 30%">Поле</th>
-                            <th style="width: 70%">Значение</th>
-                        </tr>
-                    </thead>
+                    <colgroup>
+                        <col style="width: 30%;">
+                        <col style="width: 70%;">
+                    </colgroup>
                     <tbody>
                         {% for field in card.template.fields.all|dictsort:"order" %}
 
