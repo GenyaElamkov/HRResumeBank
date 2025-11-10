@@ -7,6 +7,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ../.env.local
+      - ../.env.prod
     networks:
       - hrresumebank-network
