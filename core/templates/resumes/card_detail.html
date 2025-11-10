@@ -43,12 +43,10 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width: 30%">Поле</th>
-                            <th style="width: 70%">Значение</th>
-                        </tr>
-                    </thead>
+                    <colgroup>
+                        <col style="width: 30%;">
+                        <col style="width: 70%;">
+                    </colgroup>
                     <tbody>
                         {% for field in card.template.fields.all|dictsort:"order" %}
 
@@ -123,7 +121,7 @@
     <!-- Кнопки действий -->
     <div class="d-flex flex-wrap gap-2 mb-4">
         {% if can_edit %}
-            <a href="{% url 'resumes:fill_card' card.id %}" class="btn btn-primary flex-fill flex-md-grow-0">
+            <a href="{% url 'resumes:update_card' card.id %}" class="btn btn-primary flex-fill flex-md-grow-0">
                 <i class="bi bi-pencil-square me-2"></i><span class="d-none d-sm-inline">Редактировать</span>
             </a>
         {% endif %}

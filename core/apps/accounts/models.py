@@ -16,6 +16,8 @@ class CustomUser(AbstractUser):
         """Формирует полное имя с отчеством."""
         full_name = super().get_full_name()
         parts = full_name.split(" ") if full_name else []
+        if not self.first_name or not self.last_name:
+            return self.username
         if self.surname:
             parts.insert(1, self.surname)
         return ' '.join(parts) or self.username

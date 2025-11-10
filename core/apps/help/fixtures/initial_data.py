@@ -145,7 +145,6 @@ HELP_ARTICLES = [
         "category": "getting-started",
         "tags": "создание, первая карточка, начало работы, руководство",
         "order": 1,
-        "related_template": "Базовая анкета",
     },
     {
         "title": "Работа с шаблонами карточек",
@@ -194,7 +193,6 @@ HELP_ARTICLES = [
         "category": "templates-fields",
         "tags": "шаблоны, настройка, типы карточек, анкета, резюме",
         "order": 2,
-        "related_template": None,
     },
     {
         "title": "Расширенный поиск по карточкам",
@@ -243,7 +241,6 @@ HELP_ARTICLES = [
         "category": "search-filtration",
         "tags": "поиск, фильтрация, расширенный поиск, найти карточку",
         "order": 3,
-        "related_template": None,
     },
     {
         "title": "Загрузка и управление файлами",
@@ -297,7 +294,6 @@ HELP_ARTICLES = [
         "category": "files-images",
         "tags": "файлы, загрузка, изображения, документы, PDF, JPG",
         "order": 4,
-        "related_template": None,
     },
     {
         "title": "Печать карточек и экспорт данных",
@@ -336,7 +332,6 @@ HELP_ARTICLES = [
         "category": "card-creation",
         "tags": "печать, экспорт, PDF, распечатать, выгрузить",
         "order": 5,
-        "related_template": None,
     },
     {
         "title": "Формат поиска даты",
@@ -379,7 +374,6 @@ HELP_ARTICLES = [
         "category": "search-filtration",
         "tags": "поиск, фильтрация, расширенный поиск, найти карточку",
         "order": 6,
-        "related_template": None,
     },
 ]
 

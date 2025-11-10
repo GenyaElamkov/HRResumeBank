@@ -25,6 +25,7 @@ def update_entity_main_name(sender, instance, **kwargs):
             field_value = instance.values[field_title]
 
             if field_value:
+                # Обновление поля main_name, если оно пустое
                 instance.main_name = strip_html(str(field_value))
                 Card.objects.filter(pk=instance.pk).update(main_name=instance.main_name)
                 return
