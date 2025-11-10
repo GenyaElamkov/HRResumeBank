@@ -1,11 +1,13 @@
-from .main import *  # noqa
+import environ
+
+from .main import *  # noqaё
 
 
-DEBUG = False
+env = environ.Env()
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'main-app'] # noqa
-# ALLOWED_HOSTS = ['217.26.27.239']                               # noqa
+DEBUG = env.bool('DEBUG')
 
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 # Для тестирования
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False

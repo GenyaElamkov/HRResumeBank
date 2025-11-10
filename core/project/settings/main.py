@@ -7,7 +7,8 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env")
+environ.Env.read_env(BASE_DIR / ".env.local")
+environ.Env.read_env(BASE_DIR / ".env.prod")
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 

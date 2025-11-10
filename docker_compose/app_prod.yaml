@@ -1,7 +1,7 @@
 services:
   postgres:
     extends:
-      file: storages.yaml
+      file: storages_prod.yaml
       service: postgres
 
   gunicorn:

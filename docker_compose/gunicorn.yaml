@@ -4,9 +4,8 @@ services:
       context: ..
       dockerfile: Dockerfile.prod
     container_name: main-app
-    # command: "gunicorn -c /app/gunicorn.conf.py core.project.wsgi:application"
     env_file:
-      - ../.env
+      - ../.env.prod
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media

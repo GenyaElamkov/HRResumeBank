@@ -1,17 +1,23 @@
+# local
 DC = docker-compose
+STORAGES_FILE = docker_compose/storages.yaml
+ENV = --env-file .env.local
+APP_FILE = docker_compose/app_dev.yaml
+
+# prod
 # Debian 12 использует команду: docker compose
 DC_PROD = docker compose
-STORAGES_FILE = docker_compose/storages.yaml
+ENV_PROD = --env-file .env.prod
+APP_FILE_PROD = docker_compose/app_prod.yaml
+
+# all
+DB_CONTAINER = example-db
 LOGS = docker logs
 EXEC = docker exec -it
-DB_CONTAINER = example-db
-ENV = --env-file .env
-APP_FILE = docker_compose/app_dev.yaml
-APP_FILE_PROD = docker_compose/app_prod.yaml
 APP_CONTAINER = main-app
 MANAGE_PY = python manage.py
 
-
+# LOCAL
 .PHONY: storages
 storages:
 	$(DC) -f $(STORAGES_FILE) $(ENV) up -d
@@ -32,25 +38,32 @@ postgres:
 app:
 	$(DC) -f $(APP_FILE) -f $(STORAGES_FILE) $(ENV) up -d --build
 
-.PHONY: app-prod
-app-prod:
-	$(DC_PROD) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) up -d --build
-
-.PHONY: app-logs
-app-logs:
-	$(LOGS) $(APP_CONTAINER) -f
-
 .PHONY: app-down
 app-down:
 	$(DC) -f $(APP_FILE) -f $(STORAGES_FILE) $(ENV) down
 
-.PHONY: app-prod-down
-app-prod-down:
-	$(DC_PROD) -f $(APP_FILE_PROD) -f $(STORAGES_FILE) $(ENV) down
+# Faker
+.PHONY: seed
+seed:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed
 
 .PHONY: app-img-down
 app-img-down:
 	$(DC) -f $(APP_FILE) -f $(STORAGES_FILE) down -v
+
+# PROD
+.PHONY: app-prod
+app-prod:
+	$(DC_PROD) -f $(APP_FILE_PROD) $(ENV_PROD) up -d --build
+
+.PHONY: app-prod-down
+app-prod-down:
+	$(DC_PROD) -f $(APP_FILE_PROD) $(ENV_PROD) down
+
+# ALL
+.PHONY: app-logs
+app-logs:
+	$(LOGS) $(APP_CONTAINER) -f
 
 .PHONY: migrate
 migrate:
@@ -65,7 +78,6 @@ migrations:
 squashmigrations:
 	$(EXEC) $(MANAGE_PY) squashmigrations ${APP_CONTAINER}
 
-
 .PHONY: superuser
 superuser:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) createsuperuser
@@ -74,25 +86,20 @@ superuser:
 collectstatic:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) collectstatic --clear
 
-# Faker
-.PHONY: seed
-seed:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed
-
+# Fixture по excel шаблону
 .PHONY: seed-prod
 seed-prod:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed_prod
-
-
-# Очистить историю audilog
-.PHONY: clear_history
-clear_history:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) axec_reset
 
 # Fixture
 .PHONY: fixture
 fixture:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) load_help_data
+
+# Очистить историю audilog
+.PHONY: clear_history
+clear_history:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) axec_reset
 
 .PHONY: check
 check:

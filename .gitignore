@@ -14,9 +14,8 @@ wheels/
 
 # Virtual environments
 .venv
-.env
+.env*
 !.env.example
-core/project/settings/local.py
 !static/.gitkeep
 *.sqlite*
 .venv/
