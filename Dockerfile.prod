@@ -23,11 +23,11 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 COPY . /app/
-COPY entrypoint.prod.sh /app/entrypoint.prod.sh
+COPY entrypoint/entrypoint.prod.sh /app/entrypoint/entrypoint.prod.sh
 
-RUN chmod +x /app/entrypoint.prod.sh
+RUN chmod +x /app/entrypoint/entrypoint.prod.sh
 
 # Создаем директорию для статики
 RUN mkdir -p /app/staticfiles /app/media
 
-ENTRYPOINT ["/app/entrypoint.prod.sh"]
+ENTRYPOINT ["/app/entrypoint/entrypoint.prod.sh"]
