@@ -26,5 +26,9 @@ networks:
 
 volumes:
   media_volume:
+    external: true
+    name: hrresumebank_media
   static_volume:
   postgres_data:
+    external: true
+    name: hrresumebank_postgres
