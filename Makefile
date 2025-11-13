@@ -1,17 +1,16 @@
 # local
 DC = docker-compose
 STORAGES_FILE = docker_compose/storages.yaml
-ENV = --env-file .env.local
 APP_FILE = docker_compose/app_dev.yaml
 
 # prod
 # Debian 12 использует команду: docker compose
 DC_PROD = docker compose
-ENV_PROD = --env-file .env.prod
 APP_FILE_PROD = docker_compose/app_prod.yaml
 
 # all
 DB_CONTAINER = example-db
+ENV = --env-file .env
 LOGS = docker logs
 EXEC = docker exec -it
 APP_CONTAINER = main-app
@@ -54,11 +53,11 @@ app-img-down:
 # PROD
 .PHONY: app-prod
 app-prod:
-	$(DC_PROD) -f $(APP_FILE_PROD) $(ENV_PROD) up -d --build
+	$(DC_PROD) -f $(APP_FILE_PROD) $(ENV) up -d --build
 
 .PHONY: app-prod-down
 app-prod-down:
-	$(DC_PROD) -f $(APP_FILE_PROD) $(ENV_PROD) down
+	$(DC_PROD) -f $(APP_FILE_PROD) $(ENV) down
 
 # ALL
 .PHONY: app-logs

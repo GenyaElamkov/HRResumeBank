@@ -1,5 +1,7 @@
 import environ
 
+from .main import *  # noqa
+
 
 env = environ.Env()
 

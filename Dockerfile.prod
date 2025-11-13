@@ -13,21 +13,21 @@ RUN apt-get update && \
     python3-dev \
     libpq-dev \
     netcat-openbsd \
-    nmap \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install --no-cache-dir uv
+
 COPY requirements.txt .
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
+RUN uv pip install --no-cache --system -r requirements.txt && \
+    uv pip install --no-cache --system gunicorn
 
 COPY . /app/
-COPY entrypoint.prod.sh /app/entrypoint.prod.sh
-
-RUN chmod +x /app/entrypoint.prod.sh
+COPY entrypoint/entrypoint.prod.sh /app/entrypoint/entrypoint.prod.sh
+RUN chmod +x /app/entrypoint/entrypoint.prod.sh
 
 # Создаем директорию для статики
 RUN mkdir -p /app/staticfiles /app/media
 
-ENTRYPOINT ["/app/entrypoint.prod.sh"]
+ENTRYPOINT ["/app/entrypoint/entrypoint.prod.sh"]

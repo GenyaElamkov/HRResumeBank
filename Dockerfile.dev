@@ -13,7 +13,6 @@ RUN apt-get update && \
     python3-dev \
     libpq-dev \
     netcat-openbsd \
-    nmap \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
@@ -23,9 +22,9 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
-COPY entrypoint.dev.sh /app/entrypoint.dev.sh
+COPY /entrypoint/entrypoint.dev.sh /app/entrypoint/entrypoint.dev.sh
 
-RUN chmod +x /app/entrypoint.dev.sh
+RUN chmod +x /app/entrypoint/entrypoint.dev.sh
 
 # Создаем директорию для статики
 RUN mkdir -p /app/staticfiles /app/media

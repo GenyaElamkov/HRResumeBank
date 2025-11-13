@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: main-app
     env_file:
-      - ../.env.prod
+      - ../.env
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media

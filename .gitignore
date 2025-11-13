@@ -19,7 +19,3 @@ wheels/
 !static/.gitkeep
 *.sqlite*
 .venv/
-
-
-media/*
-staticfiles/*

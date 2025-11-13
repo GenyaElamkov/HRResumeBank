@@ -33,7 +33,7 @@ class ProfileImage(TimeBaseModel):
     )
 
     def __str__(self):
-        return f"{self.card} / {os.path.basename(self.image.name)}"
+        return f"{self.card} / {os.path.basename(self.image.name) if self.image else 'no image'}"
 
     class Meta:
         db_table = "profile_image"
