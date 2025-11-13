@@ -1,3 +1,17 @@
 docker_compose/
 *.pyc
 Documents/
+
+__pycache__
+*.pyc
+.pytest_cache
+.coverage
+.git
+.gitignore
+*.env
+Dockerfile
+README.md
+node_modules
+
+staticfiles/
+media/
