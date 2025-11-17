@@ -11,3 +11,4 @@ services:
       - media_volume:/app/media
     networks:
       - hrresumebank-network
+    user: root
