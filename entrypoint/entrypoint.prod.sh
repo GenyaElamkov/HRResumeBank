@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "Setting correct permissions for volumes..."
+chown -R app:app /app/staticfiles /app/media
+chmod -R 755 /app/staticfiles /app/media
+
 # Ожидание доступности базы данных
 echo "Waiting for database..."
 
@@ -7,6 +11,7 @@ while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
   sleep 1
 done
 echo "Database is ready!"
+
 
 # Применение миграций
 echo "Applying database migrations..."

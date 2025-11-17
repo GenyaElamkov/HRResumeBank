@@ -36,7 +36,7 @@ class FileStorage(TimeBaseModel):
     )
 
     def __str__(self):
-        return f"{self.card} / {os.path.basename(self.uploaded_file.name)}"
+        return f"{self.card} / {os.path.basename(self.uploaded_file.name) if self.uploaded_file.name else 'not file'}"
 
     class Meta:
         db_table = "file_storage"
