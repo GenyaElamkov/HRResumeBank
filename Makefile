@@ -5,7 +5,7 @@ APP_FILE = docker_compose/app_dev.yaml
 
 # prod
 # Debian 12 использует команду: docker compose
-DC_PROD = docker-compose
+DC_PROD = docker compose
 APP_FILE_PROD = docker_compose/app_prod.yaml
 
 # all
