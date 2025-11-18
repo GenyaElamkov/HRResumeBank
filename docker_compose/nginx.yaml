@@ -4,13 +4,14 @@ services:
     container_name: nginx
     ports:
       - "80:80"
-      - "443:443"  # Готовим для SSL
+      - "443:443"
     env_file:
       - ../.env
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-      - ../nginx/ssl:/etc/nginx/ssl  # Для SSL сертификатов
+      - ../nginx/certbot/conf:/etc/letsencrypt
+      - ../nginx/certbot/www:/var/www/certbot
     networks:
       - hrresumebank-network
