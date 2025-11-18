@@ -19,6 +19,3 @@ wheels/
 !static/.gitkeep
 *.sqlite*
 .venv/
-
-# SSL - сертификат
-/nginx/certbot/*
