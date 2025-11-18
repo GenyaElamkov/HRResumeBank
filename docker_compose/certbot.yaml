@@ -1,0 +1,11 @@
+services:
+  certbot:
+    image: certbot/certbot
+    env_file:
+      - ../.env
+    volumes:
+      - ../nginx/certbot/conf:/etc/letsencrypt
+      - ../nginx/certbot/www:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot/ --email ${EMAIL} --agree-tos --no-eff-email -d ${MY_SERVER_IP}
+    networks:
+      - hrresumebank-network

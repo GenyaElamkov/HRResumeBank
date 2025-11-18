@@ -18,6 +18,13 @@ services:
     depends_on:
       - gunicorn
 
+  certbot:
+    extends:
+      file: certbot.yaml
+      service: certbot
+    depends_on:
+      - nginx
+
 networks:
   hrresumebank-network:
 
