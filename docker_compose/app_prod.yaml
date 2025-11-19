@@ -3,6 +3,14 @@ services:
     extends:
       file: storages_prod.yaml
       service: postgres
+    restart: unless-stopped
+    labels:
+      - "com.example.service=postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   gunicorn:
     extends:
@@ -10,6 +18,14 @@ services:
       service: gunicorn
     depends_on:
       - postgres
+    restart: unless-stopped
+    labels:
+      - "com.example.service=gunicorn"
+    healthcheck:
+      test: ['CMD-SHELL', 'python -c "import socket; socket.create_connection((\"localhost\", 8000), 5)" || exit 1']
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx:
     extends:
@@ -17,6 +33,14 @@ services:
       service: nginx
     depends_on:
       - gunicorn
+    restart: unless-stopped
+    labels:
+      - "com.example.service=nginx"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   hrresumebank-network:

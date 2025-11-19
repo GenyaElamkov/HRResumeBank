@@ -22,7 +22,7 @@ keepalive = 2
 # Логирование
 accesslog = "-"  # stdout
 errorlog = "-"   # stdout
-loglevel = "warning/error"
+loglevel = "warning"
 
 # Перезапуск воркеров
 max_requests = 1000
