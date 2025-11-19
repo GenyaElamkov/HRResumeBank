@@ -1,14 +1,33 @@
 name: Django CI
-run-name: ${{ github.actor }} is testing out GinHub Actions
+run-name: ${{ github.actor }} is testing out GitHub Actions
 on: [push, pull_request]
+
+env:
+  DJANGO_SETTINGS_MODULE: your_project.settings
+  SECRET_KEY: test-key-123-for-ci-only
+  DEBUG: "True"
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: ['3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
     - name: Checkout repository
@@ -24,16 +43,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Setup environment
+      run: |
+        cp .env.example .env
+
     - name: Run migrations
       run: |
         python manage.py migrate
-      env:
-        SECRET_KEY: test-key-123
-        DEBUG: "True"
 
     - name: Run tests
       run: |
         python manage.py test
-      env:
-        SECRET_KEY: test-key-123
-        DEBUG: "True"
+
+    - name: Run with coverage
+      run: |
+        pip install coverage
+        coverage run manage.py test
+        coverage report
