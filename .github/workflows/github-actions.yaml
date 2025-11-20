@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is testing out GitHub Actions
 on: [push, pull_request]
 
 env:
-  SECRET_KEY: test-key-123-for-ci-only
+  DJANGO_SECRET_KEY: test-key-123-for-ci-only
 
 jobs:
   test:
@@ -31,7 +31,7 @@ jobs:
     env:
       DJANGO_SETTINGS_MODULE: core.project.settings.test
       DEBUG: True
-      DJANGO_SECRET_KEY: ${{ env.SECRET_KEY }}
+      DJANGO_SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: test_db
