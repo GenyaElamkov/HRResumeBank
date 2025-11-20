@@ -27,6 +27,18 @@ jobs:
         ports:
           - 5432:5432
 
+    # ДОБАВЬТЕ ЭТОТ БЛОК - переменные окружения для всего job
+    env:
+      DJANGO_SETTINGS_MODULE: core.project.settings.test
+      DEBUG: True
+      DJANGO_SECRET_KEY: ${{ env.SECRET_KEY }}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test_db
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
