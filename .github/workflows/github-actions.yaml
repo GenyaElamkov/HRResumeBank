@@ -54,7 +54,7 @@ jobs:
         cat << EOF > .env
         # Django
         DJANGO_SECRET_KEY=${{ env.SECRET_KEY }}
-        DJANGO_SETTINGS_MODULE=core.project.settings.local
+        DJANGO_SETTINGS_MODULE=${{ env.DJANGO_SETTINGS_MODULE }}
         DEBUG=True
 
         # Postgres
@@ -72,19 +72,18 @@ jobs:
         ALLOWED_HOSTS=localhost,127.0.0.1,testserver
         EOF
 
-    # - name: Run migrations
-    #   run: |
-    #     python manage.py migrate
-
-    - name: Run tests
+    - name: Run migrations
       run: |
-        python manage.py test
+        python manage.py migrate
 
-    - name: Generate coverage
+    - name: Run tests with pytest
       run: |
-        pip install coverage
-        coverage run manage.py test
-        coverage xml
+        pytest
+
+    - name: Generate coverage with pytest
+      run: |
+        pip install coverage pytest-cov
+        pytest --cov=. --cov-report=xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
