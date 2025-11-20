@@ -1,8 +1,10 @@
 name: Django CI
 
 on:
-  push:
   pull_request:
+    branches:
+      - dev
+      - master
 
 env:
   DJANGO_SETTINGS_MODULE: core.project.settings.test
@@ -44,3 +46,9 @@ jobs:
           pytest --cov=. tests/
           coverage xml -o coverage.xml
           coverage report
+
+      - name: Fail PR if tests failed
+        if: failure()
+        run: |
+          echo "Tests failed! Please fix before merging."
+          exit 1
