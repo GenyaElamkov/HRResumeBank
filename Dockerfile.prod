@@ -25,19 +25,11 @@ COPY requirements.txt .
 RUN uv pip install --no-cache --system -r requirements.txt && \
     uv pip install --no-cache --system gunicorn
 
-# Смена пользователя
-
 COPY --chown=app:app . /app/
 COPY --chown=app:app entrypoint/entrypoint.prod.sh /app/entrypoint/entrypoint.prod.sh
 
-
-# COPY . /app/
-# COPY entrypoint/entrypoint.prod.sh /app/entrypoint/entrypoint.prod.sh
 RUN chmod +x /app/entrypoint/entrypoint.prod.sh
 
 USER app
-
-# Создаем директорию для статики
-# RUN mkdir -p /app/staticfiles /app/media
 
 ENTRYPOINT ["/app/entrypoint/entrypoint.prod.sh"]

@@ -10,6 +10,9 @@ __pycache__
 .gitignore
 *.env
 Dockerfile
+Dockerfile.prod
+Dockerfile.dev
+
 README.md
 node_modules
 
@@ -17,3 +20,8 @@ staticfiles/
 media/
 
 .github/
+
+tests/
+test/
+
+docs/
