@@ -72,9 +72,9 @@ jobs:
         ALLOWED_HOSTS=localhost,127.0.0.1,testserver
         EOF
 
-    - name: Run migrations
-      run: |
-        python manage.py migrate
+    # - name: Run migrations
+    #   run: |
+    #     python manage.py migrate
 
     - name: Run tests
       run: |
