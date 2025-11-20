@@ -54,7 +54,7 @@ jobs:
         cat << EOF > .env
         # Django
         DJANGO_SECRET_KEY=${{ env.SECRET_KEY }}
-        DJANGO_SETTINGS_MODULE=${{ env.DJANGO_SETTINGS_MODULE }}
+        DJANGO_SETTINGS_MODULE=core.project.settings.test
         DEBUG=True
 
         # Postgres
