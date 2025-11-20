@@ -49,16 +49,28 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Setup environment
+    - name: Create .env file for CI
       run: |
-        cp .env.example .env
-        # Переопределяем настройки для CI
-        sed -i 's/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${{ env.DJANGO_SECRET_KEY }}/' .env
-        sed -i 's/POSTGRES_USER=.*/POSTGRES_USER=postgres/' .env
-        sed -i 's/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=postgres/' .env
-        sed -i 's/POSTGRES_DB=.*/POSTGRES_DB=test_db/' .env
-        sed -i 's/POSTGRES_HOST=.*/POSTGRES_HOST=localhost/' .env
-        sed -i 's/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=localhost,127.0.0.1,testserver/' .env
+        cat << EOF > .env
+        # Django
+        DJANGO_SECRET_KEY=${{ env.SECRET_KEY }}
+        DJANGO_SETTINGS_MODULE=core.project.settings.prod
+        DEBUG=True
+
+        # Postgres
+        POSTGRES_USER=postgres
+        POSTGRES_PASSWORD=postgres
+        POSTGRES_DB=test_db
+        POSTGRES_HOST=localhost
+        POSTGRES_PORT=5432
+        DJANGO_PORT=8000
+
+        # Nginx
+        MY_SERVER_IP=localhost
+
+        # Разное
+        ALLOWED_HOSTS=localhost,127.0.0.1,testserver
+        EOF
 
     - name: Run migrations
       run: |
