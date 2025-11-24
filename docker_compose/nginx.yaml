@@ -1,6 +1,6 @@
 services:
   nginx:
-    build: ./nginx
+    build: /nginx
     image: nginx:alpine
     container_name: nginx
     ports:
