@@ -11,8 +11,8 @@ services:
     env_file:
       - ../.env
     volumes:
-      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ../nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ../nginx/ssl:/etc/nginx/ssl:ro
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     networks:
