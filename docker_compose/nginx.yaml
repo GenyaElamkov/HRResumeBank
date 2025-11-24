@@ -1,7 +1,8 @@
 services:
   nginx:
-    build: ../nginx
-    dockerfile: Dockerfile
+    build:
+      context: ../nginx
+      dockerfile: Dockerfile
     image: nginx:alpine
     container_name: nginx
     ports:
