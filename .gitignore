@@ -21,3 +21,4 @@ wheels/
 .venv/
 
 /nginx/ssl_certs/
+/nginx/ssl/
