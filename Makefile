@@ -59,6 +59,10 @@ app-prod:
 app-prod-down:
 	$(DC_PROD) -f $(APP_FILE_PROD) $(ENV) down
 
+.PHONY: nginx-logs
+nginx-logs:
+	$(DC_PROD) $(ENV) -f $(APP_FILE_PROD) logs nginx
+
 # ALL
 .PHONY: app-logs
 app-logs:
