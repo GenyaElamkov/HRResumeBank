@@ -19,3 +19,5 @@ wheels/
 !static/.gitkeep
 *.sqlite*
 .venv/
+
+/nginx/ssl_certs/
