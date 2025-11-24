@@ -22,3 +22,4 @@ wheels/
 
 /nginx/ssl_certs/
 /nginx/ssl/
+/nginx/nginx.conf
