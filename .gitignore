@@ -20,4 +20,5 @@ wheels/
 *.sqlite*
 .venv/
 
+# nginx ssl
 /nginx/ssl_certs/

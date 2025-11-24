@@ -5,6 +5,8 @@ from .main import *  # noqa
 
 env = environ.Env()
 
+SECRET_KEY = env("DJANGO_SECRET_KEY")
+
 DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
@@ -21,14 +23,14 @@ DATABASES = {
 }
 
 # Для тестирования
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_SSL_REDIRECT = False
+# SESSION_COOKIE_SECURE = False # noqa
+# CSRF_COOKIE_SECURE = False    # noqa
+# SECURE_SSL_REDIRECT = False   # noqa
 
 # HTTPS
-# SESSION_COOKIE_SECURE = True  # noqa
-# CSRF_COOKIE_SECURE = True  # noqa
-# SECURE_SSL_REDIRECT = True        # noqa
-# SECURE_HSTS_SECONDS = 31536000    # noqa
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True # noqa
-# SECURE_HSTS_PRELOAD = True    # noqa
+SESSION_COOKIE_SECURE = True  # noqa
+CSRF_COOKIE_SECURE = True  # noqa
+SECURE_SSL_REDIRECT = True        # noqa
+SECURE_HSTS_SECONDS = 31536000    # noqa
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True # noqa
+SECURE_HSTS_PRELOAD = True    # noqa
