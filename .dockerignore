@@ -25,3 +25,4 @@ tests/
 test/
 
 docs/
+pytest.ini
