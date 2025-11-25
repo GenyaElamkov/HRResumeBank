@@ -7,6 +7,8 @@ env = environ.Env()
 
 DEBUG = env.bool('DEBUG')
 
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -20,16 +22,15 @@ DATABASES = {
 
 
 # HTTPS
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SESSION_COOKIE_SECURE = True  # noqa
-CSRF_COOKIE_SECURE = True  # noqa
-SECURE_SSL_REDIRECT = True        # noqa
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+
 # SECURE_HSTS_SECONDS = 31536000    # noqa
 # SECURE_HSTS_INCLUDE_SUBDOMAINS = True # noqa
 # SECURE_HSTS_PRELOAD = True    # noqa
 
-if DEBUG:
+if not DEBUG:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
     SECURE_SSL_REDIRECT = False
-    SECURE_HSTS_SECONDS = 0

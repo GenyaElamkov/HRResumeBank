@@ -7,6 +7,8 @@ env = environ.Env()
 
 DEBUG = env.bool('DEBUG')
 
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

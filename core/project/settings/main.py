@@ -11,8 +11,6 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
-ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
-
 INSTALLED_APPS = [
     # app
     "admin_interface",
