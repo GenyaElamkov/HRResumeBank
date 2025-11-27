@@ -15,7 +15,7 @@ TEMPLATE_FIELDS = {
     "department": "Подразделение",
     "directorate": "Дирекция",
     "block": "Блок",
-    "manager": "Руководитель",
+    "manager": "Куратор",
     "branch": "Филиал",
     "hire_date": "Дата приема",
     "employment": "Трудоустройство",
