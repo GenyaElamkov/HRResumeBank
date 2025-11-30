@@ -1,9 +1,12 @@
+from unittest.mock import Mock
+
 import pytest
 
 from core.apps.accounts.models import CustomUser
 from core.apps.help.models.faq import FAQ
 from core.apps.help.models.help_article import HelpArticle
 from core.apps.help.models.help_category import HelpCategory
+from core.apps.resumes.forms import MultipleFileField
 from core.apps.resumes.models.card import Card
 from core.apps.resumes.models.template import Template
 from core.apps.resumes.models.template_field import TemplateField
@@ -109,3 +112,29 @@ def card(template, custom_user):
         },
 
     )
+
+
+@pytest.fixture
+def fields():
+    """Фикстура поля по умолчанию MultiValueField"""
+    return MultipleFileField(
+        required=False,
+    )
+
+
+@pytest.fixture
+def allowed_extensions():
+    """Фикстура разрешенных расширений файлов"""
+    return [
+        ".pdf", ".docx", ".doc", ".txt", ".jpg", ".jpeg", ".png", ".xlsx", ".xls",
+    ]
+
+
+@pytest.fixture
+def mock_file():
+    """Фикстура мока файла"""
+    def _mock_file(name):
+        mock = Mock()
+        mock.name = name
+        return mock
+    return _mock_file
