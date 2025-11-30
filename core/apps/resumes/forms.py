@@ -1,3 +1,7 @@
+import os
+from dataclasses import dataclass
+from typing import List
+
 from django import forms
 from django.core.validators import validate_email
 
@@ -8,7 +12,20 @@ from .models.file_storage import FileStorage
 from .models.profile_image import ProfileImage
 
 
+@dataclass
+class FieldValidationConfig:
+    allowed_extensions: List[str]
+
+
+RESUME_FILE_CONFIG = FieldValidationConfig(
+    allowed_extensions=[
+        ".pdf", ".docx", ".doc", ".txt", ".jpg", ".jpeg", ".png", ".xlsx", ".xls",
+    ],
+)
+
+
 class CardCreateForm(forms.ModelForm):
+    """Форма для создания карточки на основе выбранного шаблона"""
     class Meta:
         model = Card
         fields = ["template"]
@@ -28,13 +45,36 @@ class CardCreateForm(forms.ModelForm):
 
 
 class MultipleFileInput(forms.ClearableFileInput):
+    """Виджет для множественной загрузки файлов в формах"""
     allow_multiple_selected = True
 
 
 class MultipleFileField(forms.FileField):
+    """Поле формы для загрузки несколько файлов одновременно"""
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("widget", MultipleFileInput())
+        self.allowed_extensions = kwargs.pop(
+            "allowed_extensions",
+            RESUME_FILE_CONFIG.allowed_extensions,
+        )
         super().__init__(*args, **kwargs)
+
+    def validate(self, value):
+        super().validate(value)
+        if not value:
+            return
+
+        if not isinstance(value, (list, tuple)):
+            value = [value]
+
+        for file in value:
+            ext = os.path.splitext(file.name)[1]
+            if ext not in self.allowed_extensions:
+                raise forms.ValidationError(
+                    f"Файл '{file}' имеет недопустимое расширение '{ext}'. "
+                    f"Разрешены: {', '.join(self.allowed_extensions)}",
+                )
 
     def clean(self, data, initial=None):
         single_file_clean = super().clean
@@ -46,6 +86,8 @@ class MultipleFileField(forms.FileField):
 
 
 class MultipleEmailField(forms.Field):
+    """Поле формы для ввода нескольких email-адресов через запятую"""
+
     def to_python(self, value):
         """Нормализация данных в список email'ов"""
         if not value:
@@ -71,6 +113,8 @@ class MultipleEmailField(forms.Field):
 
 
 class CardFillForm(forms.ModelForm):
+    """Форма для заполнения карточки с динамически создаваемыми полями на основе шаблона"""
+
     class Meta:
         model = Card
         fields = []
@@ -150,6 +194,8 @@ class CardFillForm(forms.ModelForm):
             label=field.title,
             required=field.is_required,
             initial=initial,
+            help_text=f"Выберите файлы для загрузки. Разрешены: {", ".join(RESUME_FILE_CONFIG.allowed_extensions)}",
+            allowed_extensions=RESUME_FILE_CONFIG.allowed_extensions,
         )
 
     def _created_dinamic_fields(self):
