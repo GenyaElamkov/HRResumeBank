@@ -69,7 +69,7 @@ class MultipleFileField(forms.FileField):
             value = [value]
 
         for file in value:
-            ext = os.path.splitext(file.name)[1]
+            ext = os.path.splitext(file.name)[1].lower()
             if ext not in self.allowed_extensions:
                 raise forms.ValidationError(
                     f"Файл '{file}' имеет недопустимое расширение '{ext}'. "
