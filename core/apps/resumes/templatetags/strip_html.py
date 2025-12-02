@@ -11,7 +11,8 @@ register = template.Library()
 @register.filter
 def strip_html(value: str) -> str:
     """
-    Полностью удаляет весь HTML, CSS и их атрибуты, нормализует пробелы.
+    Полностью удаляет весь HTML, CSS и их атрибуты, лишние пробелы схлопываются.
+    Теги полностью удаляются, не заменяя их на пробелы.
     """
     if not value:
         return ''
@@ -20,4 +21,5 @@ def strip_html(value: str) -> str:
     text = html.unescape(stripped)
     # Удаляем лишние пробелы
     text = re.sub(r'\s+', ' ', text.strip())
+
     return text
