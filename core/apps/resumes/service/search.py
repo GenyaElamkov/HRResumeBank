@@ -3,7 +3,10 @@ from django.core.paginator import (
     PageNotAnInteger,
     Paginator,
 )
-from django.db.models import Q
+from django.db.models import (
+    Q,
+    QuerySet,
+)
 from django.views import View
 
 from core.apps.accounts.models import CustomUser
@@ -17,35 +20,21 @@ class BaseCardSearchView(View):
     def get(self, request, *args, **kwargs):
         query = request.GET.get("q", "").strip()
         template_id = request.GET.get("template")
-        user_id = request.GET.get("created")
+        created_id = request.GET.get("created")
         page = request.GET.get('page', 1)
 
         results = Card.objects.all().select_related('template')
-        cards_matches = []
 
         # Фильтрация по пользователям
-        if user_id:
-            results = results.filter(user_id=user_id)
+        if created_id:
+            results = results.filter(created_id=created_id)
 
         # Фильтрация по шаблонам
         if template_id:
             results = results.filter(template_id=template_id)
 
-        # Поиск по ключевым словам
-        if query:
-            words = query.split()
-            q_objects = Q()
-
-            # Если | в поисковой строке, то поиск по OR
-            # Если & в поисковой строке, то поиск по AND
-            for word in words:
-                q_objects &= Q(values__icontains=word)
-
-            results = results.filter(q_objects).distinct()
-            cards_matches = self.get_field_search(results, words)
-        else:
-            cards_matches = list(results)
-
+        # Поиск карточек по заданному запросу
+        cards_matches = self._search(query, results)
         # Пагинация
         paginator = Paginator(cards_matches, 52)
         try:
@@ -63,7 +52,7 @@ class BaseCardSearchView(View):
             "results": paginated_results,
             "query": query,
             "template_id": template_id,
-            "user_id": user_id,
+            "user_id": created_id,
             "templates": templates,
             "users": users,
             "paginator": paginator,
@@ -79,3 +68,26 @@ class BaseCardSearchView(View):
     def render_to_response(self, context):
         """Метод рендеринга должен быть реализован в подклассах"""
         raise NotImplementedError("Subclasses must implement this method")
+
+    def _search(self, query: str, results: QuerySet[Card]) -> list[Card]:
+        """Выполняет поиск карточек по заданному запросу"""
+        if not query:
+            return list(results)
+
+        exact_match = False
+        if query.startswith('"') and query.endswith('"'):
+            query = query.strip('"').strip()
+            exact_match = True
+
+        words = query.split()
+        q_objects = Q()
+        if exact_match and words:
+            phrase = ' '.join(words)
+            q_objects = Q(values__icontains=phrase)
+        else:
+            for word in words:
+                q_objects &= Q(values__icontains=word)
+
+        results: QuerySet = results.filter(q_objects).distinct()
+        card_matches = self.get_field_search(results, words)
+        return card_matches
