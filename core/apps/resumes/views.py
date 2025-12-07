@@ -1,4 +1,5 @@
 import os
+import re
 
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render
@@ -231,30 +232,44 @@ class AdvancedCardSearchView(BaseCardSearchView):
 
     def get_field_search(self, results_query, words: list) -> list:
         """Получает поля, значения поиска с оптимизацией"""
-        cards_with_matches = []
+        exact_search = False
+        query = self.request.GET.get('q', '').strip()
+        if query.startswith('"') and query.endswith('"'):
+            query_text = " ".join(words).lower()
+            # Проверяем, что запрос содержит только выбранное слово
+            pattern = rf'\b{re.escape(query_text)}\b'
+            exact_search = True
 
+        cards_with_matches = []
         for card in results_query:
             matched_fields = {}
             for field_name, field_value in card.values.items():
-                if isinstance(field_value, str) and any(word.lower() in field_value.lower() for word in words):
-                    matched_fields[field_name] = field_value
-                elif isinstance(field_value, (int, float)) and any(str(word) in str(field_value) for word in words):
-                    matched_fields[field_name] = str(field_value)
+                value_str = ""
+                if isinstance(field_value, str):
+                    value_str = field_value
+                elif isinstance(field_value, (int, float)):
+                    value_str = str(field_value)
                 elif isinstance(field_value, list):
-                    for item in field_value:
-                        if isinstance(item, str) and any(word.lower() in item.lower() for word in words):
-                            matched_fields[field_name] = str(field_value)
-                            break
+                    value_str = ' '.join(str(item) for item in field_value)
+                else:
+                    value_str = str(field_value)
 
+                value_lower = value_str.lower()
+                if exact_search:
+                    if re.search(pattern, value_lower):
+                        matched_fields[field_name] = value_str
+                else:
+                    if any(word.lower() in value_lower for word in words):
+                        matched_fields[field_name] = value_str
+
+            # Если есть совпадения в полях, создаем поле matched_fields и добавляем карточку
             if matched_fields:
                 card.matched_fields = matched_fields
-                cards_with_matches.append(card)
-
+            cards_with_matches.append(card)
         return cards_with_matches
 
     def render_to_response(self, context):
         """Рендеринг с использованием шаблона advanced_search.html"""
-
         context.update(
             PermissionComposer.get_context_data(
                 context=context,
