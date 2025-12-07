@@ -69,7 +69,7 @@ class BaseCardSearchView(View):
     def _search(self, query: str, results: QuerySet[Card]) -> list[Card]:
         """Выполняет поиск карточек по заданному запросу"""
         if not query:
-            return list(results)
+            return results
 
         words = query.strip('"').strip().split()
         if query.startswith('"') and query.endswith('"'):
@@ -99,6 +99,7 @@ class BaseCardSearchView(View):
                 text_parts.append(str(value).lower())
 
         full_text = ' '.join(text_parts)
+        # Проверяем, что запрос содержит только выбранное слово
         pattern = rf'\b{re.escape(phrase.lower())}\b'
         return re.search(pattern, full_text) is not None
 
@@ -110,7 +111,7 @@ class BaseCardSearchView(View):
 
         return results.filter(q_objects).distinct()
 
-    def _get_paginator(self, cards_matches, page):
+    def _get_paginator(self, cards_matches: QuerySet[Card], page) -> dict:
         """Получение пагинатора"""
         paginator = Paginator(cards_matches, 52)
         try:
@@ -125,16 +126,7 @@ class BaseCardSearchView(View):
             "paginated_results": paginated_results,
         }
 
-    def _get_context(
-        self,
-        paginator,
-        paginated_results,
-        templates,
-        users,
-        query,
-        template_id,
-        created_id,
-    ):
+    def _get_context(self, paginator, paginated_results, templates, users, query, template_id, created_id):
         """Получение контекста"""
         return {
             "results": paginated_results,

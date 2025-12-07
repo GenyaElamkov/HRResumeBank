@@ -1,4 +1,5 @@
 import os
+import re
 
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render
@@ -231,11 +232,13 @@ class AdvancedCardSearchView(BaseCardSearchView):
 
     def get_field_search(self, results_query, words: list) -> list:
         """Получает поля, значения поиска с оптимизацией"""
-        exact = False
+        exact_search = False
         query = self.request.GET.get('q', '').strip()
         if query.startswith('"') and query.endswith('"'):
             query_text = " ".join(words).lower()
-            exact = True
+            # Проверяем, что запрос содержит только выбранное слово
+            pattern = rf'\b{re.escape(query_text)}\b'
+            exact_search = True
 
         cards_with_matches = []
         for card in results_query:
@@ -251,10 +254,13 @@ class AdvancedCardSearchView(BaseCardSearchView):
                 else:
                     value_str = str(field_value)
 
-                if exact and query_text in value_str.lower():
-                    matched_fields[field_name] = value_str
-                elif any(word.lower() in value_str.lower() for word in words):
-                    matched_fields[field_name] = value_str
+                value_lower = value_str.lower()
+                if exact_search:
+                    if re.search(pattern, value_lower):
+                        matched_fields[field_name] = value_str
+                else:
+                    if any(word.lower() in value_lower for word in words):
+                        matched_fields[field_name] = value_str
 
             # Если есть совпадения в полях, создаем поле matched_fields и добавляем карточку
             if matched_fields:
