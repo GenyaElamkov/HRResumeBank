@@ -175,7 +175,7 @@
             max-height: none !important;
             overflow: visible !important;
             height: auto !important;
-            font-size: 10px !important;
+            font-size: 12px !important;
             line-height: 1.2 !important;
             padding: 2px !important;
             display: block !important;
@@ -196,7 +196,7 @@
 
         /* Если много картинок - делаем их меньше */
         .scrollable-field img + img {
-            max-height: 100px !important;
+            max-height: 200px !important;
             display: inline-block !important;
             margin: 2px 5px 2px 0 !important;
         }
@@ -206,7 +206,7 @@
         img[style*="width: auto"],
         img[style*="max-width: 200px"] {
             max-width: 100% !important;
-            max-height: 100px !important;
+            max-height: 300px !important;
             height: auto !important;
             width: auto !important;
         }
