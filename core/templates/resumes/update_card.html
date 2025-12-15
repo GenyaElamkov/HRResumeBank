@@ -11,7 +11,7 @@
                     </h2>
                 </div>
                 <div class="card-body">
-                    <form method="post"  enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <form method="post"  enctype="multipart/form-data" class="needs-validation" novalidate id="update-card-form">
                         {% csrf_token %}
 
                         {% for field in form %}
@@ -103,11 +103,22 @@
                                 <i class="bi bi-check-circle me-1"></i>Сохранить
                             </button>
                         </div>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<!-- Кнопка stick -->
+<div class="sticky-buttons-wrapper">
+    <div class="sticky-buttons">
+        <a href="{% url 'resumes:card_detail' card.id %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Назад к карточке
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle me-1"></i>Сохранить
+        </button>
+    </div>
+</div>
 {% endblock %}

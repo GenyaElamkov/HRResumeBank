@@ -39,10 +39,35 @@
         });
     });
 
-    // Для корректной работы ID с подчеркиваниями
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     // Автоматическая замена ID с подчеркиваниями на пробелы для корректной работы
-    //     document.querySelectorAll('[id^="id_"]').forEach(el => {
-    //         el.id = el.id.replace(/_/g, ' ')
-    //     })
-    // })
+
+// Добавляем обработчик для кнопки сохранения
+document.addEventListener('DOMContentLoaded', function() {
+    const buttonsWrapper = document.querySelector('.sticky-buttons-wrapper');
+    const footer = document.querySelector('footer');
+    const mainForm = document.getElementById('update-card-form');
+
+    if (buttonsWrapper && footer && mainForm) {
+        const saveButton = buttonsWrapper.querySelector('button[type="submit"]');
+        if (saveButton && !saveButton.getAttribute('form')) {
+            saveButton.setAttribute('form', mainForm.id);
+        }
+
+        function checkFooterDistance() {
+            const footerRect = footer.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+
+            // Если футер близко к видимой области
+            if (footerRect.top < windowHeight + 200) {
+                buttonsWrapper.classList.add('near-footer');
+            } else {
+                buttonsWrapper.classList.remove('near-footer');
+            }
+        }
+
+        window.addEventListener('scroll', checkFooterDistance);
+        window.addEventListener('resize', checkFooterDistance);
+
+        // Проверяем начальное состояние
+        setTimeout(checkFooterDistance, 100);
+    }
+});

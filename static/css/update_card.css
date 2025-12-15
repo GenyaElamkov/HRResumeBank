@@ -1,18 +1,59 @@
-    .form-control:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 0.2rem rgba(119, 141, 169, 0.25);
+.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(119, 141, 169, 0.25);
+}
+
+.form-label {
+    color: var(--primary-dark);
+    font-weight: 500;
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+select.form-control {
+    background-color: #fff;
+}
+
+/* Для кнопки сохранения */
+.sticky-buttons-wrapper {
+    position: sticky;
+    bottom: 20px;
+    z-index: 100;
+    margin-top: -4rem;
+    pointer-events: none;
+}
+
+.sticky-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    max-width: 370px;
+    margin-left: auto;
+    pointer-events: auto;
+}
+
+/* Скрываем при приближении к футеру */
+.sticky-buttons-wrapper.near-footer {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+@media (max-width: 768px) {
+    .sticky-buttons-wrapper {
+        bottom: 10px;
     }
 
-    .form-label {
-        color: var(--primary-dark);
-        font-weight: 500;
+    .sticky-buttons {
+        width: 100%;
+        max-width: none;
+        justify-content: center;
     }
-
-    textarea.form-control {
-        min-height: 100px;
-        resize: vertical;
-    }
-
-    select.form-control {
-        background-color: #fff;
-    }
+}
