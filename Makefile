@@ -41,11 +41,7 @@ app:
 app-down:
 	$(DC) -f $(APP_FILE) -f $(STORAGES_FILE) $(ENV) down
 
-# Faker
-.PHONY: seed
-seed:
-	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed
-
+# Закрываем все docker images
 .PHONY: app-img-down
 app-img-down:
 	$(DC) -f $(APP_FILE) -f $(STORAGES_FILE) down -v
@@ -94,7 +90,11 @@ collectstatic:
 seed-prod:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed_prod
 
-# Fixture
+.PHONY: seed-org
+seed-org:
+	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) seed_org
+
+# Fixture Help
 .PHONY: fixture
 fixture:
 	$(EXEC) $(APP_CONTAINER) $(MANAGE_PY) load_help_data
