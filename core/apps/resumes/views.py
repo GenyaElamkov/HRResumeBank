@@ -77,6 +77,7 @@ class CardListView(ListView):
                     for field in card.template.fields.all()
                 },
                 "image": ProfileImage.objects.filter(card=card).first(),
+                "status_color": card.get_status_color(),
             })
 
         context["card_list"] = cards
@@ -308,6 +309,7 @@ class HomeScreenCardSearchView(BaseCardSearchView):
                     for field in card.template.fields.all()
                 },
                 "image": ProfileImage.objects.filter(card=card).first(),
+                "status_color": card.get_status_color(),
             })
 
         context["card_list"] = card_list

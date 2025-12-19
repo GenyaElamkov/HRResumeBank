@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
+from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
@@ -33,6 +34,38 @@ class Card(TimeBaseModel):
         null=True,
         editable=False,
     )
+
+    def save(self, *args, **kwargs):
+        # Cache clearing
+        cache_key = f"card_{self.id}_status_color"
+        cache.delete(cache_key)
+        super().save(*args, **kwargs)
+
+    def get_status_color(self) -> str:
+        """Получить цвет статуса карточки"""
+        color_map = {
+            'кандидат': 'linear-gradient(to right, var(--success-dark), var(--success))',
+            'уволен': 'linear-gradient(to right, var(--danger-dark), var(--danger))',
+            'default': 'linear-gradient(to right, var(--primary), var(--secondary))',
+        }
+
+        cache_key = f"card_{self.id}_status_color"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+
+        status_keys = {'статус', 'status', 'state', 'состояние'}
+        value_lower = next(
+            (
+                str(v).lower() for k, v in self.values.items()
+                if k.lower() in status_keys and isinstance(v, (str, int))
+            ),
+            None,
+        )
+
+        color = color_map.get(value_lower, color_map['default'])
+        cache.set(cache_key, color, 300)
+        return color
 
     def __str__(self):
         return f"{self.template.title} Карточка #{self.id}"

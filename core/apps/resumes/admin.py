@@ -1,12 +1,31 @@
+from django import forms
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from .models.card import Card
 from .models.template import Template
 from .models.template_field import TemplateField
 
 
+class TemplateFieldAdminForm(forms.ModelForm):
+    class Meta:
+        model = TemplateField
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['title'].help_text = mark_safe(
+                '<span style="color: #d4ac0d; font-weight: bold; font-size: 0.9em; display: block; margin-top: 4px;">'
+                '⚠️ Внимание: Изменение имени поля может привести к потере связи со старыми значениями '
+                'в карточках.'
+                '</span>',
+            )
+
+
 class TemplateFieldInline(admin.StackedInline):
     model = TemplateField
+    form = TemplateFieldAdminForm
     extra = 0
 
 
