@@ -7,8 +7,12 @@
     --dark-text: #0d1b2a;
     --light-text: #e0e1dd;
     --success: #2e7d32;
+    --success-lite: #28a745;
+    --success-dark: #1b5e20;
     --warning: #f9a825;
     --danger: #c62828;
+    --danger-lite: #e55b5b;
+    --danger-dark: #b71c1c; 
 }
 
 html, body {
