@@ -33,8 +33,9 @@ cp .env.example .env
 ```
 
 4. Измените значения переменных окружения в файле .env согласно вашим требованиям.
-5. Замените server_name в файле nginx/nginx.conf на свой
-6. Соберите Docker-образы и запустите контейнеры:
+5. Замените server_name в файле nginx/nginx.conf на свой.
+6. Замените сертификаты https в блоке (ssl_certificate, ssl_certificate_key) в файле nginx/nginx.conf на свои.
+7. Соберите Docker-образы и запустите контейнеры:
 
 ```bash
 make app-prod
